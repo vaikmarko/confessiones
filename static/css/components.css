@@ -1,0 +1,76 @@
+/* Sentimental Design Tokens & Utilities */
+
+:root {
+  --brand-primary: #7e22ce; /* Tailwind purple-600 */
+  --brand-primary-hover: #6b21a8; /* purple-700 */
+  --brand-secondary: #6366f1; /* indigo-500 */
+  --brand-secondary-hover: #4f46e5; /* indigo-600 */
+  --brand-light: #f5f3ff; /* purple-50 */
+  --text-light: #ffffff;
+  --text-dark: #1f2937;
+}
+
+.btn-primary {
+  background-color: var(--brand-primary);
+  color: var(--text-light);
+  padding: 0.75rem 1.25rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  transition: background-color 150ms ease-in-out, box-shadow 150ms ease-in-out;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+.btn-primary:hover {
+  background-color: var(--brand-primary-hover);
+}
+
+.btn-secondary {
+  background-color: #ffffff;
+  color: var(--brand-secondary);
+  border: 2px solid var(--brand-secondary);
+  padding: 0.625rem 1.25rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  transition: background-color 150ms ease-in-out, color 150ms ease-in-out, border-color 150ms ease-in-out;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+.btn-secondary:hover {
+  background-color: var(--brand-secondary);
+  color: var(--text-light);
+  border-color: var(--brand-secondary-hover);
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.25rem 0.5rem;
+  background-color: var(--brand-light);
+  color: var(--brand-primary);
+  border-radius: 0.375rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+/* Skeleton Loader */
+.skeleton {
+  position: relative;
+  overflow: hidden;
+  background-color: #f3f4f6; /* gray-100 */
+}
+.skeleton::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -150%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+  animation: shimmer 1.5s infinite;
+}
+@keyframes shimmer {
+  100% { transform: translateX(300%); }
+} 

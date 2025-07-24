@@ -1,0 +1,58 @@
+{
+  "hosting": {
+    "public": "public",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**",
+      "venv/**",
+      "*.py",
+      "requirements.txt",
+      "static/js/**",
+      "static/css/**"
+    ],
+    "rewrites": [
+      {
+        "source": "/",
+        "run": {
+          "serviceId": "sentimentalapp",
+          "region": "europe-west1"
+        }
+      },
+      {
+        "source": "/app",
+        "run": {
+          "serviceId": "sentimentalapp",
+          "region": "europe-west1"
+        }
+      },
+      {
+        "source": "/api/**",
+        "run": {
+          "serviceId": "sentimentalapp",
+          "region": "europe-west1"
+        }
+      },
+      {
+        "source": "/static/**",
+        "run": {
+          "serviceId": "sentimentalapp",
+          "region": "europe-west1"
+        }
+      },
+      {
+        "source": "/s/**",
+        "run": {
+          "serviceId": "sentimentalapp",
+          "region": "europe-west1"
+        }
+      }
+    ]
+  },
+  "functions": {
+    "source": "functions"
+  },
+  "firestore": {
+    "rules": "firestore.rules"
+  }
+}

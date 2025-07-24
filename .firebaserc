@@ -1,0 +1,18 @@
+{
+  "projects": {
+    "default": "sentimental-f95e6"
+  },
+  "targets": {
+    "sentimental-f95e6": {
+      "hosting": {
+        "sentimentalapp-test": [
+          "sentimentalapp-test"
+        ],
+        "sentimental-f95e6": [
+          "sentimental-f95e6"
+        ]
+      }
+    }
+  },
+  "etags": {}
+}

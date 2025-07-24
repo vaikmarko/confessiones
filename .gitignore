@@ -1,0 +1,52 @@
+# Ignore environment variables
+.env
+
+# Node modules
+node_modules/
+
+# Build cache või logid
+.DS_Store
+npm-debug.log
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual Environment
+venv/
+ENV/
+
+# Firebase
+firebase-credentials.json
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+Thumbs.db
+
+# Prevent duplicate front-end bundles (served by Cloud Run)
+public/static/js/
+public/static/css/.env
+*.env

@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-GHR6MC542E"></script>
+    <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-GHR6MC542E');
+    </script>
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sentimental App - Your Life, Your Story</title>
+    <link rel="icon" type="image/x-icon" href="/static/icons/icon-192x192.png">
+    
+    <!-- PWA Meta Tags -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#8639E8">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Sentimental">
+    <link rel="apple-touch-icon" href="/static/icons/icon-192x192.png">
+    
+    <!-- Tailwind CSS (Production Build) -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/tailwind.css') }}">
+    <!-- Sentimental Component Utilities -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/components.css') }}">
+    
+    <!-- React -->
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    
+    <!-- Babel for JSX -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    
+    <!-- GA helper -->
+    <script type="text/babel" src="{{ url_for('static', filename='js/analytics.js') }}"></script>
+    
+    <!-- Three.js for 3D inner space -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://unpkg.com/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        
+        /* PWA specific styles */
+        @media (display-mode: standalone) {
+            body {
+                -webkit-user-select: none;
+                -webkit-touch-callout: none;
+            }
+        }
+        
+        /* Loading animation */
+        .loading-spinner {
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Smooth transitions */
+        * {
+            transition: colors 150ms ease-in-out, background-color 150ms ease-in-out, border-color 150ms ease-in-out;
+        }
+        
+        /* Chat interface styles - Ultra-minimal like Cursor */
+        .share-container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            background: white;
+        }
+        
+        .chat-header-minimal {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid #f0f0f0;
+            background: white;
+            display: flex;
+            justify-content: center;
+        }
+        
+        .model-dropdown-minimal {
+            padding: 0.5rem 0.75rem;
+            border: 1px solid #e0e0e0;
+            border-radius: 0.375rem;
+            background: white;
+            font-size: 0.875rem;
+            color: #666;
+            cursor: pointer;
+            outline: none;
+        }
+        
+        .model-dropdown-minimal:focus {
+            border-color: #8b5cf6;
+            box-shadow: 0 0 0 1px #8b5cf6;
+        }
+        
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1rem;
+            background: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+        }
+        
+        .message {
+            margin-bottom: 1.5rem;
+            max-width: 80%;
+        }
+        
+        .user-message {
+            margin-left: auto;
+        }
+        
+        .user-message .message-content {
+            background: #f0f0f0;
+            color: #1a1a1a;
+            padding: 0.75rem 1rem;
+            border-radius: 1rem 1rem 0.25rem 1rem;
+        }
+        
+        .ai-message .message-content {
+            background: #f8f8f8;
+            color: #1a1a1a;
+            padding: 0.75rem 1rem;
+            border-radius: 1rem 1rem 1rem 0.25rem;
+        }
+        
+        .chat-input-container {
+            padding: 1rem;
+            background: white;
+            border-top: 1px solid #f0f0f0;
+        }
+        
+        .input-wrapper {
+            display: flex;
+            gap: 0.75rem;
+            align-items: flex-end;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .chat-input {
+            flex: 1;
+            padding: 0.875rem 1rem;
+            border: 1px solid #e0e0e0;
+            border-radius: 0.75rem;
+            font-family: inherit;
+            font-size: 1rem;
+            line-height: 1.5;
+            background: white;
+            outline: none;
+            transition: border-color 0.15s ease-in-out;
+        }
+        
+        .chat-input::placeholder {
+            color: #999;
+        }
+        
+        .chat-input:focus {
+            border-color: #8b5cf6;
+        }
+        
+        .send-button {
+            padding: 0.875rem 1.5rem;
+            background: #8b5cf6;
+            color: white;
+            border: none;
+            border-radius: 0.75rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.15s ease-in-out;
+            outline: none;
+        }
+        
+        .send-button:hover:not(:disabled) {
+            background: #7c3aed;
+        }
+        
+        .send-button:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+        
+        .typing-indicator {
+            display: flex;
+            gap: 0.25rem;
+            align-items: center;
+        }
+        
+        .typing-indicator span {
+            width: 0.375rem;
+            height: 0.375rem;
+            background: #999;
+            border-radius: 50%;
+            animation: typing 1.4s infinite ease-in-out;
+        }
+        
+        .typing-indicator span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+        
+        .typing-indicator span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+        
+        @keyframes typing {
+            0%, 80%, 100% {
+                transform: scale(0.8);
+                opacity: 0.5;
+            }
+            40% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Loading Screen -->
+    <div id="loading" class="fixed inset-0 bg-white flex items-center justify-center z-50">
+        <div class="text-center">
+            <div class="loading-spinner inline-block w-8 h-8 border-4 border-purple-200 border-t-purple-600 rounded-full mb-4"></div>
+            <h2 class="text-xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+                Sentimental
+            </h2>
+            <p class="text-gray-600 text-sm">Loading...</p>
+        </div>
+    </div>
+
+    <!-- React App Root -->
+    <div id="sentimental-app"></div>
+
+    <!-- Service Worker Registration (for PWA) - TEMPORARILY DISABLED FOR DEBUGGING -->
+    <!--
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+                navigator.serviceWorker.register('/static/js/sw.js')
+                    .then(function(registration) {
+                        console.log('SW registered: ', registration);
+                    })
+                    .catch(function(registrationError) {
+                        console.log('SW registration failed: ', registrationError);
+                    });
+            });
+        }
+    </script>
+    -->
+
+    <!-- Load React Component (raw JSX like production) -->
+    <script type="text/babel" src="{{ url_for('static', filename='js/sentimental-app.jsx') }}?v={{ cache_bust }}"></script>
+    
+    <!-- Load 3D Inner Space Component -->
+<script type="text/babel" src="{{ url_for('static', filename='js/inner-space-3d.jsx') }}"></script>
+    
+    <!-- Firebase Configuration -->
+    <script>
+        // Firebase configuration is injected server-side from environment variables
+        const firebaseConfig = {{ firebase_config | safe }};
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        
+        // Initialize Firebase Auth
+        const auth = firebase.auth();
+        
+        // Configure OAuth providers
+        const googleProvider = new firebase.auth.GoogleAuthProvider();
+        googleProvider.addScope('profile');
+        googleProvider.addScope('email');
+        
+        const facebookProvider = new firebase.auth.FacebookAuthProvider();
+        facebookProvider.addScope('email');
+        
+        const appleProvider = new firebase.auth.OAuthProvider('apple.com');
+        appleProvider.addScope('email');
+        appleProvider.addScope('name');
+        
+        // Make auth available globally
+        window.firebaseAuth = auth;
+        window.authProviders = {
+            google: googleProvider,
+            facebook: facebookProvider,
+            apple: appleProvider
+        };
+    </script>
+
+    <!-- Initialize App -->
+    <script type="text/babel">
+        // Hide loading screen and show app
+        function hideLoading() {
+            const loading = document.getElementById('loading');
+            if (loading) {
+                loading.style.opacity = '0';
+                setTimeout(() => {
+                    loading.style.display = 'none';
+                }, 150);
+            }
+        }
+
+        // Render React App after initial setup is complete
+        function initializeApp() {
+            const root = ReactDOM.createRoot(document.getElementById('sentimental-app'));
+            root.render(React.createElement(SentimentalApp));
+            
+            // Hide loading screen after React renders
+            setTimeout(hideLoading, 300);
+        }
+        
+        // Initialize app after DOM is ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initializeApp);
+        } else {
+            initializeApp();
+        }
+
+        // Add install prompt for PWA
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            
+            // Show install button/notification
+            const installBanner = document.createElement('div');
+            installBanner.className = 'fixed bottom-20 left-4 right-4 bg-purple-600 text-white p-4 rounded-xl shadow-lg z-40';
+            installBanner.innerHTML = `
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="font-semibold">Install Sentimental App</p>
+                        <p class="text-sm text-purple-100">Add to home screen for quick access</p>
+                    </div>
+                    <button id="install-btn" class="bg-white text-purple-600 px-4 py-2 rounded-lg font-medium">
+                        Install
+                    </button>
+                </div>
+                <button id="close-install" class="absolute top-2 right-2 text-purple-200 hover:text-white">×</button>
+            `;
+            document.body.appendChild(installBanner);
+
+            document.getElementById('install-btn').addEventListener('click', () => {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        console.log('User accepted the install prompt');
+                    }
+                    deferredPrompt = null;
+                    installBanner.remove();
+                });
+            });
+
+            document.getElementById('close-install').addEventListener('click', () => {
+                installBanner.remove();
+            });
+
+            // Auto hide after 10 seconds
+            setTimeout(() => {
+                if (installBanner.parentNode) {
+                    installBanner.remove();
+                }
+            }, 10000);
+        });
+    </script>
+</body>
+</html> 

@@ -1,0 +1,24 @@
+{
+  "name": "sentimental-app",
+  "version": "1.0.0",
+  "description": "Sentimental App - Your Life, Your Story",
+  "scripts": {
+    "build-css": "tailwindcss -i ./src/input.css -o ./public/static/css/tailwind.css --watch",
+    "build-css-prod": "tailwindcss -i ./src/input.css -o ./public/static/css/tailwind.css --minify",
+    "build-js": "babel static/js --out-dir public/static/js --presets=@babel/preset-react",
+    "build": "npm run build-css-prod && npm run build-js",
+    "dev": "npm run build-css",
+    "deploy": "npm run build && firebase deploy"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.23.4",
+    "@babel/core": "^7.23.5",
+    "@babel/preset-react": "^7.23.3",
+    "@tailwindcss/forms": "^0.5.7",
+    "@tailwindcss/postcss": "^4.1.11",
+    "tailwindcss": "^3.4.16"
+  },
+  "dependencies": {
+    "react-markdown": "^10.1.0"
+  }
+}
