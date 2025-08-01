@@ -4,7 +4,7 @@ import logging
 import requests
 from datetime import datetime
 import firebase_admin
-from firebase_admin import credentials, firestore
+from firebase_admin import credentials, firestore, _alerts
 from flask import Flask, request, jsonify, render_template
 from flask_cors import CORS
 from dotenv import load_dotenv
@@ -337,7 +337,8 @@ def get_confessions():
             confession = doc.to_dict()
             confession['id'] = doc.id
             # Firestore timestamp needs to be converted to a string
-            confession['created_at'] = confession['created_at'].isoformat()
+            if 'created_at' in confession and hasattr(confession['created_at'], 'isoformat'):
+                confession['created_at'] = confession['created_at'].isoformat()
             public_confessions.append(confession)
             
         return jsonify(public_confessions)
@@ -345,6 +346,25 @@ def get_confessions():
     except Exception as e:
         logger.error(f"Error getting confessions: {e}")
         return jsonify([])
+
+@app.route('/api/stats/souls_helped', methods=['GET'])
+def get_souls_helped():
+    """Get the total number of confessions created."""
+    try:
+        if not db:
+            # Fallback for local development
+            logger.warning("DB not initialized. Returning in-memory confession count.")
+            return jsonify({'count': len(confessions)})
+
+        # Production logic: Fetch count from Firestore
+        # This gets the count of all documents in the collection.
+        count = db.collection('confessions').get()
+        return jsonify({'count': len(count)})
+        
+    except Exception as e:
+        logger.error(f"Error getting souls helped count: {e}")
+        return jsonify({'count': 0}) # Return 0 on error
+
 
 @app.route('/api/confessions/<confession_id>/upvote', methods=['POST'])
 def upvote_confession(confession_id):

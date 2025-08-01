@@ -10,14 +10,34 @@ const SentimentalApp = () => {
   const [upvotedConfessions, setUpvotedConfessions] = useState(new Set());
   const [confessionFilter, setConfessionFilter] = useState('latest');
   const [currentConfession, setCurrentConfession] = useState(null);
+  const [soulsHelped, setSoulsHelped] = useState(10000); // Base number to start with
+  const [copiedPrayerId, setCopiedPrayerId] = useState(null);
   const [generatedSummary, setGeneratedSummary] = useState({ title: '', prayer: '' });
   const [donationAmount, setDonationAmount] = useState(25);
   const [donationFrequency, setDonationFrequency] = useState('one-time');
 
-  // Load public confessions on mount
+  // Load public confessions and stats
   useEffect(() => {
     fetchConfessions(confessionFilter);
   }, [confessionFilter]);
+
+  useEffect(() => {
+    if (currentView === 'donation') {
+        const fetchSoulsHelped = async () => {
+            try {
+                const response = await fetch('/api/stats/souls_helped');
+                if (response.ok) {
+                    const data = await response.json();
+                    // Add the base number to the fetched count for a more impressive start
+                    setSoulsHelped(10000 + data.count); 
+                }
+            } catch (error) {
+                console.error('Error fetching souls helped count:', error);
+            }
+        };
+        fetchSoulsHelped();
+    }
+  }, [currentView]);
 
   const fetchConfessions = async (filter) => {
     try {
@@ -69,7 +89,18 @@ const SentimentalApp = () => {
     setIsLoading(false);
   };
 
-const handleUpvoteClick = async (confessionId) => {
+const handleSharePrayer = (confession) => {
+    const shareText = `A prayer from Confessiones.org:\n\n"${confession.title}"\n\n${confession.text}\n\nFind peace and share your own prayer at https://confessiones.org`;
+    navigator.clipboard.writeText(shareText).then(() => {
+        setCopiedPrayerId(confession.id);
+        setTimeout(() => setCopiedPrayerId(null), 2000); // Reset after 2 seconds
+    }).catch(err => {
+        console.error('Failed to copy prayer:', err);
+        alert('Failed to copy prayer.');
+    });
+  };
+
+  const handleUpvoteClick = async (confessionId) => {
     if (upvotedConfessions.has(confessionId)) {
       // Already upvoted in this session, do nothing.
       return;
@@ -421,15 +452,23 @@ const handleUpvoteClick = async (confessionId) => {
                 <h3 className="font-bold text-gray-800 text-md mb-2">{confession.title || "A Prayer"}</h3>
                 <p className="text-gray-700 leading-relaxed mb-4">{confession.text}</p>
                 <div className="flex justify-between items-center text-xs text-gray-500">
-                  <span>{new Date(confession.created_at).toLocaleDateString()}</span>
                   <button
-                    onClick={() => handleUpvoteClick(confession.id)}
-                    disabled={upvotedConfessions.has(confession.id)}
-                    className="flex items-center space-x-1 p-1 rounded-md transition-colors disabled:opacity-70 disabled:cursor-not-allowed group hover:bg-red-100"
+                    onClick={() => handleSharePrayer(confession)}
+                    className="font-semibold text-blue-600 hover:underline"
                   >
-                    <span className={`transition-transform ${upvotedConfessions.has(confession.id) ? 'text-red-500' : 'text-gray-400 group-hover:text-red-400'}`}>❤️</span>
-                    <span className="font-semibold">{confession.upvotes || 0}</span>
+                    {copiedPrayerId === confession.id ? 'Copied!' : 'Share'}
                   </button>
+                  <div className="flex items-center space-x-2">
+                    <span>{new Date(confession.created_at).toLocaleDateString()}</span>
+                    <button
+                      onClick={() => handleUpvoteClick(confession.id)}
+                      disabled={upvotedConfessions.has(confession.id)}
+                      className="flex items-center space-x-1 p-1 rounded-md transition-colors disabled:opacity-70 disabled:cursor-not-allowed group hover:bg-red-100"
+                    >
+                      <span className={`transition-transform ${upvotedConfessions.has(confession.id) ? 'text-red-500' : 'text-gray-400 group-hover:text-red-400'}`}>❤️</span>
+                      <span className="font-semibold">{confession.upvotes || 0}</span>
+                    </button>
+                  </div>
                 </div>
               </div>
             ))}
@@ -449,108 +488,124 @@ const handleUpvoteClick = async (confessionId) => {
     </div>
   );
 
-  const renderDonationPage = () => (
-    <div className="flex flex-col h-full bg-gray-50 pb-20">
-      {/* 1. New Header */}
-      <div className="relative bg-blue-600 text-white p-6 text-center overflow-hidden">
-        <div className="relative z-10">
-          <h1 className="text-3xl font-bold tracking-tight text-white">Become a Beacon of Hope</h1>
-          <p className="text-lg mt-2 opacity-90">Your generosity provides free, anonymous spiritual guidance to souls in need.</p>
-        </div>
-      </div>
+  const renderDonationPage = () => {
+    const goal = 100000;
+    const progressPercentage = Math.min((soulsHelped / goal) * 100, 100);
 
-      <div className="flex-1 overflow-y-auto p-4 space-y-6">
-        {/* 2. Impact Section */}
-        <div className="bg-white rounded-xl shadow-lg p-6 text-center">
-          <h2 className="text-xl font-bold text-gray-800 mb-4">Why Your Support Matters</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="text-center">
-               <div className="text-3xl mb-2">✝️</div>
-               <h3 className="font-semibold text-gray-700">Free Confession</h3>
-               <p className="text-sm text-gray-600 mt-1">We are committed to keeping this service 100% free for everyone, forever.</p>
-            </div>
-            <div className="text-center">
-               <div className="text-3xl mb-2">🌍</div>
-               <h3 className="font-semibold text-gray-700">Global Reach</h3>
-               <p className="text-sm text-gray-600 mt-1">Your gift helps us reach thousands of souls across the world seeking peace.</p>
-            </div>
-            <div className="text-center">
-               <div className="text-3xl mb-2">🔒</div>
-               <h3 className="font-semibold text-gray-700">Safe & Anonymous</h3>
-               <p className="text-sm text-gray-600 mt-1">We maintain a secure, private, and anonymous platform for our users.</p>
-            </div>
+    return (
+      <div className="flex flex-col h-full bg-gray-50 pb-20">
+        {/* 1. New Header */}
+        <div className="relative bg-blue-600 text-white p-6 text-center overflow-hidden">
+          <div className="relative z-10">
+            <h1 className="text-3xl font-bold tracking-tight text-white">Become a Beacon of Hope</h1>
+            <p className="text-lg mt-2 opacity-90">Your generosity provides free, anonymous spiritual guidance to souls in need.</p>
           </div>
         </div>
 
-        {/* 3. Donation Form */}
-        <div className="bg-white rounded-xl shadow-lg p-6">
-          <h3 className="text-lg font-bold text-gray-800 text-center mb-4">Choose Your Gift</h3>
-          
-          {/* Frequency */}
-          <div className="grid grid-cols-2 gap-3 mb-6">
-            <button onClick={() => setDonationFrequency('one-time')} className={`p-3 rounded-lg border-2 font-semibold transition-all ${donationFrequency === 'one-time' ? 'bg-blue-600 border-blue-600 text-white' : 'bg-gray-100 border-gray-200 text-gray-700'}`}>One-Time</button>
-            <button onClick={() => setDonationFrequency('monthly')} className={`p-3 rounded-lg border-2 font-semibold transition-all ${donationFrequency === 'monthly' ? 'bg-blue-600 border-blue-600 text-white' : 'bg-gray-100 border-gray-200 text-gray-700'}`}>Monthly</button>
-          </div>
-          
-          {/* Amounts */}
-          <div className="grid grid-cols-3 gap-3 mb-4">
-            {[10, 25, 50, 100, 250, 500].map((amount) => (
-              <button
-                key={amount}
-                onClick={() => setDonationAmount(amount)}
-                className={`py-3 px-2 rounded-lg border-2 font-semibold transition-all text-center ${donationAmount === amount ? 'border-blue-600 bg-blue-50 text-blue-600' : 'border-gray-300 text-gray-700 hover:border-blue-400'}`}
-              >
-                ${amount}
-              </button>
-            ))}
+        <div className="flex-1 overflow-y-auto p-4 space-y-6">
+          {/* Progress Bar Section */}
+          <div className="bg-white rounded-xl shadow-lg p-6">
+            <h2 className="text-xl font-bold text-gray-800 mb-2 text-center">Join the Mission</h2>
+            <p className="text-center text-gray-600 mb-4">
+                We've helped <strong>{soulsHelped.toLocaleString()}</strong> souls find peace. Help us reach our goal of <strong>{goal.toLocaleString()}</strong>.
+            </p>
+            <div className="w-full bg-gray-200 rounded-full h-2.5">
+                <div className="bg-blue-600 h-2.5 rounded-full" style={{ width: `${progressPercentage}%` }}></div>
+            </div>
           </div>
 
-          {/* Custom Amount */}
-          <div className="mb-6">
-              <label className="block text-sm font-medium text-gray-700 mb-2">Or enter a custom amount:</label>
-              <input
-                type="number"
-                value={donationAmount}
-                onChange={(e) => setDonationAmount(parseInt(e.target.value) || 0)}
-                className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="0"
-              />
+          {/* 2. Impact Section */}
+          <div className="bg-white rounded-xl shadow-lg p-6 text-center">
+            <h2 className="text-xl font-bold text-gray-800 mb-4">Why Your Support Matters</h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="text-center">
+                 <div className="text-3xl mb-2">✝️</div>
+                 <h3 className="font-semibold text-gray-700">Free Confession</h3>
+                 <p className="text-sm text-gray-600 mt-1">We are committed to keeping this service 100% free for everyone, forever.</p>
+              </div>
+              <div className="text-center">
+                 <div className="text-3xl mb-2">🌍</div>
+                 <h3 className="font-semibold text-gray-700">Global Reach</h3>
+                 <p className="text-sm text-gray-600 mt-1">Your gift helps us reach thousands of souls across the world seeking peace.</p>
+              </div>
+              <div className="text-center">
+                 <div className="text-3xl mb-2">🔒</div>
+                 <h3 className="font-semibold text-gray-700">Safe & Anonymous</h3>
+                 <p className="text-sm text-gray-600 mt-1">We maintain a secure, private, and anonymous platform for our users.</p>
+              </div>
+            </div>
           </div>
 
-          {/* Impact Statement */}
-          <div className="bg-green-50 rounded-lg p-4 border border-green-200 text-center">
-              <p className="text-sm text-green-800">
-                Your <strong>${donationAmount} {donationFrequency === 'monthly' ? 'monthly' : 'one-time'}</strong> gift can help us guide <strong>{Math.round(donationAmount / 5)} souls</strong>.
-              </p>
-          </div>
-        </div>
-
-        {/* 4. Final CTA Buttons */}
-        <div className="space-y-3 px-4">
-            <button
-              onClick={() => {
-                alert(`Thank you for your generous heart! Stripe integration coming soon. You selected $${donationAmount} ${donationFrequency}.`);
-                setCurrentView('confess');
-              }}
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white py-4 rounded-xl font-bold text-lg transition-all duration-200 shadow-lg"
-            >
-              Donate ${donationAmount} {donationFrequency === 'monthly' ? 'Monthly' : 'Now'}
-            </button>
+          {/* 3. Donation Form */}
+          <div className="bg-white rounded-xl shadow-lg p-6">
+            <h3 className="text-lg font-bold text-gray-800 text-center mb-4">Choose Your Gift</h3>
             
-            <button
-              onClick={() => setCurrentView('confess')}
-              className="w-full text-gray-600 py-3 rounded-lg font-semibold hover:bg-gray-200 transition-colors"
-            >
-              Maybe Later
-            </button>
-        </div>
+            {/* Frequency */}
+            <div className="grid grid-cols-2 gap-3 mb-6">
+              <button onClick={() => setDonationFrequency('one-time')} className={`p-3 rounded-lg border-2 font-semibold transition-all ${donationFrequency === 'one-time' ? 'bg-blue-600 border-blue-600 text-white' : 'bg-gray-100 border-gray-200 text-gray-700'}`}>One-Time</button>
+              <button onClick={() => setDonationFrequency('monthly')} className={`p-3 rounded-lg border-2 font-semibold transition-all ${donationFrequency === 'monthly' ? 'bg-blue-600 border-blue-600 text-white' : 'bg-gray-100 border-gray-200 text-gray-700'}`}>Monthly</button>
+            </div>
+            
+            {/* Amounts */}
+            <div className="grid grid-cols-3 gap-3 mb-4">
+              {[10, 25, 50, 100, 250, 500].map((amount) => (
+                <button
+                  key={amount}
+                  onClick={() => setDonationAmount(amount)}
+                  className={`py-3 px-2 rounded-lg border-2 font-semibold transition-all text-center ${donationAmount === amount ? 'border-blue-600 bg-blue-50 text-blue-600' : 'border-gray-300 text-gray-700 hover:border-blue-400'}`}
+                >
+                  ${amount}
+                </button>
+              ))}
+            </div>
 
-        <div className="text-center text-xs text-gray-500 pt-4 px-4">
-          For questions or support, please contact us at <a href="mailto:support@confessiones.org" className="underline text-blue-600">support@confessiones.org</a>.
+            {/* Custom Amount */}
+            <div className="mb-6">
+                <label className="block text-sm font-medium text-gray-700 mb-2">Or enter a custom amount:</label>
+                <input
+                  type="number"
+                  value={donationAmount}
+                  onChange={(e) => setDonationAmount(parseInt(e.target.value) || 0)}
+                  className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="0"
+                />
+            </div>
+
+            {/* Impact Statement */}
+            <div className="bg-green-50 rounded-lg p-4 border border-green-200 text-center">
+                <p className="text-sm text-green-800">
+                  Your <strong>${donationAmount} {donationFrequency === 'monthly' ? 'monthly' : 'one-time'}</strong> gift can help us guide <strong>{Math.round(donationAmount / 5)} souls</strong>.
+                </p>
+            </div>
+          </div>
+
+          {/* 4. Final CTA Buttons */}
+          <div className="space-y-3 px-4">
+              <button
+                onClick={() => {
+                  alert(`Thank you for your generous heart! Stripe integration coming soon. You selected $${donationAmount} ${donationFrequency}.`);
+                  setCurrentView('confess');
+                }}
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white py-4 rounded-xl font-bold text-lg transition-all duration-200 shadow-lg"
+              >
+                Donate ${donationAmount} {donationFrequency === 'monthly' ? 'Monthly' : 'Now'}
+              </button>
+              
+              <button
+                onClick={() => setCurrentView('confess')}
+                className="w-full text-gray-600 py-3 rounded-lg font-semibold hover:bg-gray-200 transition-colors"
+              >
+                Maybe Later
+              </button>
+          </div>
+
+          <div className="text-center text-xs text-gray-500 pt-4 px-4">
+            For questions or support, please contact us at <a href="mailto:support@confessiones.org" className="underline text-blue-600">support@confessiones.org</a>.
+          </div>
         </div>
       </div>
-    </div>
-  );
+    );
+  }
 
   const renderNavigation = () => (
     <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 md:hidden shadow-lg">
