@@ -1,76 +1,501 @@
-/* Sentimental Design Tokens & Utilities */
+/* Confessiones - Presidential Campaign Style Design System */
 
 :root {
-  --brand-primary: #7e22ce; /* Tailwind purple-600 */
-  --brand-primary-hover: #6b21a8; /* purple-700 */
-  --brand-secondary: #6366f1; /* indigo-500 */
-  --brand-secondary-hover: #4f46e5; /* indigo-600 */
-  --brand-light: #f5f3ff; /* purple-50 */
+  /* Presidential Campaign Color Palette */
+  --campaign-blue: #1e40af; /* Deep presidential blue */
+  --campaign-blue-light: #3b82f6;
+  --campaign-blue-dark: #1e3a8a;
+  --campaign-gold: #f59e0b; /* Presidential gold */
+  --campaign-gold-light: #fbbf24;
+  --campaign-red: #dc2626; /* Patriotic red */
+  --campaign-red-light: #ef4444;
+  --campaign-navy: #0f172a; /* Deep navy for trust */
+  --campaign-navy-light: #1e293b;
+  --campaign-cream: #fefefe; /* Pure white/cream */
+  --campaign-gray: #f8fafc; /* Light gray */
+  --campaign-gray-dark: #64748b;
+  
+  /* Text Colors */
+  --text-primary: #0f172a; /* Deep navy for maximum readability */
+  --text-secondary: #475569;
   --text-light: #ffffff;
-  --text-dark: #1f2937;
+  --text-muted: #64748b;
+  --text-gold: #f59e0b;
+  
+  /* Background Colors */
+  --bg-primary: #ffffff;
+  --bg-secondary: #f8fafc;
+  --bg-card: #ffffff;
+  --bg-input: #f1f5f9;
+  --bg-gradient: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+  --bg-gradient-gold: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
+  
+  /* Borders */
+  --border-light: #e2e8f0;
+  --border-medium: #cbd5e1;
+  --border-gold: #f59e0b;
+  
+  /* Shadows */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+  --shadow-gold: 0 4px 14px 0 rgba(245, 158, 11, 0.3);
 }
 
-.btn-primary {
-  background-color: var(--brand-primary);
-  color: var(--text-light);
-  padding: 0.75rem 1.25rem;
-  border-radius: 0.5rem;
-  font-weight: 600;
-  transition: background-color 150ms ease-in-out, box-shadow 150ms ease-in-out;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.25rem;
-}
-.btn-primary:hover {
-  background-color: var(--brand-primary-hover);
+/* Presidential Campaign Typography */
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  line-height: 1.6;
 }
 
-.btn-secondary {
-  background-color: #ffffff;
-  color: var(--brand-secondary);
-  border: 2px solid var(--brand-secondary);
-  padding: 0.625rem 1.25rem;
-  border-radius: 0.5rem;
-  font-weight: 600;
-  transition: background-color 150ms ease-in-out, color 150ms ease-in-out, border-color 150ms ease-in-out;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.25rem;
-}
-.btn-secondary:hover {
-  background-color: var(--brand-secondary);
-  color: var(--text-light);
-  border-color: var(--brand-secondary-hover);
+.campaign-title {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-weight: 800;
+  color: var(--text-primary);
+  letter-spacing: -0.025em;
+  font-size: 2rem;
 }
 
-.chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.25rem;
-  padding: 0.25rem 0.5rem;
-  background-color: var(--brand-light);
-  color: var(--brand-primary);
-  border-radius: 0.375rem;
-  font-size: 0.75rem;
+.campaign-subtitle {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   font-weight: 500;
+  color: var(--text-secondary);
+  font-size: 1.1rem;
 }
 
-/* Skeleton Loader */
-.skeleton {
+/* Presidential Campaign Buttons */
+.btn-campaign-primary {
+  background: var(--bg-gradient);
+  color: var(--text-light);
+  padding: 1rem 2rem;
+  border-radius: 0.75rem;
+  font-weight: 700;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  border: none;
+  transition: all 0.3s ease;
+  box-shadow: var(--shadow-lg);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  text-decoration: none;
+  font-size: 1.1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.btn-campaign-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-xl);
+  background: linear-gradient(135deg, var(--campaign-blue-dark) 0%, var(--campaign-blue) 100%);
+}
+
+.btn-campaign-secondary {
+  background: var(--bg-primary);
+  color: var(--campaign-blue);
+  border: 2px solid var(--campaign-blue);
+  padding: 0.875rem 1.5rem;
+  border-radius: 0.75rem;
+  font-weight: 600;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.btn-campaign-secondary:hover {
+  background: var(--campaign-blue);
+  color: var(--text-light);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.btn-campaign-gold {
+  background: var(--bg-gradient-gold);
+  color: var(--text-primary);
+  padding: 1rem 2rem;
+  border-radius: 0.75rem;
+  font-weight: 700;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  border: none;
+  transition: all 0.3s ease;
+  box-shadow: var(--shadow-gold);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  text-decoration: none;
+  font-size: 1.1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.btn-campaign-gold:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(245, 158, 11, 0.4);
+  background: linear-gradient(135deg, var(--campaign-gold) 0%, var(--campaign-gold-light) 100%);
+}
+
+/* Sacred Cards */
+.sacred-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-sacred);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  box-shadow: var(--shadow-card);
+  transition: all 0.3s ease;
+}
+
+.sacred-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 20px 25px -5px rgba(44, 24, 16, 0.1);
+}
+
+/* Campaign Input */
+.campaign-input {
+  background: var(--bg-input);
+  border: 2px solid var(--border-medium);
+  border-radius: 0.75rem;
+  padding: 0.875rem 1rem;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 1rem;
+  color: var(--text-primary);
+  transition: all 0.3s ease;
+  width: 100%;
+}
+
+.campaign-input:focus {
+  outline: none;
+  border-color: var(--campaign-blue);
+  box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.1);
+}
+
+.campaign-input::placeholder {
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+/* Presidential Campaign Header */
+.campaign-header {
+  background: var(--bg-gradient);
+  color: var(--text-light);
+  padding: 2rem 1.5rem;
+  text-align: center;
+  border-radius: 0 0 1.5rem 1.5rem;
+  box-shadow: var(--shadow-xl);
   position: relative;
   overflow: hidden;
-  background-color: #f3f4f6; /* gray-100 */
 }
-.skeleton::after {
-  content: "";
+
+.campaign-header::before {
+  content: '';
   position: absolute;
   top: 0;
-  left: -150%;
-  width: 50%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
-  animation: shimmer 1.5s infinite;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="stars" patternUnits="userSpaceOnUse" width="20" height="20"><circle cx="10" cy="10" r="1" fill="rgba(255,255,255,0.1)"/></pattern></defs><rect width="100" height="100" fill="url(%23stars)"/></svg>');
+  opacity: 0.3;
 }
-@keyframes shimmer {
-  100% { transform: translateX(300%); }
+
+.campaign-header h1 {
+  font-size: 2.5rem;
+  font-weight: 800;
+  margin-bottom: 0.75rem;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  position: relative;
+  z-index: 1;
+}
+
+.campaign-header p {
+  font-size: 1.1rem;
+  opacity: 0.95;
+  font-weight: 500;
+  position: relative;
+  z-index: 1;
+}
+
+/* Campaign Chat Messages */
+.campaign-chat-container {
+  background: var(--bg-secondary);
+  border-radius: 1rem;
+  overflow: hidden;
+  box-shadow: var(--shadow-lg);
+}
+
+.campaign-message {
+  margin: 0.75rem;
+  padding: 1rem 1.25rem;
+  border-radius: 1rem;
+  max-width: 80%;
+  word-wrap: break-word;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.campaign-message.user {
+  background: var(--bg-gradient);
+  color: var(--text-light);
+  margin-left: auto;
+  border-bottom-right-radius: 0.25rem;
+  box-shadow: var(--shadow-md);
+}
+
+.campaign-message.ai {
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-light);
+  margin-right: auto;
+  border-bottom-left-radius: 0.25rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.campaign-loading {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--text-secondary);
+  font-style: italic;
+}
+
+.campaign-loading::before {
+  content: '';
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--border-medium);
+  border-top: 2px solid var(--campaign-blue);
+  border-radius: 50%;
+  animation: campaign-spin 1s linear infinite;
+}
+
+@keyframes campaign-spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Presidential Campaign Chat Input */
+.campaign-chat-input {
+  display: flex;
+  gap: 0.75rem;
+  padding: 1rem;
+  background: var(--bg-primary);
+  border-top: 1px solid var(--border-light);
+  position: relative;
+}
+
+.campaign-chat-input input {
+  flex: 1;
+  background: var(--bg-input);
+  border: 2px solid var(--border-medium);
+  border-radius: 1.5rem;
+  padding: 1rem 1.25rem;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 1rem;
+  color: var(--text-primary);
+  transition: all 0.3s ease;
+}
+
+.campaign-chat-input input:focus {
+  outline: none;
+  border-color: var(--campaign-blue);
+  box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.1);
+}
+
+.campaign-chat-input button {
+  background: var(--bg-gradient);
+  color: var(--text-light);
+  border: none;
+  border-radius: 1.5rem;
+  padding: 1rem 1.5rem;
+  font-weight: 600;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 100px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.campaign-chat-input button:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-lg);
+}
+
+.campaign-chat-input button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Fixed Confession Button - Always Visible */
+.campaign-confession-button {
+  position: fixed;
+  bottom: 80px;
+  right: 20px;
+  z-index: 1000;
+  background: var(--bg-gradient-gold);
+  color: var(--text-primary);
+  border: none;
+  border-radius: 1rem;
+  padding: 1rem 1.5rem;
+  font-weight: 700;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: var(--shadow-gold);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 200px;
+  justify-content: center;
+}
+
+.campaign-confession-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(245, 158, 11, 0.4);
+}
+
+.campaign-confession-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Donation Button */
+.campaign-donation-button {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 1000;
+  background: var(--campaign-red);
+  color: var(--text-light);
+  border: none;
+  border-radius: 1rem;
+  padding: 0.75rem 1rem;
+  font-weight: 600;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: var(--shadow-md);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 0.8rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.campaign-donation-button:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-lg);
+  background: var(--campaign-red-light);
+}
+
+/* Sacred Navigation */
+.sacred-nav {
+  background: var(--bg-white);
+  border-top: 1px solid var(--border-sacred);
+  padding: 0.75rem;
+  display: flex;
+  justify-content: space-around;
+  box-shadow: 0 -4px 6px -1px rgba(44, 24, 16, 0.1);
+}
+
+.sacred-nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  text-decoration: none;
+  color: var(--text-muted);
+}
+
+.sacred-nav-item.active {
+  color: var(--sacred-gold);
+  background: var(--bg-input);
+}
+
+.sacred-nav-item:hover {
+  color: var(--sacred-gold);
+  transform: translateY(-1px);
+}
+
+.sacred-nav-icon {
+  font-size: 1.5rem;
+  margin-bottom: 0.25rem;
+}
+
+.sacred-nav-text {
+  font-size: 0.75rem;
+  font-weight: 600;
+  font-family: 'Georgia', 'Times New Roman', serif;
+}
+
+/* Sacred Welcome */
+.sacred-welcome {
+  text-align: center;
+  padding: 2rem 1rem;
+  color: var(--text-sacred);
+}
+
+.sacred-welcome h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  color: var(--sacred-purple);
+}
+
+.sacred-welcome p {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--text-muted);
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+/* Sacred Cross Icon */
+.sacred-cross {
+  color: var(--sacred-gold);
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+/* Loading Animation */
+.sacred-loading {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 3px solid var(--border-sacred);
+  border-radius: 50%;
+  border-top-color: var(--sacred-gold);
+  animation: sacred-spin 1s ease-in-out infinite;
+}
+
+@keyframes sacred-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .sacred-header h1 {
+    font-size: 1.75rem;
+  }
+  
+  .sacred-message {
+    max-width: 90%;
+  }
+  
+  .sacred-chat-input {
+    padding: 0.75rem;
+  }
 } 

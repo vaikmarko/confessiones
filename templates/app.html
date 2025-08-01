@@ -12,12 +12,12 @@
     
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sentimental App - Your Life, Your Story</title>
+    <title>Confessiones - Prepare for Confession with Confidence</title>
     <link rel="icon" type="image/x-icon" href="/static/icons/icon-192x192.png">
     
     <!-- PWA Meta Tags -->
     <link rel="manifest" href="/manifest.json">
-    <meta name="theme-color" content="#8639E8">
+    <meta name="theme-color" content="#2E7D32">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="Sentimental">
@@ -42,9 +42,10 @@
     <!-- GA helper -->
     <script type="text/babel" src="{{ url_for('static', filename='js/analytics.js') }}"></script>
     
-    <!-- Three.js for 3D inner space -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="https://unpkg.com/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <!-- Main React App -->
+    <script type="text/babel" src="{{ url_for('static', filename='js/sentimental-app.jsx') }}"></script>
+    
+    <!-- Three.js for 3D inner space (removed for simplicity) -->
 
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
@@ -175,12 +176,12 @@
         }
         
         .chat-input:focus {
-            border-color: #8b5cf6;
+            border-color: #2E7D32;
         }
         
         .send-button {
             padding: 0.875rem 1.5rem;
-            background: #8b5cf6;
+            background: #2E7D32;
             color: white;
             border: none;
             border-radius: 0.75rem;
@@ -191,7 +192,7 @@
         }
         
         .send-button:hover:not(:disabled) {
-            background: #7c3aed;
+            background: #1B5E20;
         }
         
         .send-button:disabled {
@@ -238,8 +239,8 @@
     <div id="loading" class="fixed inset-0 bg-white flex items-center justify-center z-50">
         <div class="text-center">
             <div class="loading-spinner inline-block w-8 h-8 border-4 border-purple-200 border-t-purple-600 rounded-full mb-4"></div>
-            <h2 class="text-xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
-                Sentimental
+            <h2 class="text-xl font-bold bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent">
+                ✝️ Confessiones
             </h2>
             <p class="text-gray-600 text-sm">Loading...</p>
         </div>
@@ -269,7 +270,7 @@
     <script type="text/babel" src="{{ url_for('static', filename='js/sentimental-app.jsx') }}?v={{ cache_bust }}"></script>
     
     <!-- Load 3D Inner Space Component -->
-<script type="text/babel" src="{{ url_for('static', filename='js/inner-space-3d.jsx') }}"></script>
+    <!-- inner-space-3d.jsx removed for simplicity -->
     
     <!-- Firebase Configuration -->
     <script>
@@ -340,14 +341,14 @@
             
             // Show install button/notification
             const installBanner = document.createElement('div');
-            installBanner.className = 'fixed bottom-20 left-4 right-4 bg-purple-600 text-white p-4 rounded-xl shadow-lg z-40';
+            installBanner.className = 'fixed bottom-20 left-4 right-4 bg-green-600 text-white p-4 rounded-xl shadow-lg z-40';
             installBanner.innerHTML = `
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="font-semibold">Install Sentimental App</p>
-                        <p class="text-sm text-purple-100">Add to home screen for quick access</p>
+                        <p class="font-semibold">Install Confessiones App</p>
+                        <p class="text-sm text-green-100">Add to home screen for quick access</p>
                     </div>
-                    <button id="install-btn" class="bg-white text-purple-600 px-4 py-2 rounded-lg font-medium">
+                    <button id="install-btn" class="bg-white text-green-600 px-4 py-2 rounded-lg font-medium">
                         Install
                     </button>
                 </div>

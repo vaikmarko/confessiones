@@ -50,3 +50,4 @@ Thumbs.db
 public/static/js/
 public/static/css/.env
 *.env
+firebase-credentials.json
