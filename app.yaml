@@ -1,0 +1,15 @@
+runtime: python39
+
+# Environment variables should be stored securely, not in source code.
+# I have removed the hardcoded secrets from this file.
+# Please use Google Cloud Secret Manager or a similar service to manage your secrets.
+# You can set them in the GAE console or reference them from Secret Manager.
+env_variables:
+  OPENAI_API_KEY: "YOUR_OPENAI_API_KEY"
+  STRIPE_SECRET_KEY: "YOUR_STRIPE_SECRET_KEY"
+  STRIPE_PUBLISHABLE_KEY: "YOUR_STRIPE_PUBLISHABLE_KEY"
+  STRIPE_PRICE_ID_UNLIMITED: "YOUR_STRIPE_PRICE_ID"
+
+automatic_scaling:
+  min_instances: 0
+  max_instances: 1

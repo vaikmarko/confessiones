@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subscription Successful - My Confessions</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/tailwind.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/components.css') }}">
+</head>
+<body class="bg-gray-50 min-h-screen flex items-center justify-center">
+    <div class="max-w-md w-full bg-white rounded-xl shadow-lg p-8 text-center">
+        <!-- Success Icon -->
+        <div class="text-6xl mb-6">🎉</div>
+        
+        <!-- Success Message -->
+        <h1 class="text-2xl font-bold text-gray-800 mb-4">Subscription Successful!</h1>
+        <p class="text-gray-600 mb-6">
+            Welcome to <strong>{{ tier.title() }} Spiritual Guidance</strong>!
+        </p>
+        
+        <!-- Subscription Details -->
+        <div class="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
+            <div class="text-green-800">
+                <p class="font-semibold">💎 Unlimited Access Activated</p>
+                <p class="text-sm mt-2">
+                    You now have unlimited access to spiritual guidance and confession support.
+                </p>
+                {% if session_id %}
+                <p class="text-xs mt-2 text-green-700">
+                    Session ID: {{ session_id }}
+                </p>
+                {% endif %}
+            </div>
+        </div>
+        
+        <!-- What's Included -->
+        <div class="text-left mb-6">
+            <h3 class="font-semibold text-gray-800 mb-3">What's Included:</h3>
+            <ul class="text-sm text-gray-600 space-y-2">
+                <li class="flex items-center">
+                    <span class="text-green-500 mr-2">✅</span>
+                    Unlimited spiritual conversations
+                </li>
+                <li class="flex items-center">
+                    <span class="text-green-500 mr-2">✅</span>
+                    Deeper spiritual guidance
+                </li>
+                <li class="flex items-center">
+                    <span class="text-green-500 mr-2">✅</span>
+                    Priority responses
+                </li>
+                <li class="flex items-center">
+                    <span class="text-green-500 mr-2">✅</span>
+                    Support our ministry
+                </li>
+            </ul>
+        </div>
+        
+        <!-- Action Buttons -->
+        <div class="space-y-3">
+            <a href="/app" 
+               class="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-semibold transition-colors block">
+                Continue Your Spiritual Journey
+            </a>
+            
+            {% if customer_id %}
+            <button onclick="openSubscriptionManagement()" 
+                    class="w-full bg-gray-600 hover:bg-gray-700 text-white py-2 rounded-lg font-semibold transition-colors">
+                Manage Subscription
+            </button>
+            {% endif %}
+            
+            <p class="text-xs text-gray-500">
+                Your subscription will be automatically renewed monthly.
+            </p>
+        </div>
+        
+        <!-- Support Info -->
+        <div class="mt-6 pt-4 border-t border-gray-200">
+            <p class="text-xs text-gray-500">
+                Need help? Contact us at 
+                <a href="mailto:support@myconfessions.org" class="underline text-blue-600">
+                    support@myconfessions.org
+                </a>
+            </p>
+        </div>
+    </div>
+
+    <script>
+        function openSubscriptionManagement() {
+            const sessionId = '{{ session_id }}';
+            
+            fetch(`/api/user/subscription-management?session_id=${sessionId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success && data.management_url) {
+                        window.location.href = data.management_url;
+                    } else {
+                        alert('Unable to open subscription management. Please contact support at support@myconfessions.org');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Unable to open subscription management. Please contact support at support@myconfessions.org');
+                });
+        }
+    </script>
+</body>
+</html>

@@ -12,20 +12,53 @@
     
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Confessiones - Prepare for Confession with Confidence</title>
+    <title>My Confessions - Anonymous Confession & Spiritual Guidance</title>
+    <meta name="description" content="Christian religious ministry providing active spiritual guidance and confession services. Immediate biblical counseling, prayer, and spiritual support rooted in Christian tradition.">
+    <meta name="keywords" content="Christian ministry, religious services, spiritual guidance, confession services, biblical counseling, prayer ministry, Christian spiritual advisor, religious donations, active ministry">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://myconfessions.org/">
+    <meta property="og:title" content="My Confessions - Anonymous Confession & Spiritual Guidance">
+    <meta property="og:description" content="Christian religious ministry providing active spiritual guidance and confession services with immediate biblical counseling and prayer support.">
+    <meta property="og:image" content="https://myconfessions.org/static/icons/icon-192x192.png">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://myconfessions.org/">
+    <meta property="twitter:title" content="My Confessions - Anonymous Confession & Spiritual Guidance">
+    <meta property="twitter:description" content="Christian religious ministry providing active spiritual guidance and confession services with immediate biblical counseling and prayer support.">
+    <meta property="twitter:image" content="https://myconfessions.org/static/icons/icon-192x192.png">
+
     <link rel="icon" type="image/x-icon" href="/static/icons/icon-192x192.png">
     
     <!-- PWA Meta Tags -->
     <link rel="manifest" href="/manifest.json">
-    <meta name="theme-color" content="#2E7D32">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <meta name="apple-mobile-web-app-title" content="Sentimental">
+    <meta name="theme-color" content="#1D4ED8">
+    
+    <!-- Structured Data for SEO -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "My Confessions",
+      "url": "https://myconfessions.org/",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "https://myconfessions.org/discover?q={search_term_string}",
+        "query-input": "required name=search_term_string"
+      },
+      "description": "Anonymous confession and spiritual guidance based on Christian tradition."
+    }
+    </script>
+    
     <link rel="apple-touch-icon" href="/static/icons/icon-192x192.png">
     
-    <!-- Tailwind CSS (Production Build) -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/tailwind.css') }}">
-    <!-- Sentimental Component Utilities -->
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/components.css') }}">
     
     <!-- React -->
@@ -43,7 +76,7 @@
     <script type="text/babel" src="{{ url_for('static', filename='js/analytics.js') }}"></script>
     
     <!-- Main React App -->
-    <script type="text/babel" src="{{ url_for('static', filename='js/sentimental-app.jsx') }}"></script>
+    <script type="text/babel" src="{{ url_for('static', filename='js/myconfessions-app.jsx') }}"></script>
     
     <!-- Three.js for 3D inner space (removed for simplicity) -->
 
@@ -240,14 +273,14 @@
         <div class="text-center">
             <div class="loading-spinner inline-block w-8 h-8 border-4 border-purple-200 border-t-purple-600 rounded-full mb-4"></div>
             <h2 class="text-xl font-bold bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent">
-                ✝️ Confessiones
+                ✝️ My Confessions
             </h2>
             <p class="text-gray-600 text-sm">Loading...</p>
         </div>
     </div>
 
     <!-- React App Root -->
-    <div id="sentimental-app"></div>
+    <div id="myconfessions-app"></div>
 
     <!-- Service Worker Registration (for PWA) - TEMPORARILY DISABLED FOR DEBUGGING -->
     <!--
@@ -267,41 +300,50 @@
     -->
 
     <!-- Load React Component (raw JSX like production) -->
-    <script type="text/babel" src="{{ url_for('static', filename='js/sentimental-app.jsx') }}?v={{ cache_bust }}"></script>
+    <script type="text/babel" src="{{ url_for('static', filename='js/myconfessions-app.jsx') }}?v={{ cache_bust }}"></script>
     
     <!-- Load 3D Inner Space Component -->
     <!-- inner-space-3d.jsx removed for simplicity -->
     
     <!-- Firebase Configuration -->
     <script>
-        // Firebase configuration is injected server-side from environment variables
-        const firebaseConfig = {{ firebase_config | safe }};
+        try {
+            // Firebase configuration is injected server-side from environment variables
+            const firebaseConfig = {{ firebase_config | safe }};
 
-        // Initialize Firebase
-        firebase.initializeApp(firebaseConfig);
-        
-        // Initialize Firebase Auth
-        const auth = firebase.auth();
-        
-        // Configure OAuth providers
-        const googleProvider = new firebase.auth.GoogleAuthProvider();
-        googleProvider.addScope('profile');
-        googleProvider.addScope('email');
-        
-        const facebookProvider = new firebase.auth.FacebookAuthProvider();
-        facebookProvider.addScope('email');
-        
-        const appleProvider = new firebase.auth.OAuthProvider('apple.com');
-        appleProvider.addScope('email');
-        appleProvider.addScope('name');
-        
-        // Make auth available globally
-        window.firebaseAuth = auth;
-        window.authProviders = {
-            google: googleProvider,
-            facebook: facebookProvider,
-            apple: appleProvider
-        };
+            // Initialize Firebase
+            firebase.initializeApp(firebaseConfig);
+            
+            // Initialize Firebase Auth
+            const auth = firebase.auth();
+            
+            // Configure OAuth providers
+            const googleProvider = new firebase.auth.GoogleAuthProvider();
+            googleProvider.addScope('profile');
+            googleProvider.addScope('email');
+            
+            const facebookProvider = new firebase.auth.FacebookAuthProvider();
+            facebookProvider.addScope('email');
+            
+            const appleProvider = new firebase.auth.OAuthProvider('apple.com');
+            appleProvider.addScope('email');
+            appleProvider.addScope('name');
+            
+            // Make auth available globally
+            window.firebaseAuth = auth;
+            window.authProviders = {
+                google: googleProvider,
+                facebook: facebookProvider,
+                apple: appleProvider
+            };
+            
+            console.log('Firebase initialized successfully');
+        } catch (error) {
+            console.error('Firebase initialization error:', error);
+            // Continue without Firebase
+            window.firebaseAuth = null;
+            window.authProviders = null;
+        }
     </script>
 
     <!-- Initialize App -->
@@ -319,11 +361,17 @@
 
         // Render React App after initial setup is complete
         function initializeApp() {
-            const root = ReactDOM.createRoot(document.getElementById('sentimental-app'));
-            root.render(React.createElement(SentimentalApp));
-            
-            // Hide loading screen after React renders
-            setTimeout(hideLoading, 300);
+            try {
+                const root = ReactDOM.createRoot(document.getElementById('myconfessions-app'));
+                root.render(React.createElement(MyConfessionsApp));
+                
+                // Hide loading screen after React renders
+                setTimeout(hideLoading, 300);
+                console.log('React app initialized successfully');
+            } catch (error) {
+                console.error('Error initializing React app:', error);
+                hideLoading();
+            }
         }
         
         // Initialize app after DOM is ready
@@ -332,52 +380,14 @@
         } else {
             initializeApp();
         }
-
-        // Add install prompt for PWA
-        let deferredPrompt;
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredPrompt = e;
-            
-            // Show install button/notification
-            const installBanner = document.createElement('div');
-            installBanner.className = 'fixed bottom-20 left-4 right-4 bg-green-600 text-white p-4 rounded-xl shadow-lg z-40';
-            installBanner.innerHTML = `
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="font-semibold">Install Confessiones App</p>
-                        <p class="text-sm text-green-100">Add to home screen for quick access</p>
-                    </div>
-                    <button id="install-btn" class="bg-white text-green-600 px-4 py-2 rounded-lg font-medium">
-                        Install
-                    </button>
-                </div>
-                <button id="close-install" class="absolute top-2 right-2 text-purple-200 hover:text-white">×</button>
-            `;
-            document.body.appendChild(installBanner);
-
-            document.getElementById('install-btn').addEventListener('click', () => {
-                deferredPrompt.prompt();
-                deferredPrompt.userChoice.then((choiceResult) => {
-                    if (choiceResult.outcome === 'accepted') {
-                        console.log('User accepted the install prompt');
-                    }
-                    deferredPrompt = null;
-                    installBanner.remove();
-                });
-            });
-
-            document.getElementById('close-install').addEventListener('click', () => {
-                installBanner.remove();
-            });
-
-            // Auto hide after 10 seconds
-            setTimeout(() => {
-                if (installBanner.parentNode) {
-                    installBanner.remove();
-                }
-            }, 10000);
-        });
     </script>
+    <footer class="text-center text-xs text-gray-500 py-4">
+        &copy; 2025 My Confessions. All Rights Reserved.
+        <div class="mt-2">
+            <a href="{{ url_for('terms_view') }}" class="underline hover:text-gray-700 mx-2">Terms of Service</a> |
+            <a href="{{ url_for('privacy_view') }}" class="underline hover:text-gray-700 mx-2">Privacy Policy</a> |
+            <a href="{{ url_for('disclaimer_view') }}" class="underline hover:text-gray-700 mx-2">Disclaimer</a>
+        </div>
+    </footer>
 </body>
 </html> 

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thank You - My Confessions</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/tailwind.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/components.css') }}">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-gradient-to-b from-blue-50 to-white min-h-screen">
+    <div class="max-w-2xl mx-auto p-6 text-center">
+        <!-- Success Icon -->
+        <div class="mb-8 mt-16">
+            <div class="mx-auto w-24 h-24 bg-green-100 rounded-full flex items-center justify-center mb-6">
+                <svg class="w-12 h-12 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                </svg>
+            </div>
+            
+            <h1 class="text-4xl font-bold text-gray-900 mb-4">Thank You! 🙏</h1>
+            <p class="text-xl text-gray-700 mb-6">Your generous donation has been received successfully.</p>
+        </div>
+
+        <!-- Blessing -->
+        <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
+            <div class="text-6xl mb-4">✝️</div>
+            <blockquote class="text-lg italic text-gray-800 mb-4">
+                "Give, and it will be given to you. A good measure, pressed down, shaken together and running over, will be poured into your lap. For with the measure you use, it will be measured to you."
+            </blockquote>
+            <p class="text-gray-600 font-medium">— Luke 6:38</p>
+            
+            <div class="mt-6 p-4 bg-blue-50 rounded-lg">
+                <p class="text-blue-800 font-medium">May God bless your generous heart and multiply your kindness back to you abundantly.</p>
+            </div>
+        </div>
+
+        <!-- Impact Message -->
+        <div class="bg-gray-900 text-white rounded-lg p-6 mb-8 border border-gray-700">
+            <h2 class="text-2xl font-bold mb-3 text-white">Your Impact</h2>
+            <p class="text-gray-100 mb-4">
+                Your donation helps us provide spiritual guidance and comfort to thousands of souls seeking peace, forgiveness, and connection with God.
+            </p>
+            <div class="flex justify-center items-center space-x-6 text-center">
+                <div>
+                    <div class="text-3xl font-bold text-white">100K+</div>
+                    <div class="text-gray-300 text-sm">Souls Reached</div>
+                </div>
+                <div>
+                    <div class="text-3xl font-bold text-white">24/7</div>
+                    <div class="text-gray-300 text-sm">Spiritual Support</div>
+                </div>
+                <div>
+                    <div class="text-3xl font-bold text-white">∞</div>
+                    <div class="text-gray-300 text-sm">God's Love</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Next Steps -->
+        <div class="space-y-4">
+            <a href="{{ url_for('app_view') }}" 
+               class="inline-block bg-gray-900 text-white px-8 py-3 rounded-full font-bold shadow-lg hover:bg-black transition-all duration-200 border-2 border-gray-700">
+                Continue Your Spiritual Journey
+            </a>
+            
+            <div class="text-gray-600 text-sm">
+                <p>Questions? Contact us at <a href="mailto:support@myconfessions.org" class="text-blue-600 underline">support@myconfessions.org</a></p>
+            </div>
+        </div>
+
+        <!-- Share the Mission -->
+        <div class="mt-12 p-6 bg-gray-50 rounded-lg">
+            <h3 class="text-lg font-semibold text-gray-900 mb-3">Share the Mission</h3>
+            <p class="text-gray-600 mb-4">Help others find peace and spiritual guidance</p>
+            <div class="flex justify-center space-x-6">
+                <button onclick="shareOnTwitter()" class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors font-medium">
+                    Share on X
+                </button>
+                <button onclick="shareOnFacebook()" class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors font-medium">
+                    Share on Facebook
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function shareOnTwitter() {
+            const text = "I just supported @MyConfessions - a beautiful platform for spiritual guidance and prayer. Find peace and connection with God 🙏";
+            const url = "https://myconfessions.org";
+            window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`, '_blank');
+        }
+
+        function shareOnFacebook() {
+            const url = "https://myconfessions.org";
+            const text = "I just supported My Confessions - a beautiful platform for spiritual guidance and prayer. Find peace and connection with God through AI-powered confession.";
+            window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}&quote=${encodeURIComponent(text)}`, '_blank');
+        }
+    </script>
+</body>
+</html>
