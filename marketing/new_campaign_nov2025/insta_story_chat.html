@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instagram Story - Peace</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Merriweather:ital,wght@1,300&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden; /* Prevent scrollbars */
+        }
+
+        /* Wrapper to scale down the huge 1080x1920 design to fit screen */
+        .preview-wrapper {
+            transform: scale(0.45); /* Scale down to 45% to fit typical monitor */
+            transform-origin: center center;
+            /* Add border to visualize edges */
+            border: 2px solid #555; 
+        }
+
+        /* Instagram Story Size: 1080x1920 */
+        .story-container {
+            width: 1080px;
+            height: 1920px;
+            background: white;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 0 50px rgba(0,0,0,0.5);
+        }
+
+        /* Clean, modern, airy background */
+        .bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(180deg, #dbeafe 0%, #ffffff 50%, #eff6ff 100%);
+            z-index: 0;
+        }
+
+        .top-bar {
+            position: absolute;
+            top: 100px;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            z-index: 10;
+        }
+
+        .brand-logo {
+            font-size: 40px;
+            color: #1e40af;
+        }
+
+        .brand-name {
+            font-family: 'Inter', sans-serif;
+            font-weight: 700;
+            font-size: 32px;
+            color: #1e3a8a;
+            letter-spacing: 1px;
+        }
+
+        .main-content {
+            z-index: 10;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 80px;
+        }
+
+        .question {
+            font-family: 'Inter', sans-serif;
+            font-size: 80px;
+            font-weight: 800;
+            color: #1e3a8a;
+            line-height: 1.1;
+            margin-bottom: 60px;
+            letter-spacing: -2px;
+        }
+
+        .chat-bubble {
+            background: white;
+            border-radius: 40px;
+            border-bottom-left-radius: 5px;
+            padding: 50px;
+            box-shadow: 0 20px 60px rgba(30, 58, 138, 0.1);
+            margin-bottom: 40px;
+            position: relative;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+
+        .chat-text {
+            font-family: 'Inter', sans-serif;
+            font-size: 42px;
+            color: #374151;
+            line-height: 1.4;
+        }
+
+        .response-bubble {
+            background: #2563eb;
+            color: white;
+            border-radius: 40px;
+            border-bottom-right-radius: 5px;
+            padding: 50px;
+            margin-left: auto;
+            max-width: 85%;
+            box-shadow: 0 20px 60px rgba(37, 99, 235, 0.25);
+            position: relative;
+            margin-top: 20px;
+        }
+
+        .response-text {
+            font-family: 'Inter', sans-serif;
+            font-size: 42px;
+            line-height: 1.4;
+        }
+
+        .bottom-cta {
+            position: absolute;
+            bottom: 150px;
+            width: 100%;
+            text-align: center;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .swipe-arrow {
+            font-size: 60px;
+            color: #2563eb;
+            animation: bounce 1.5s infinite;
+            margin-bottom: 20px;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {transform: translateY(0);}
+            40% {transform: translateY(-20px);}
+            60% {transform: translateY(-10px);}
+        }
+
+        .cta-text {
+            font-family: 'Inter', sans-serif;
+            font-weight: 700;
+            font-size: 40px;
+            color: #1e3a8a;
+            background: white;
+            padding: 20px 60px;
+            border-radius: 100px;
+            box-shadow: 0 10px 30px rgba(30, 58, 138, 0.15);
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="preview-wrapper">
+        <div class="story-container">
+            <div class="bg"></div>
+            
+            <div class="top-bar">
+                <span class="brand-logo">✝</span>
+                <span class="brand-name">MY CONFESSIONS</span>
+            </div>
+
+            <div class="main-content">
+                <div class="question">
+                    Feeling overwhelmed?
+                </div>
+
+                <div class="chat-bubble">
+                    <div class="chat-text">
+                        "I feel so anxious about the future. I don't know what to do."
+                    </div>
+                </div>
+
+                <div class="response-bubble">
+                    <div class="response-text">
+                        "Peace I leave with you; my peace I give you. Do not let your hearts be troubled." (John 14:27)
+                    </div>
+                </div>
+            </div>
+
+            <div class="bottom-cta">
+                <div class="swipe-arrow">▲</div>
+                <div class="cta-text">Start Your Journey</div>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
