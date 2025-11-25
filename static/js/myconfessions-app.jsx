@@ -259,10 +259,10 @@ const handleSharePrayer = (confession) => {
       {/* Header */}
       <div className="flex-shrink-0 bg-white border-b border-gray-100 p-3 md:p-4 shadow-sm z-10">
         <div className="max-w-3xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <span className="text-2xl">✝️</span>
+          <a href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity text-decoration-none">
+            <span className="text-2xl text-blue-800">✝</span>
             <h1 className="text-lg font-bold text-blue-900">My Confessions</h1>
-          </div>
+          </a>
 
           {/* Mobile login buttons */}
           <div className="md:hidden">
@@ -1196,9 +1196,11 @@ const handleSharePrayer = (confession) => {
         <div className="max-w-4xl mx-auto px-4 py-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-8">
-              <h1 className="text-xl font-bold text-blue-900 flex items-center gap-2">
-                <span>✝️</span> My Confessions
-              </h1>
+              <a href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity text-decoration-none">
+                <h1 className="text-xl font-bold text-blue-900 flex items-center gap-2">
+                  <span className="text-blue-800">✝</span> My Confessions
+                </h1>
+              </a>
               <div className="flex bg-gray-50 p-1 rounded-lg">
                 <button
                   onClick={() => setCurrentView('confess')}
