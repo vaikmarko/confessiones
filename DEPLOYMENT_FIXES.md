@@ -110,10 +110,10 @@ gcloud run deploy myconfessions --source .
 
 Veendu, et production'is on seadistatud:
 ```
-OPENAI_API_KEY=sk-...
-STRIPE_SECRET_KEY=sk_live_...
-STRIPE_PUBLISHABLE_KEY=pk_live_...
-FIREBASE_API_KEY=...
+OPENAI_API_KEY=[your-openai-api-key]
+STRIPE_SECRET_KEY=[your-stripe-secret-key]
+STRIPE_PUBLISHABLE_KEY=[your-stripe-publishable-key]
+FIREBASE_API_KEY=[your-firebase-api-key]
 FIREBASE_PROJECT_ID=confessiones-c6ca5
 # ... jne
 ```

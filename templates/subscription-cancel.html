@@ -1,17 +1,65 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <!-- Google Analytics 4 -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-GPB1ZF7QK2"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-GPB1ZF7QK2');
+    </script>
+    <!-- End Google Analytics 4 -->
+    
+    <!-- Google Tag Manager -->
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-TVFVC4P2');</script>
+    <!-- End Google Tag Manager -->
+    
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Donation Cancelled - My Confessions</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/tailwind.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/components.css') }}">
+    <title>Subscription Cancelled - My Confessions</title>
+    <meta name="description" content="Subscription not completed. Continue your spiritual journey with our free tier.">
+    <meta name="robots" content="noindex, nofollow">
+    <link rel="canonical" href="https://myconfessions.org/subscription-cancel">
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
         body { font-family: 'Inter', sans-serif; }
     </style>
+    <script>
+        // Auto-redirect after 5 seconds
+        setTimeout(function() {
+            window.location.href = '{{ url_for("app_view") }}';
+        }, 5000);
+    </script>
 </head>
 <body class="bg-gradient-to-b from-gray-50 to-white min-h-screen">
+    <!-- Google Tag Manager (noscript) -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TVFVC4P2"
+    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
+    
+    <script>
+        // Track subscription cancellation for GA4
+        if (window.gtag) {
+            gtag('event', 'checkout_cancelled', {
+                'page': 'subscription-cancel'
+            });
+        }
+        
+        // Track subscription cancellation for GTM
+        if (window.dataLayer) {
+            window.dataLayer.push({
+                'event': 'checkout_cancelled',
+                'page': 'subscription-cancel'
+            });
+        }
+    </script>
+    
     <div class="max-w-2xl mx-auto p-6 text-center">
         <!-- Info Icon -->
         <div class="mb-8 mt-16">
@@ -21,8 +69,18 @@
                 </svg>
             </div>
             
-            <h1 class="text-3xl font-bold text-gray-900 mb-4">Donation Cancelled</h1>
-            <p class="text-lg text-gray-600 mb-6">No worries! Your donation was not processed.</p>
+            <h1 class="text-3xl font-bold text-gray-900 mb-4">Subscription Cancelled</h1>
+            <p class="text-lg text-gray-600 mb-6">No worries! Your subscription was not activated.</p>
+            <p class="text-sm text-gray-500">Redirecting to app in <span id="countdown">5</span> seconds...</p>
+            <script>
+                let seconds = 5;
+                setInterval(() => {
+                    seconds--;
+                    if (seconds >= 0) {
+                        document.getElementById('countdown').textContent = seconds;
+                    }
+                }, 1000);
+            </script>
         </div>
 
         <!-- Understanding Message -->
@@ -30,7 +88,7 @@
             <div class="text-4xl mb-4">💙</div>
             <h2 class="text-xl font-semibold text-gray-900 mb-4">We Understand</h2>
             <p class="text-gray-700 mb-4">
-                Every heart gives in its own time and way. Your presence here and your spiritual journey matter more than any donation.
+                Every heart seeks God in its own time and way. Your presence here and your spiritual journey matter to us.
             </p>
             <blockquote class="text-lg italic text-gray-800 mb-4">
                 "Each of you should give what you have decided in your heart to give, not reluctantly or under compulsion, for God loves a cheerful giver."
@@ -62,11 +120,11 @@
 
         <!-- Try Again Later -->
         <div class="bg-green-50 rounded-lg p-6 mb-8">
-            <h3 class="text-lg font-semibold text-green-800 mb-3">Want to Try Again Later?</h3>
-            <p class="text-green-700 mb-4">You can always return to make a donation when the time feels right.</p>
-            <a href="{{ url_for('app_view') }}#donation" 
-               class="inline-block bg-green-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-green-700 transition-colors">
-                Return to Donation Page
+            <h3 class="text-lg font-semibold text-green-800 mb-3">Want to Try Premium Later?</h3>
+            <p class="text-green-700 mb-4">You can always upgrade when you feel ready. Your spiritual journey continues with our free tier.</p>
+            <a href="{{ url_for('app_view') }}" 
+               class="inline-block bg-blue-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-blue-700 transition-colors">
+                Continue with Free Tier
             </a>
         </div>
 
@@ -74,12 +132,12 @@
         <div class="space-y-4">
             <h3 class="text-xl font-semibold text-gray-900">Continue Your Spiritual Journey</h3>
             <p class="text-gray-600 mb-6">
-                Whether you donate or not, you are always welcome here. Find peace, guidance, and connection with God.
+                Premium or free, you are always welcome here. Find peace, guidance, and connection with God.
             </p>
             
             <a href="{{ url_for('app_view') }}" 
                class="inline-block bg-gradient-to-r from-blue-500 to-purple-500 text-white px-8 py-3 rounded-full font-bold shadow-lg hover:from-blue-600 hover:to-purple-600 transition-all duration-200">
-                Start Your Confession Journey
+                Return to App Now
             </a>
             
             <div class="text-gray-600 text-sm mt-4">

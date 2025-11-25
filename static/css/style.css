@@ -1,1 +1,22 @@
-/* Empty style.css to prevent 404 error */ 
+/* MyConfessions.org - Main Stylesheet */
+
+/* Import Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&family=Inter:wght@400;500;600;700;800&display=swap');
+
+/*
+  This file can be used for global overrides or styles
+  that don't fit into the component-based CSS.
+  For now, it remains minimal as most styles are in components.css
+  or handled via inline styles in the JSX.
+*/
+
+body {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+#myconfessions-app {
+  height: 100vh;
+  width: 100vw;
+} 

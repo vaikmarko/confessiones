@@ -17,3 +17,6 @@
 __pycache__/
 # Ignored by the build system
 /setup.cfg
+
+# IMPORTANT: Allow firebase-credentials.json to be deployed (override .gitignore)
+!firebase-credentials.json

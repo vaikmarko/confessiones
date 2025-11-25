@@ -10,9 +10,15 @@ const MyConfessionsApp = () => {
   const [upvotedConfessions, setUpvotedConfessions] = useState(new Set());
   const [confessionFilter, setConfessionFilter] = useState('latest');
   const [currentConfession, setCurrentConfession] = useState(null);
-  const [soulsHelped, setSoulsHelped] = useState(10000); // Base number to start with
   const [copiedPrayerId, setCopiedPrayerId] = useState(null);
   const [generatedSummary, setGeneratedSummary] = useState({ title: '', prayer: '' });
+  
+  // Analytics helper
+  const track = (eventName, params = {}) => {
+    if (window.track) {
+      window.track(eventName, { ...params, user_tier: userTier });
+    }
+  };
   
   // Value-first service model state
   const [userTier, setUserTier] = useState('free');
@@ -30,11 +36,54 @@ const MyConfessionsApp = () => {
   const [userName, setUserName] = useState('');
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userSessionId, setUserSessionId] = useState('');
+  
+  // Toast notification state
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
+  
+  // Subscription info state
+  const [subscriptionInfo, setSubscriptionInfo] = useState(null);
+
+  const QUICK_STARTS = [
+    { icon: "😟", label: "I feel anxious", message: "I'm feeling really anxious right now and I need some peace." },
+    { icon: "🙏", label: "I need prayer", message: "I'm going through a hard time and I really need prayer." },
+    { icon: "💔", label: "I'm grieving", message: "I'm struggling with grief and loss." },
+    { icon: "😔", label: "I feel lonely", message: "I'm feeling very lonely and isolated." }
+  ];
 
   // Load public confessions and stats
   useEffect(() => {
     fetchConfessions(confessionFilter);
   }, [confessionFilter]);
+  
+  // Track page view on mount
+  useEffect(() => {
+    track('page_view', { page: 'app' });
+  }, []);
+  
+  // Track view changes
+  useEffect(() => {
+    track('view_change', { view: currentView });
+  }, [currentView]);
+  
+  // Check for URL params (e.g. subscription cancelled/upgraded)
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    
+    if (urlParams.get('cancelled') === 'true') {
+      setToastMessage("No worries! You can upgrade to Premium anytime. Your free tier is still available. 💙");
+      setShowToast(true);
+      setTimeout(() => setShowToast(false), 5000);
+      window.history.replaceState({}, '', window.location.pathname);
+    }
+    
+    if (urlParams.get('upgraded') === 'true') {
+      setToastMessage("🎉 Welcome to Premium! Your unlimited spiritual guidance is now active. Enjoy your journey!");
+      setShowToast(true);
+      setTimeout(() => setShowToast(false), 6000);
+      window.history.replaceState({}, '', window.location.pathname);
+    }
+  }, []);
 
 
   const fetchConfessions = async (filter) => {
@@ -43,19 +92,27 @@ const MyConfessionsApp = () => {
       if (response.ok) {
         const data = await response.json();
         setConfessions(data);
+      } else {
+        console.error('Confessions API error:', response.status, response.statusText);
       }
     } catch (error) {
       console.error('Error fetching confessions:', error);
     }
   };
 
-  const sendMessage = async () => {
-    if (!inputMessage.trim()) return;
+  const sendMessage = async (msgOverride = null) => {
+    const messageToSend = msgOverride || inputMessage;
+    if (!messageToSend.trim()) return;
     
-    const userMessage = inputMessage;
     setInputMessage('');
-    setMessages(prev => [...prev, { role: 'user', content: userMessage }]);
+    setMessages(prev => [...prev, { role: 'user', content: messageToSend }]);
     setIsLoading(true);
+    
+    // Track message sent
+    track('message_sent', { 
+      message_count: messages.length / 2 + 1,
+      conversation_depth: conversationDepth + 1
+    });
 
     try {
       const currentSessionId = isLoggedIn ? userSessionId : sessionId;
@@ -63,7 +120,7 @@ const MyConfessionsApp = () => {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          message: userMessage,
+          message: messageToSend,
           session_id: currentSessionId,
           conversation_history: messages
         })
@@ -80,6 +137,10 @@ const MyConfessionsApp = () => {
         if (data.suggest_upgrade) {
           setUpgradeMessage(data.upgrade_message);
           setShowUpgradeModal(true);
+          track('upgrade_modal_shown', { 
+            trigger: 'conversation_limit',
+            conversation_depth: data.conversation_depth 
+          });
         }
       } else {
         setMessages(prev => [...prev, { 
@@ -98,6 +159,8 @@ const MyConfessionsApp = () => {
   };
 
 const handleSharePrayer = (confession) => {
+    track('prayer_shared', { prayer_id: confession.id });
+    
     const shareText = `A prayer from MyConfessions.org:\n\n"${confession.title}"\n\n${confession.text}\n\nFind peace and share your own prayer at https://myconfessions.org`;
     navigator.clipboard.writeText(shareText).then(() => {
         setCopiedPrayerId(confession.id);
@@ -192,859 +255,542 @@ const handleSharePrayer = (confession) => {
   };
 
   const renderConfess = () => (
-    <div className="flex flex-col h-full bg-gradient-to-b from-blue-50 to-white pb-20">
+    <div className="flex flex-col h-full bg-white">
       {/* Header */}
-      <div className="relative overflow-hidden">
-        <div className="bg-blue-700 text-white p-6 text-center relative">
+      <div className="flex-shrink-0 bg-white border-b border-gray-100 p-3 md:p-4 shadow-sm z-10">
+        <div className="max-w-3xl mx-auto flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <span className="text-2xl">✝️</span>
+            <h1 className="text-lg font-bold text-blue-900">My Confessions</h1>
+          </div>
 
-          <div className="relative z-10">
-            <div className="text-3xl mb-3">✝️</div>
-            <h1 className="text-3xl font-bold mb-2 tracking-tight text-white drop-shadow-lg">My Confessions</h1>
-            <p className="text-white font-medium text-lg drop-shadow-md">Biblical Guidance for Your Spiritual Journey</p>
-            
-            {/* Scripture Quote - Inspirational */}
-            <div className="bg-white bg-opacity-20 backdrop-blur-sm rounded-lg p-3 mt-4 max-w-lg mx-auto border border-white border-opacity-30">
-              <p className="text-sm text-white italic leading-relaxed">
-                "If we confess our sins, He is faithful and just to forgive us our sins and to cleanse us from all unrighteousness."
-              </p>
-              <p className="text-xs text-white font-semibold mt-2">— 1 John 1:9</p>
-            </div>
-            
-            {/* Stats */}
-            <div className="flex justify-center space-x-8 mt-6 text-sm">
-              <div className="text-center">
-                <div className="text-2xl font-bold text-yellow-300 drop-shadow-lg">10,000+</div>
-                <div className="text-white font-medium drop-shadow-md">Souls Helped</div>
-              </div>
-              <div className="text-center">
-                <div className="text-2xl font-bold text-yellow-300 drop-shadow-lg">24/7</div>
-                <div className="text-white font-medium drop-shadow-md">Spiritual Support</div>
-              </div>
-              <div className="text-center">
-                <div className="text-2xl font-bold text-yellow-300 drop-shadow-lg">100%</div>
-                <div className="text-white font-medium drop-shadow-md">Anonymous</div>
-              </div>
-            </div>
-            
-            {/* Compact Login Status - Subtle */}
-            <div className="mt-6 flex justify-center">
-              {!isLoggedIn ? (
-                <div className="text-center">
-                  <p className="text-white text-sm opacity-75 mb-2">Save your progress</p>
-                  <div className="flex space-x-3">
-                  <button
-                    onClick={() => setShowLoginModal(true)}
-                      className="bg-white bg-opacity-25 hover:bg-opacity-35 text-white px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200"
-                  >
-                      Sign In
-                  </button>
-                  <button
-                    onClick={() => setShowRegisterModal(true)}
-                      className="bg-white hover:bg-gray-300 text-blue-950 px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200"
-                  >
-                      Sign Up
-                  </button>
-                  </div>
-                </div>
-              ) : (
-                <div className="text-center">
-                  <p className="text-white text-sm opacity-90">Welcome, {userName || userEmail}!</p>
-                  <button
-                    onClick={() => setIsLoggedIn(false)}
-                    className="text-white text-xs underline hover:no-underline mt-1 opacity-75 hover:opacity-100"
-                  >
-                    Sign Out
-                  </button>
-                </div>
-              )}
-            </div>
-          </div>
-          </div>
-        </div>
-
-      {/* Value Proposition - Clear Benefits */}
-      <div className="bg-white mx-4 mt-4 rounded-xl shadow-lg overflow-hidden border border-gray-500">
-        <div className="bg-gradient-to-r from-blue-600 to-blue-700 p-4 text-center">
-          <h2 className="text-xl font-bold text-white">Choose Your Spiritual Path</h2>
-        </div>
-        
-        {/* Comparison Cards */}
-        <div className="p-4 grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Free Tier */}
-          <div className="border-2 border-gray-500 rounded-lg p-4 bg-gray-300">
-            <h3 className="text-lg font-bold text-gray-900 mb-3 text-center">Free User</h3>
-            <div className="text-sm text-gray-700 space-y-2">
-              <div className="flex items-start">
-                <span className="text-gray-600 mr-2">▪</span>
-                <span className="text-gray-700">Up to 4 conversations per month</span>
-              </div>
-              <div className="flex items-start">
-                <span className="text-gray-600 mr-2">▪</span>
-                <span className="text-gray-700">Can write your own prayers</span>
-              </div>
-              <div className="flex items-start">
-                <span className="text-red-500 mr-2">✗</span>
-                <span className="text-gray-600">Cannot see other prayers</span>
-              </div>
-              <div className="flex items-start">
-                <span className="text-red-500 mr-2">✗</span>
-                <span className="text-gray-600">Conversations not saved</span>
-              </div>
-            </div>
-          </div>
-          
-          {/* Premium Tier */}
-          <div className="border-2 border-blue-600 rounded-lg p-4 bg-gradient-to-br from-blue-100 to-white relative">
-            <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-yellow-400 text-blue-950 text-xs font-bold px-3 py-1 rounded-full shadow-lg">
-              ⭐ RECOMMENDED
-            </div>
-            <h3 className="text-lg font-bold text-blue-950 mb-2 flex items-center justify-center mt-2">
-              💎 Premium User
-              <span className="ml-2 text-sm font-normal text-gray-600">$9.99/mo</span>
-            </h3>
-            <div className="text-sm text-gray-900 space-y-2 mb-4">
-              <div className="flex items-start">
-                <span className="text-green-900 mr-2">✓</span>
-                <span className="font-medium text-gray-900">UNLIMITED Biblical guidance 24/7</span>
-              </div>
-              <div className="flex items-start">
-                <span className="text-green-900 mr-2">✓</span>
-                <span className="font-medium text-gray-900">See ALL shared prayers & testimonies</span>
-              </div>
-              <div className="flex items-start">
-                <span className="text-green-900 mr-2">✓</span>
-                <span className="font-medium text-gray-900">Find strength in community faith</span>
-              </div>
-              <div className="flex items-start">
-                <span className="text-green-900 mr-2">✓</span>
-                <span className="font-medium text-gray-900">Your spiritual journey saved</span>
-              </div>
-              <div className="flex items-start">
-                <span className="text-green-900 mr-2">✓</span>
-                <span className="font-medium text-gray-900">Support God's work through technology</span>
-              </div>
-            </div>
-            <button
-            onClick={() => setCurrentView('subscription')}
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white px-4 py-3 rounded-lg font-bold transition-all duration-200 shadow-md"
-            >
-              Join Premium
-            </button>
-          </div>
-      </div>
-      
-        {/* Mission Statement - Positive & Value-Focused */}
-        <div className="p-4 bg-gradient-to-br from-blue-100 to-white border-t border-blue-200">
-          <div className="max-w-2xl mx-auto text-center">
-            <p className="text-sm text-gray-900 leading-relaxed mb-2">
-              <strong className="text-blue-950">God has given us technology to draw closer to Him.</strong>
-            </p>
-            <p className="text-xs text-gray-700 leading-relaxed">
-              We provide 24/7 Scripture-based spiritual guidance to help believers examine their hearts, 
-              find Biblical wisdom, and grow in their walk with Christ. Your partnership helps us serve 
-              thousands seeking God's truth and grace.
-            </p>
-          </div>
-        </div>
-      </div>
-      
-      {/* Value-first conversation depth display with Progress Bar */}
-      {userTier === 'free' && conversationDepth > 0 && (
-        <div className="bg-gradient-to-br from-yellow-100 to-orange-100 border-2 border-yellow-500 p-4 mx-4 mt-4 rounded-lg shadow-md">
-          <div className="mb-3">
-            <div className="flex items-center justify-between mb-2">
-              <p className="text-sm text-yellow-900 font-semibold">
-                Free Tier: {conversationDepth} / 4 conversations used
-              </p>
-              <span className="text-xs bg-yellow-300 text-yellow-900 px-2 py-1 rounded-full font-bold">
-                {Math.round((conversationDepth / 4) * 100)}%
-              </span>
-            </div>
-            {/* Visual Progress Bar */}
-            <div className="w-full bg-yellow-300 rounded-full h-3 overflow-hidden">
-                <div
-                  className="bg-gradient-to-r from-yellow-600 to-orange-600 h-3 rounded-full transition-all duration-500 flex items-center justify-end pr-1"
-                  style={{ width: `${Math.min((conversationDepth / 4) * 100, 100)}%` }}
+          {/* Mobile login buttons */}
+          <div className="md:hidden">
+            {!isLoggedIn ? (
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setShowLoginModal(true)}
+                  className="text-blue-600 px-2 py-1 rounded text-xs font-medium"
                 >
-                {conversationDepth >= 3 && (
-                  <span className="text-xs text-white font-bold">🔥</span>
+                  Sign In
+                </button>
+                <button
+                  onClick={() => setShowRegisterModal(true)}
+                  className="bg-blue-600 text-white px-3 py-1 rounded-full text-xs font-semibold shadow-sm"
+                >
+                  Sign Up
+                </button>
+              </div>
+            ) : (
+              <span className="text-gray-600 text-xs">{userName || userEmail}</span>
+            )}
+          </div>
+        </div>
+
+        {/* Desktop login */}
+        <div className="hidden md:flex justify-center mt-2">
+          {!isLoggedIn ? (
+            <div className="flex gap-2">
+              <button onClick={() => setShowLoginModal(true)} className="text-blue-600 px-3 py-1 rounded text-sm font-medium hover:bg-blue-50">
+                Sign In
+              </button>
+              <button onClick={() => setShowRegisterModal(true)} className="bg-blue-600 text-white px-4 py-1 rounded-full text-sm font-semibold hover:bg-blue-700 transition-colors shadow-sm">
+                Sign Up
+              </button>
+            </div>
+          ) : (
+            <div className="text-center">
+              <p className="text-gray-600 text-sm">{userName || userEmail}</p>
+            </div>
           )}
         </div>
       </div>
-          </div>
-            <div className="flex items-center justify-between">
-              <div className="flex-1">
-                {conversationDepth >= 4 ? (
-                  <p className="text-xs text-red-800 font-bold">⚠️ Limit reached! Upgrade for unlimited access</p>
-                ) : conversationDepth >= 3 ? (
-                  <p className="text-xs text-orange-900 font-semibold">🔔 Almost there! {4 - conversationDepth} conversation{4 - conversationDepth > 1 ? 's' : ''} left</p>
-                ) : (
-                  <p className="text-xs text-yellow-900">Continue your spiritual journey with unlimited guidance</p>
-                )}
-              </div>
-            <button
-              onClick={() => setShowUpgradeModal(true)}
-              className="bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white px-4 py-2 rounded-lg text-sm font-bold shadow-md transform hover:scale-105 transition-all ml-3"
-            >
-              {conversationDepth >= 4 ? 'Upgrade Now' : 'Join Premium'}
-            </button>
-          </div>
-        </div>
-      )}
 
-            {/* Show unlimited status for paid users */}
-            {userTier === 'unlimited' && (
-                  <div className="bg-green-400 border-l-4 border-green-600 p-4 mx-4 mt-4 rounded-lg">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm text-green-900">
-                      <strong>💎 Unlimited Member:</strong> Unlimited spiritual guidance
-                    </p>
-                    <p className="text-xs text-green-900 mt-1">Thank you for supporting our ministry!</p>
+      {/* Main chat area */}
+      <div className="flex-1 flex flex-col min-h-0 bg-gray-50">
+        {/* Messages area */}
+        <div className="flex-1 overflow-y-auto p-4 space-y-4" style={{WebkitOverflowScrolling: 'touch'}}>
+
+          {/* Mobile Premium CTA - Only show if no messages */}
+          {messages.length === 0 && (
+            <div className="bg-gradient-to-r from-blue-50 to-white border border-blue-100 p-4 rounded-xl mb-4 shadow-sm max-w-2xl mx-auto">
+              <div className="flex items-center justify-between">
+                <div>
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="text-lg">✨</span>
+                    <span className="font-bold text-blue-900">Premium Access</span>
                   </div>
-                  <div className="flex items-center space-x-2">
+                  <p className="text-xs text-gray-600">Unlimited guidance 24/7</p>
+                </div>
+                <button
+                  onClick={() => setCurrentView('subscription')}
+                  className="bg-blue-600 text-white px-4 py-2 rounded-full font-bold text-xs shadow-sm hover:bg-blue-700 transition-colors"
+                >
+                  $4.99/mo
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Chat content */}
+          <div className="max-w-2xl mx-auto">
+
+            {/* Welcome message */}
+            {messages.length === 0 && (
+              <div className="text-center py-6 mb-4">
+                <h3 className="text-xl font-bold text-gray-800 mb-2">How can I help you today?</h3>
+                <p className="text-gray-500 mb-6 text-sm">
+                  I'm your biblical counselor. Everything you share here is private.
+                </p>
+                
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {QUICK_STARTS.map((qs, idx) => (
                     <button
-                      onClick={() => handleSubscriptionManagement()}
-                      className="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded-lg text-xs font-semibold"
+                      key={idx}
+                      onClick={() => {
+                        sendMessage(qs.message);
+                      }}
+                      className="text-left p-4 rounded-xl bg-white border border-gray-200 hover:border-blue-300 hover:shadow-md transition-all flex items-center gap-3 group"
                     >
-                      Manage
+                      <span className="text-2xl group-hover:scale-110 transition-transform duration-200">{qs.icon}</span>
+                      <span className="font-medium text-gray-700 group-hover:text-blue-700 transition-colors">{qs.label}</span>
                     </button>
-                    <div className="text-2xl">💎</div>
-                  </div>
+                  ))}
                 </div>
               </div>
             )}
-      
-      {/* Chat Interface */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4">
-        {messages.length === 0 && (
-          <div className="text-center py-8 bg-white rounded-lg shadow-sm border border-gray-500 mx-4">
-            <div className="text-4xl mb-4">🙏</div>
-            <h3 className="text-xl font-bold text-gray-900 mb-3">Welcome to Biblical Spiritual Guidance</h3>
-            <p className="text-gray-600 mb-3">
-              God has provided this tool to help you reflect on Scripture, examine your heart, and grow closer to Him.
-              Let's explore what the Bible says about your journey.
-            </p>
-            <div className="bg-blue-400 border-l-4 border-blue-600 p-3 rounded">
-              <p className="text-sm text-blue-950 italic">
-                "Search me, O God, and know my heart; test me and know my anxious thoughts."
-              </p>
-              <p className="text-xs text-blue-950 mt-1">— Psalm 139:23</p>
-            </div>
-            <p className="text-sm text-gray-900 mt-4 font-semibold">
-              What's on your heart today?
-                      </p>
-                    </div>
-        )}
-        
-        {messages.map((msg, index) => (
+
+            {/* Progress indicator for free users */}
+            {userTier === 'free' && conversationDepth > 0 && (
+              <div className="bg-white border border-gray-200 p-3 rounded-lg mb-4 shadow-sm">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-xs font-semibold text-gray-500">
+                    Free Tier: {conversationDepth} / 20 messages
+                  </span>
+                  <span className="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full font-bold">
+                    {Math.round((conversationDepth / 20) * 100)}%
+                  </span>
+                </div>
+                <div className="w-full bg-gray-100 rounded-full h-1.5 mb-2">
+                  <div
+                    className="bg-blue-500 h-1.5 rounded-full transition-all duration-500"
+                    style={{ width: `${Math.min((conversationDepth / 20) * 100, 100)}%` }}
+                  ></div>
+                </div>
+              </div>
+            )}
+
+            {/* Premium member status */}
+            {userTier === 'unlimited' && (
+              <div className="bg-green-50 border border-green-100 p-3 rounded-lg mb-4 flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <span className="text-green-600">💎</span>
+                  <span className="text-green-800 text-sm font-medium">Premium Member</span>
+                </div>
+                <button
+                  onClick={() => handleSubscriptionManagement()}
+                  className="text-green-700 text-xs font-semibold hover:underline"
+                >
+                  Manage
+                </button>
+              </div>
+            )}
+
+            {/* Chat messages */}
+            <div className="space-y-6">
+              {messages.map((msg, index) => (
                 <div key={index} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-            <div className={`max-w-xs lg:max-w-md px-4 py-3 rounded-2xl ${
-                    msg.role === 'user' 
-                ? 'bg-blue-600 text-white rounded-br-md' 
-                : 'bg-white text-gray-900 border border-gray-500 rounded-bl-md shadow-sm'
+                  <div className={`max-w-[85%] px-5 py-3.5 rounded-2xl shadow-sm ${
+                    msg.role === 'user'
+                      ? 'bg-blue-600 text-white rounded-br-sm'
+                      : 'bg-white text-gray-800 border border-gray-100 rounded-bl-sm'
                   }`}>
-              <div className="text-sm leading-relaxed">{msg.content}</div>
+                    <div className="text-[15px] leading-relaxed whitespace-pre-wrap">{msg.content}</div>
                   </div>
                 </div>
               ))}
-              
+
               {isLoading && (
                 <div className="flex justify-start">
-            <div className="bg-white text-gray-900 border border-gray-500 rounded-2xl rounded-bl-md shadow-sm px-4 py-3">
-              <div className="flex items-center space-x-2 text-sm">
-                <div className="animate-spin rounded-full h-4 w-4 border-2 border-blue-700 border-t-transparent"></div>
-                <span>Processing your confession...</span>
+                  <div className="bg-white border border-gray-100 px-4 py-3 rounded-2xl rounded-bl-sm shadow-sm">
+                    <div className="flex items-center space-x-1.5">
+                      <div className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce"></div>
+                      <div className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce" style={{animationDelay: '0.15s'}}></div>
+                      <div className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce" style={{animationDelay: '0.3s'}}></div>
                     </div>
                   </div>
                 </div>
-          )}
-        </div>
-        
-      {/* Finalise CTA */}
-      {messages.length >= 3 && !isLoading && (
-        <div className="mx-4 mb-4 bg-yellow-300 border-l-4 border-yellow-500 p-4 rounded-lg flex items-center justify-between space-x-4">
-          <p className="text-sm text-gray-900 font-medium flex-1">
-            Ready to bring this to prayer?
-                </p>
-                <button
-            onClick={handleSummarizeClick}
-            className="bg-yellow-400 hover:bg-yellow-3000 text-black font-bold px-4 py-2 rounded-lg shadow-md border-2 border-yellow-300"
-          >
-            Summarize & Review
-                </button>
+              )}
             </div>
-          )}
-          
-      {/* Chat Input - Fixed at Bottom */}
-      <div className="bg-white border-t border-gray-500 p-4">
-        <div className="flex space-x-3">
+
+            {/* Summarize CTA */}
+            {messages.length >= 3 && !isLoading && (
+              <div className="mt-8 text-center">
+                <p className="text-gray-500 text-sm mb-3">Ready to bring this to prayer?</p>
+                <button
+                  onClick={handleSummarizeClick}
+                  className="bg-white border border-blue-200 hover:bg-blue-50 text-blue-700 py-2.5 px-6 rounded-full font-semibold transition-colors shadow-sm text-sm"
+                >
+                  Summarize & Create Prayer
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Chat Input - Fixed at bottom */}
+      <div className="flex-shrink-0 bg-white border-t border-gray-100 p-3 md:p-4" style={{
+        paddingBottom: 'max(1rem, env(safe-area-inset-bottom))'
+      }}>
+        <div className="max-w-2xl mx-auto flex items-center gap-2">
           <input
             type="text"
             value={inputMessage}
             onChange={(e) => setInputMessage(e.target.value)}
-            onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
-            placeholder="Share your confession..."
-            className="flex-1 px-4 py-3 border-2 border-gray-500 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900 font-medium"
-                disabled={isLoading}
-              />
-              <button
-                onClick={sendMessage}
+            onKeyPress={(e) => e.key === 'Enter' && !isLoading && sendMessage()}
+            placeholder="Type your message..."
+            className="flex-1 px-4 py-3 border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-50 text-gray-900 placeholder-gray-400"
+            disabled={isLoading}
+            style={{fontSize: '16px'}} // Prevent iOS zoom
+          />
+          <button
+            onClick={() => sendMessage()}
             disabled={isLoading || !inputMessage.trim()}
-            className="bg-blue-800 hover:bg-blue-700 text-white px-6 py-3 rounded-full font-bold transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg border-2 border-blue-800"
-              >
-            <span className="text-lg font-bold">Send</span>
-              </button>
-            </div>
+            className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 disabled:text-gray-500 text-white p-3 rounded-full transition-colors shadow-sm flex-shrink-0 w-12 h-12 flex items-center justify-center"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 translate-x-0.5">
+              <path d="M3.478 2.405a.75.75 0 00-.926.94l2.432 7.905H13.5a.75.75 0 010 1.5H4.984l-2.432 7.905a.75.75 0 00.926.94 60.519 60.519 0 0018.445-8.986.75.75 0 000-1.218A60.517 60.517 0 003.478 2.405z" />
+            </svg>
+          </button>
         </div>
-      
-
-
-
-        </div>
-      );
+      </div>
+    </div>
+  );
 
   const renderReview = () => (
-    <div className="flex flex-col h-full bg-gray-300 pb-20">
-      <div className="bg-blue-700 text-white p-6 text-center">
-        <h1 className="text-2xl font-bold">An Act of Contrition</h1>
-        <p className="text-sm opacity-90 mt-1">You have prepared your prayer. Offer it to God privately, or share it anonymously to help and inspire others.</p>
+    <div className="flex flex-col h-full bg-gray-50">
+      <div className="flex-shrink-0 bg-white border-b border-gray-100 p-4 text-center">
+        <h1 className="text-xl font-bold text-gray-900">Review Your Prayer</h1>
+        <p className="text-xs text-gray-500 mt-1">Offer it to God privately, or share it anonymously.</p>
       </div>
 
       <div className="flex-1 overflow-y-auto p-4">
-        <div className="bg-white rounded-xl shadow-lg p-6">
-          <h2 className="text-xl font-bold text-center text-gray-900 mb-4">{generatedSummary.title}</h2>
-          <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">{generatedSummary.prayer}</p>
-                  </div>
-              </div>
+        <div className="max-w-lg mx-auto bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8">
+          <h2 className="text-xl font-bold text-center text-gray-900 mb-6">{generatedSummary.title}</h2>
+          <p className="text-gray-700 leading-relaxed whitespace-pre-wrap font-serif text-lg">{generatedSummary.prayer}</p>
+        </div>
+      </div>
 
-      <div className="p-4 space-y-3 bg-white border-t">
-              <button
-          onClick={() => handleSaveConfession(true)}
-          disabled={isLoading}
-          className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition-all shadow-md disabled:opacity-50"
-              >
-          Share Anonymously to Help Others
-              </button>
-            <button
-          onClick={() => handleSaveConfession(false)}
-          disabled={isLoading}
-          className="w-full bg-gray-700 hover:bg-gray-800 text-white font-bold py-3 px-4 rounded-lg transition-all disabled:opacity-50"
-            >
-          Confess to God Alone
-            </button>
-                <button
-          onClick={() => setCurrentView('confess')}
-          disabled={isLoading}
-          className="w-full text-center text-sm text-gray-600 py-2"
-        >
-          Continue Chatting
-                </button>
-              </div>
-                      </div>
+      <div className="flex-shrink-0 p-4 bg-white border-t border-gray-100">
+        <div className="max-w-lg mx-auto space-y-3">
+          <button
+            onClick={() => handleSaveConfession(true)}
+            disabled={isLoading}
+            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 px-4 rounded-xl transition-all shadow-sm disabled:opacity-50"
+          >
+            Share Anonymously to Help Others
+          </button>
+          <button
+            onClick={() => handleSaveConfession(false)}
+            disabled={isLoading}
+            className="w-full bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 font-semibold py-3.5 px-4 rounded-xl transition-all disabled:opacity-50"
+          >
+            Keep Private (For God Alone)
+          </button>
+          <button
+            onClick={() => setCurrentView('confess')}
+            disabled={isLoading}
+            className="w-full text-center text-sm text-gray-500 py-2 hover:text-gray-700"
+          >
+            Go back to chat
+          </button>
+        </div>
+      </div>
+    </div>
   );
 
   const renderConfession = () => (
-    <div className="flex flex-col h-full">
-      <div className="bg-blue-700 text-white p-4 text-center">
-        <h1 className="text-2xl font-bold">Peace Be With You</h1>
-        <p className="text-sm opacity-90">You have completed your confession. Go in peace.</p>
-                    </div>
-      <div className="flex-1 p-6 overflow-y-auto pb-24">
-        <div className="bg-white border border-gray-500 rounded-lg p-6 shadow-sm">
-          <div className="text-center mb-4">
-            <div className="text-4xl mb-2">✅</div>
-            <h2 className="text-xl font-semibold text-gray-900">Your Prayer Has Been Offered</h2>
-                  </div>
+    <div className="flex flex-col h-full bg-gray-50">
+      <div className="flex-1 p-6 overflow-y-auto flex items-center justify-center">
+        <div className="max-w-md w-full bg-white rounded-2xl shadow-sm border border-gray-100 p-8 text-center">
+          <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+            <span className="text-3xl">✅</span>
+          </div>
+          
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">Prayer Received</h2>
+          <p className="text-gray-600 mb-8">
+            {currentConfession?.is_public 
+              ? "Your prayer has been shared anonymously to inspire others."
+              : "Your prayer has been offered to God in privacy."}
+          </p>
 
-          <div className="bg-gray-300 rounded-lg p-4 mb-6">
-            <p className="text-gray-700 leading-relaxed">{currentConfession?.text}</p>
-                  </div>
-
-          <div className="text-center text-sm text-gray-600 mb-6">
-            {currentConfession?.is_public ? (
-              <p>Your prayer has been shared anonymously to help and inspire others.</p>
-            ) : (
-              <p>Your prayer has been offered to God alone and was not shared publicly.</p>
-                      )}
-                    </div>
-                    
-          <div className="flex flex-col space-y-3">
-                <button
+          <div className="space-y-3">
+            <button
               onClick={() => setCurrentView('confess')}
-              className="w-full px-4 py-3 bg-blue-700 text-white rounded-lg hover:bg-blue-600 font-semibold"
-                >
-              Start New Confession
-                </button>
-              <button
+              className="w-full px-6 py-3.5 bg-blue-600 text-white rounded-xl hover:bg-blue-700 font-semibold transition-colors shadow-sm"
+            >
+              Start New Conversation
+            </button>
+            <button
               onClick={() => setCurrentView('discover')}
-              className="w-full px-4 py-3 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-300 font-semibold"
-              >
-              See Other Prayers
-              </button>
-          <button
-              onClick={() => setCurrentView('subscription')}
-              className="w-full px-4 py-3 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-300 font-semibold"
-          >
-              💎 Upgrade to Unlimited
-          </button>
-                </div>
-                </div>
-              </div>
-            </div>
+              className="w-full px-6 py-3.5 bg-white border border-gray-200 text-gray-700 rounded-xl hover:bg-gray-50 font-semibold transition-colors"
+            >
+              Read Community Prayers
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 
   const renderDiscover = () => {
     // Check if user has premium access
     const isPremium = userTier === 'unlimited';
+    
+    // Freemium Teaser: Show top 3 confessions to free users
+    const FREE_CONFESSION_LIMIT = 3;
+    const visibleConfessions = isPremium 
+      ? confessions 
+      : confessions.slice(0, FREE_CONFESSION_LIMIT);
+    const lockedCount = confessions.length - FREE_CONFESSION_LIMIT;
 
     return (
-    <div className="flex flex-col h-full pb-20">
+    <div className="flex flex-col h-full pb-20 bg-gray-50">
       {/* Header */}
-      <div className="bg-blue-700 text-white p-4 text-center">
-        <h1 className="text-2xl font-bold">✝️ Shared Prayers</h1>
-          <p className="text-sm opacity-90">Read prayers shared anonymously by people around the world</p>
+      <div className="bg-white border-b border-gray-100 p-4 text-center sticky top-0 z-10">
+        <h1 className="text-lg font-bold text-gray-900">Community Prayers</h1>
+        <p className="text-xs text-gray-500">Real prayers from real people</p>
             </div>
 
-        {!isPremium ? (
-          /* Premium Upsell for Free Users */
-          <div className="flex-1 overflow-y-auto p-4 bg-gray-300">
-            <div className="max-w-md mx-auto mt-8">
-              {/* Lock Icon */}
-              <div className="text-center mb-6">
-                <div className="inline-block bg-blue-300 p-6 rounded-full mb-4">
-                  <span className="text-5xl">🔒</span>
-                </div>
-                <h2 className="text-2xl font-bold text-gray-900 mb-3">Premium Feature</h2>
-                <p className="text-gray-600 leading-relaxed">
-                  Join Premium to view and read <strong>all shared prayers</strong> from other people. 
-                  Get inspiration, see that you're not alone, and grow with the community.
-                </p>
-              </div>
-
-              {/* Preview Benefits */}
-              <div className="bg-white rounded-lg shadow-lg p-6 mb-6 border-2 border-blue-500">
-                <h3 className="font-bold text-lg text-gray-900 mb-4 text-center">As a Premium member you get:</h3>
-                <div className="space-y-3 text-sm">
-                  <div className="flex items-start">
-                    <span className="text-green-900 mr-3 text-lg">✓</span>
-                    <span className="text-gray-700"><strong>View all shared prayers</strong> - Get inspiration from others' stories</span>
-                  </div>
-                  <div className="flex items-start">
-                    <span className="text-green-900 mr-3 text-lg">✓</span>
-                    <span className="text-gray-700"><strong>Unlimited conversations</strong> - Deeper conversations with AI</span>
-                  </div>
-                  <div className="flex items-start">
-                    <span className="text-green-900 mr-3 text-lg">✓</span>
-                    <span className="text-gray-700"><strong>Conversation history</strong> - Everything saved for future reference</span>
-                  </div>
-                  <div className="flex items-start">
-                    <span className="text-green-900 mr-3 text-lg">✓</span>
-                    <span className="text-gray-700"><strong>Support the mission</strong> - Help spread Christian support</span>
-                  </div>
-                </div>
-                
-                <div className="mt-6 text-center">
-                  <div className="text-3xl font-bold text-blue-950 mb-2">$9.99<span className="text-base text-gray-600">/mo</span></div>
-                  <button
-                    onClick={() => setCurrentView('subscription')}
-                    className="w-full bg-blue-600 hover:bg-blue-700 text-white py-4 rounded-lg font-bold text-lg transition-all duration-200 shadow-lg"
-                  >
-                    💎 Join Premium
-                  </button>
-                </div>
-              </div>
-
-              {/* Social Proof */}
-              <div className="bg-blue-300 rounded-lg p-4 border border-blue-500 text-center">
-                <p className="text-sm text-gray-600">
-                  <strong className="text-blue-950">10,000+ people</strong> have already found support and inspiration in our community
-                </p>
-              </div>
-            </div>
-          </div>
-        ) : (
-          /* Premium Content - Show Confessions */
-          <>
-      {/* Filter Buttons */}
-      <div className="flex justify-center p-3 bg-gray-300 border-b">
-        <div className="flex space-x-2 bg-gray-300 p-1 rounded-lg">
-               <button
-            onClick={() => setConfessionFilter('latest')}
-            className={`px-4 py-1.5 text-sm font-semibold rounded-md transition-colors ${confessionFilter === 'latest' ? 'bg-white text-blue-950 shadow-sm' : 'text-gray-600'}`}
-               >
-            Latest
-               </button>
-                      <button
-            onClick={() => setConfessionFilter('popular')}
-            className={`px-4 py-1.5 text-sm font-semibold rounded-md transition-colors ${confessionFilter === 'popular' ? 'bg-white text-blue-950 shadow-sm' : 'text-gray-600'}`}
-                      >
-            Most Popular
-                      </button>
-                        </div>
-                            </div>
-
-      {/* Confessions List */}
-      <div className="flex-1 overflow-y-auto p-4">
         {confessions.length === 0 ? (
-          <div className="text-center text-gray-600 py-8">
-            <p className="text-lg mb-2">No public prayers yet</p>
-            <p className="text-sm">Be the first to share a prayer to help others.</p>
-                </div>
-        ) : (
-          <div className="space-y-4">
-            {confessions.map((confession) => (
-              <div key={confession.id} className="bg-white border border-gray-500 rounded-lg p-4 shadow-sm transition-all hover:shadow-md">
-                <h3 className="font-bold text-gray-900 text-md mb-2">{confession.title || "A Prayer"}</h3>
-                <p className="text-gray-700 leading-relaxed mb-4">{confession.text}</p>
-                <div className="flex justify-between items-center text-xs text-gray-600">
-                          <button 
-                    onClick={() => handleSharePrayer(confession)}
-                    className="font-semibold text-blue-950 hover:underline"
-                          >
-                    {copiedPrayerId === confession.id ? 'Copied!' : 'Share'}
-                          </button>
-                  <div className="flex items-center space-x-2">
-                    <span>{new Date(confession.created_at).toLocaleDateString()}</span>
-                          <button
-                      onClick={() => handleUpvoteClick(confession.id)}
-                      disabled={upvotedConfessions.has(confession.id)}
-                      className="flex items-center space-x-1 p-1 rounded-md transition-colors disabled:opacity-70 disabled:cursor-not-allowed group hover:bg-red-300"
-                          >
-                      <span className={`transition-transform ${upvotedConfessions.has(confession.id) ? 'text-red-500' : 'text-gray-500 group-hover:text-red-400'}`}>❤️</span>
-                      <span className="font-semibold">{confession.upvotes || 0}</span>
-                          </button>
-                </div>
-              </div>
+          /* Empty State - Loading or No Data */
+          <div className="flex-1 flex items-center justify-center p-4">
+            <div className="text-center text-gray-500">
+              <div className="text-4xl mb-4 opacity-50">🙏</div>
+              <p className="mb-4">Loading prayers...</p>
+              <button
+                onClick={() => fetchConfessions(confessionFilter)}
+                className="text-blue-600 text-sm font-medium hover:underline"
+              >
+                Refresh
+              </button>
+            </div>
           </div>
-            ))}
-        </div>
+        ) : (
+          /* Content */
+          <div className="flex-1 overflow-y-auto">
+            {/* Filter */}
+            <div className="flex justify-center py-4">
+              <div className="bg-gray-200 p-1 rounded-lg inline-flex">
+                <button
+                  onClick={() => setConfessionFilter('latest')}
+                  className={`px-4 py-1.5 text-xs font-semibold rounded-md transition-all ${confessionFilter === 'latest' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
+                >
+                  Latest
+                </button>
+                <button
+                  onClick={() => setConfessionFilter('popular')}
+                  className={`px-4 py-1.5 text-xs font-semibold rounded-md transition-all ${confessionFilter === 'popular' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
+                >
+                  Popular
+                </button>
+              </div>
+            </div>
+
+            <div className="px-4 pb-4 space-y-4 max-w-2xl mx-auto">
+              {visibleConfessions.map((confession) => (
+                <div key={confession.id} className="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
+                  <h3 className="font-bold text-gray-900 mb-2">{confession.title || "A Prayer"}</h3>
+                  <p className="text-gray-600 text-sm leading-relaxed mb-4 whitespace-pre-wrap">{confession.text}</p>
+                  <div className="flex justify-between items-center pt-3 border-t border-gray-50">
+                    <button 
+                      onClick={() => handleSharePrayer(confession)}
+                      className="text-xs font-medium text-blue-600 hover:text-blue-700"
+                    >
+                      {copiedPrayerId === confession.id ? 'Copied!' : 'Share Prayer'}
+                    </button>
+                    <div className="flex items-center gap-3 text-xs text-gray-400">
+                      <span>{new Date(confession.created_at).toLocaleDateString()}</span>
+                      <button
+                        onClick={() => handleUpvoteClick(confession.id)}
+                        disabled={upvotedConfessions.has(confession.id)}
+                        className="flex items-center gap-1 hover:text-red-500 transition-colors disabled:opacity-50"
+                      >
+                        <span className={upvotedConfessions.has(confession.id) ? 'text-red-500' : ''}>❤️</span>
+                        <span>{confession.upvotes || 0}</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+
+              {/* Locked Preview for Free Users */}
+              {!isPremium && lockedCount > 0 && (
+                <div className="relative mt-6 py-8 text-center">
+                  <div className="absolute inset-0 bg-gradient-to-t from-gray-50 via-gray-50/90 to-transparent z-10"></div>
+                  
+                  <div className="relative z-20 bg-white p-6 rounded-2xl shadow-lg border border-blue-100 max-w-sm mx-auto">
+                    <div className="w-12 h-12 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <span className="text-2xl">🔒</span>
+                    </div>
+                    <h3 className="font-bold text-gray-900 mb-2">
+                      Unlock {lockedCount}+ More Prayers
+                    </h3>
+                    <p className="text-sm text-gray-600 mb-6">
+                      Join our community to read all shared testimonies and prayers.
+                    </p>
+                    <button
+                      onClick={() => {
+                        track('unlock_prayers_clicked', { source: 'prayers_preview' });
+                        setCurrentView('subscription');
+                      }}
+                      className="w-full bg-blue-600 text-white py-3 rounded-xl font-bold shadow-md hover:bg-blue-700 transition-colors"
+                    >
+                      Unlock Full Access - $4.99/mo
+                    </button>
+                  </div>
+                  
+                  {/* Blurred placeholder content below */}
+                  <div className="opacity-30 blur-sm pointer-events-none mt-4 space-y-4">
+                    <div className="bg-white h-32 rounded-xl"></div>
+                    <div className="bg-white h-32 rounded-xl"></div>
+                  </div>
+                </div>
               )}
             </div>
-          </>
-        )}
-            
-      {/* Navigation */}
-      <div className="border-t bg-white p-4">
-                    <button 
-          onClick={() => setCurrentView('confess')}
-          className="w-full px-4 py-2 bg-blue-700 text-white rounded-lg hover:bg-blue-600 font-semibold"
-                    >
-            ✝️ Start Your Confession
-                    </button>
-            </div>
           </div>
-        );
+        )}
+      
+      {/* Navigation */}
+      <div className="bg-white border-t border-gray-100 p-4 sticky bottom-0 md:hidden">
+        <button 
+          onClick={() => setCurrentView('confess')}
+          className="w-full bg-blue-600 text-white py-3 rounded-xl font-semibold shadow-sm"
+        >
+          Start Your Prayer
+        </button>
+      </div>
+    </div>
+    );
   };
 
   const renderSubscriptionPage = () => {
     return (
-      <div className="flex flex-col h-full bg-gray-300 pb-20">
-        {/* Header */}
-        <div className="relative bg-gradient-to-r from-blue-700 to-blue-800 text-white p-6 text-center overflow-hidden">
-          <div className="relative z-10">
-            <div className="text-4xl mb-3">💎</div>
-            <h1 className="text-3xl font-bold tracking-tight text-white">Premium Membership</h1>
-            <p className="text-base mt-2 opacity-90">Continue your spiritual journey with unlimited access to Christian guidance</p>
-          </div>
+      <div className="flex flex-col h-full bg-gray-50 pb-20 overflow-y-auto">
+        {/* Simple Header */}
+        <div className="bg-white p-6 text-center border-b border-gray-100">
+          <h1 className="text-2xl font-bold text-gray-900">Premium Membership</h1>
+          <p className="text-gray-500 text-sm mt-1">Support the ministry & unlock unlimited guidance</p>
         </div>
 
-        <div className="flex-1 overflow-y-auto p-4 space-y-6">
-          {/* Current Status */}
-          <div className="bg-white rounded-xl shadow-lg p-6">
-            <h2 className="text-xl font-bold text-gray-900 mb-4 text-center">Your Spiritual Journey</h2>
-            <div className={`rounded-lg p-4 border-2 ${userTier === 'unlimited' ? 'bg-green-400 border-green-600' : 'bg-blue-400 border-blue-600'}`}>
-              <div className="text-center">
-                <p className={`font-bold text-lg ${userTier === 'unlimited' ? 'text-green-900' : 'text-blue-950'}`}>
-                  Current Status: {userTier === 'unlimited' ? '💎 Premium Member' : '🆓 Free User'}
-                </p>
-                <p className={`text-sm mt-2 ${userTier === 'unlimited' ? 'text-green-900' : 'text-blue-950'}`}>
-                {userTier === 'unlimited' 
-                    ? 'Thank you for supporting our mission! You have unlimited access to spiritual guidance and community.'
-                  : `You've had ${conversationDepth} meaningful conversations. Continue with unlimited spiritual guidance.`
-                }
-              </p>
-              </div>
+        <div className="p-4 max-w-2xl mx-auto w-full space-y-6">
+          {/* Current Status Card */}
+          <div className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm text-gray-500 font-medium">YOUR STATUS</span>
+              <span className={`px-3 py-1 rounded-full text-xs font-bold ${userTier === 'unlimited' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600'}`}>
+                {userTier === 'unlimited' ? 'PREMIUM' : 'FREE PLAN'}
+              </span>
             </div>
+            <p className="text-gray-900 font-medium">
+              {userTier === 'unlimited' 
+                ? 'You have unlimited access to all features.' 
+                : `You have used ${conversationDepth} of 20 free messages.`}
+            </p>
           </div>
 
-          {/* Social Proof Stats */}
-          <div className="bg-gradient-to-br from-blue-700 to-blue-800 rounded-xl shadow-lg p-6 text-white">
-            <h3 className="text-lg font-bold text-center mb-4">Our Growing Community</h3>
-            <div className="grid grid-cols-3 gap-4 text-center">
-              <div>
-                <div className="text-3xl font-bold text-yellow-300">10,000+</div>
-                <div className="text-xs opacity-90 mt-1">People Helped</div>
+          {/* Pricing Options */}
+          {userTier === 'free' && (
+            <div className="bg-white rounded-2xl shadow-lg border border-blue-100 overflow-hidden">
+              <div className="bg-blue-600 p-2 text-center text-white text-xs font-bold tracking-wide">
+                LIMITED TIME OFFER
               </div>
-              <div>
-                <div className="text-3xl font-bold text-yellow-300">5,000+</div>
-                <div className="text-xs opacity-90 mt-1">Shared Prayers</div>
-              </div>
-              <div>
-                <div className="text-3xl font-bold text-yellow-300">24/7</div>
-                <div className="text-xs opacity-90 mt-1">Always Available</div>
-              </div>
-            </div>
-          </div>
+              
+              <div className="p-6">
+                <div className="flex justify-center mb-6">
+                  <div className="bg-gray-100 p-1 rounded-lg flex text-sm font-medium">
+                    <button
+                      onClick={() => setSelectedPlan('monthly')}
+                      className={`px-6 py-2 rounded-md transition-all ${
+                        selectedPlan === 'monthly' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500'
+                      }`}
+                    >
+                      Monthly
+                    </button>
+                    <button
+                      onClick={() => setSelectedPlan('annual')}
+                      className={`px-6 py-2 rounded-md transition-all flex items-center ${
+                        selectedPlan === 'annual' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500'
+                      }`}
+                    >
+                      Annual <span className="ml-1.5 text-[10px] bg-green-100 text-green-700 px-1.5 py-0.5 rounded-full">-33%</span>
+                    </button>
+                  </div>
+                </div>
 
-          {/* Subscription Option */}
-          {userTier === 'free' ? (
-            <div className="bg-white rounded-xl shadow-lg p-6">
-              {/* Urgency Banner */}
-              <div className="bg-gradient-to-r from-red-500 to-orange-500 text-white p-3 rounded-lg mb-4 text-center">
-                <p className="text-sm font-bold">⚡ SPECIAL OFFER: Save up to 33% + 30-Day Money-Back Guarantee!</p>
-              </div>
-              
-              <h3 className="text-xl font-bold text-gray-900 text-center mb-4">Join Premium Today</h3>
-              
-              {/* Plan Selection Toggle */}
-              <div className="flex justify-center mb-6">
-                <div className="bg-gray-300 p-1 rounded-lg inline-flex">
-                  <button
-                    onClick={() => setSelectedPlan('monthly')}
-                    className={`px-6 py-2 rounded-md text-sm font-semibold transition-all ${
-                      selectedPlan === 'monthly' 
-                        ? 'bg-white text-blue-950 shadow-md' 
-                        : 'text-gray-600 hover:text-gray-900'
-                    }`}
-                  >
-                    Monthly
-                  </button>
-                  <button
-                    onClick={() => setSelectedPlan('annual')}
-                    className={`px-6 py-2 rounded-md text-sm font-semibold transition-all relative ${
-                      selectedPlan === 'annual' 
-                        ? 'bg-white text-blue-950 shadow-md' 
-                        : 'text-gray-600 hover:text-gray-900'
-                    }`}
-                  >
-                    Annual
-                    <span className="absolute -top-2 -right-2 bg-green-500 text-white text-xs px-1.5 py-0.5 rounded-full">
-                      Save 17%
+                <div className="text-center mb-8">
+                  <div className="flex items-baseline justify-center gap-1">
+                    <span className="text-4xl font-bold text-gray-900">
+                      {selectedPlan === 'monthly' ? '$4.99' : '$39.99'}
                     </span>
-                  </button>
-                </div>
-              </div>
-              
-              <div className="border-2 border-blue-600 rounded-lg p-6 bg-gradient-to-br from-blue-100 to-white relative">
-                <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-                  <span className="bg-yellow-500 text-blue-950 px-4 py-1 text-xs font-bold rounded-full shadow-lg">
-                    ⭐ MOST POPULAR
-                  </span>
-                </div>
-                <div className="text-center pt-4">
-                  <h3 className="font-bold text-2xl text-gray-900 mb-2">💎 Premium Membership</h3>
-                  
-                  {selectedPlan === 'monthly' ? (
-                    <div>
-                      <div className="text-sm text-gray-600 mb-1">
-                        <span className="line-through">$14.99</span>
-                        <span className="ml-2 text-green-900 font-semibold">33% OFF</span>
-                      </div>
-                      <div className="text-4xl font-bold text-blue-950 mb-2">
-                        $9.99<span className="text-lg text-gray-600">/mo</span>
-                      </div>
-                      <p className="text-xs text-green-900 font-semibold">Start today - Cancel anytime</p>
-                    </div>
-                  ) : (
-                    <div>
-                      <div className="text-sm text-gray-600 mb-1">
-                        <span className="line-through">$119.88</span>
-                        <span className="ml-2 text-green-900 font-semibold">SAVE $20.88</span>
-                      </div>
-                      <div className="text-4xl font-bold text-blue-950 mb-2">
-                        $99<span className="text-lg text-gray-600">/year</span>
-                      </div>
-                      <p className="text-xs text-green-900 font-semibold">Just $8.25/month - Best Value!</p>
-                    </div>
+                    <span className="text-gray-500">
+                      /{selectedPlan === 'monthly' ? 'mo' : 'year'}
+                    </span>
+                  </div>
+                  {selectedPlan === 'annual' && (
+                    <p className="text-green-600 text-sm mt-2 font-medium">
+                      Like paying just $3.33/month
+                    </p>
                   )}
-                  
-                  {/* Benefits List */}
-                  <div className="text-left space-y-3 mb-6">
-                    <div className="flex items-start">
-                      <span className="text-green-900 mr-3 text-xl font-bold">✓</span>
-                      <div>
-                        <p className="font-semibold text-gray-900">Unlimited Biblical guidance 24/7</p>
-                        <p className="text-xs text-gray-600">Scripture-based wisdom whenever you need it</p>
+                </div>
+
+                <ul className="space-y-4 mb-8">
+                  {[
+                    'Unlimited 24/7 Spiritual Guidance',
+                    'Access Full Prayer Library',
+                    'Save Your Spiritual Journey',
+                    'Support the Ministry'
+                  ].map((feature, i) => (
+                    <li key={i} className="flex items-center gap-3 text-gray-700 text-sm">
+                      <div className="w-5 h-5 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
+                        <span className="text-green-600 text-xs">✓</span>
                       </div>
-                    </div>
-                    <div className="flex items-start">
-                      <span className="text-green-900 mr-3 text-xl font-bold">✓</span>
-                      <div>
-                        <p className="font-semibold text-gray-900">Access all community prayers</p>
-                        <p className="text-xs text-gray-600">Find strength in shared faith journeys</p>
-                      </div>
-                    </div>
-                    <div className="flex items-start">
-                      <span className="text-green-900 mr-3 text-xl font-bold">✓</span>
-                      <div>
-                        <p className="font-semibold text-gray-900">Your spiritual journey preserved</p>
-                        <p className="text-xs text-gray-600">Track your growth in faith over time</p>
-                      </div>
-                    </div>
-                    <div className="flex items-start">
-                      <span className="text-green-900 mr-3 text-xl font-bold">✓</span>
-                      <div>
-                        <p className="font-semibold text-gray-900">Priority spiritual support</p>
-                        <p className="text-xs text-gray-600">We're here when you need us most</p>
-                      </div>
-                    </div>
-                    <div className="flex items-start">
-                      <span className="text-green-900 mr-3 text-xl font-bold">✓</span>
-                      <div>
-                        <p className="font-semibold text-gray-900">Empower faith through technology</p>
-                        <p className="text-xs text-gray-600">Help us serve thousands seeking God's truth</p>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <button
-                    onClick={() => handleUpgrade()}
-                    className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white py-4 rounded-lg font-bold text-lg transition-all duration-200 shadow-lg transform hover:scale-105"
-                  >
-                    {selectedPlan === 'monthly' 
-                      ? 'Join Premium - $9.99/mo' 
-                      : 'Get Best Value - $99/year'
-                    }
-                  </button>
-                  
-                  <div className="mt-4 space-y-2 text-center">
-                    <p className="text-xs text-gray-600 font-semibold">
-                      ✓ Instant Access • ✓ Cancel Anytime
-                    </p>
-                    <p className="text-xs text-gray-600 font-semibold">
-                      ✓ 30-Day Money-Back Guarantee
-                    </p>
-                    <p className="text-xs text-gray-600">
-                      🔒 Secure Stripe payment • No risk
-                    </p>
-                </div>
-                </div>
-              </div>
-              
-              {/* Social Proof - Faith-Focused Testimonials */}
-              <div className="mt-6 bg-gradient-to-br from-blue-100 to-white rounded-lg p-4 border border-blue-200">
-                <h4 className="font-bold text-sm text-blue-950 mb-3 text-center">✝️ What Believers Say:</h4>
-                <div className="space-y-3">
-                  <div className="bg-white p-3 rounded-lg shadow-sm border border-gray-200">
-                    <div className="flex items-center mb-2">
-                      <div className="text-yellow-400 text-sm">★★★★★</div>
-                      <span className="ml-2 text-xs text-gray-600">Sarah M., Texas</span>
-                    </div>
-                    <p className="text-xs text-gray-700 italic">"This tool helped me examine my heart before God. The Scripture guidance brought me closer to understanding His grace and forgiveness."</p>
-                  </div>
-                  <div className="bg-white p-3 rounded-lg shadow-sm border border-gray-200">
-                    <div className="flex items-center mb-2">
-                      <div className="text-yellow-400 text-sm">★★★★★</div>
-                      <span className="ml-2 text-xs text-gray-600">John D., California</span>
-                    </div>
-                    <p className="text-xs text-gray-700 italic">"Reading others' prayers showed me I'm not alone in my struggles. God is using technology to build His community. Powerful!"</p>
-                  </div>
-                  <div className="bg-white p-3 rounded-lg shadow-sm border border-gray-200">
-                    <div className="flex items-center mb-2">
-                      <div className="text-yellow-400 text-sm">★★★★★</div>
-                      <span className="ml-2 text-xs text-gray-600">Maria K., Florida</span>
-                    </div>
-                    <p className="text-xs text-gray-700 italic">"Having 24/7 access to Biblical wisdom has transformed my prayer life. I can seek God's guidance anytime, anywhere."</p>
-                  </div>
-                </div>
-              </div>
-              
-              {/* Community Growth - Positive Framing */}
-              <div className="mt-4 bg-blue-400 border-l-4 border-blue-600 p-3 rounded-lg">
-                <p className="text-xs text-blue-950">
-                  <strong>🙏 Join 10,000+ believers</strong> growing in faith through Biblical guidance
-                </p>
-              </div>
-            </div>
-          ) : (
-            /* Premium Member Benefits */
-            <div className="bg-white rounded-xl shadow-lg p-6">
-              <h3 className="text-xl font-bold text-gray-900 text-center mb-4">Your Premium Benefits</h3>
-              
-              <div className="space-y-3 text-sm">
-                <div className="flex items-center p-3 bg-green-400 rounded-lg border border-green-600">
-                  <span className="text-green-900 mr-3 text-xl">✓</span>
-                  <span className="font-medium text-gray-700">Unlimited Biblical guidance</span>
-                </div>
-                <div className="flex items-center p-3 bg-green-400 rounded-lg border border-green-600">
-                  <span className="text-green-900 mr-3 text-xl">✓</span>
-                  <span className="font-medium text-gray-700">All shared prayers visible</span>
-                </div>
-                <div className="flex items-center p-3 bg-green-400 rounded-lg border border-green-600">
-                  <span className="text-green-900 mr-3 text-xl">✓</span>
-                  <span className="font-medium text-gray-700">Conversation history saved</span>
-                </div>
-                <div className="flex items-center p-3 bg-green-400 rounded-lg border border-green-600">
-                  <span className="text-green-900 mr-3 text-xl">✓</span>
-                  <span className="font-medium text-gray-700">Priority support</span>
-                </div>
-              </div>
-              
-              <div className="mt-6 text-center">
+                      {feature}
+                    </li>
+                  ))}
+                </ul>
+
                 <button
-                  onClick={() => handleSubscriptionManagement()}
-                  className="w-full bg-blue-600 hover:bg-blue-700 text-white px-4 py-3 rounded-lg font-bold transition-all duration-200"
+                  onClick={() => handleUpgrade()}
+                  className="w-full bg-blue-600 hover:bg-blue-700 text-white py-4 rounded-xl font-bold text-lg shadow-lg transition-all transform hover:scale-[1.02]"
                 >
-                  Manage Membership
+                  {selectedPlan === 'monthly' ? 'Start Monthly Plan' : 'Get Annual Access'}
                 </button>
+                
+                <p className="text-center text-xs text-gray-400 mt-4">
+                  Secure payment via Stripe • Cancel anytime
+                </p>
               </div>
             </div>
           )}
 
-          {/* Ministry Info */}
-          <div className="bg-white rounded-xl shadow-lg p-6">
-            <h2 className="text-xl font-bold text-gray-900 mb-4 text-center">Our Christian Ministry</h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="text-center">
-                <div className="text-4xl mb-2">✝️</div>
-                <h3 className="font-semibold text-gray-700 mb-1">Spiritual Guidance</h3>
-                <p className="text-xs text-gray-600">Based on Christian tradition and Scripture</p>
-              </div>
-              <div className="text-center">
-                <div className="text-4xl mb-2">🌍</div>
-                <h3 className="font-semibold text-gray-700 mb-1">24/7 Service</h3>
-                <p className="text-xs text-gray-600">Always available for spiritual support</p>
-              </div>
-              <div className="text-center">
-                <div className="text-4xl mb-2">🔒</div>
-                <h3 className="font-semibold text-gray-700 mb-1">Sacred Privacy</h3>
-                <p className="text-xs text-gray-600">Complete anonymity and security</p>
-              </div>
+          {/* FAQ / Reassurance */}
+          <div className="space-y-4">
+            <div className="bg-white p-4 rounded-xl border border-gray-100">
+              <h3 className="font-semibold text-gray-900 mb-1">Is this anonymous?</h3>
+              <p className="text-sm text-gray-600">Yes, 100%. We don't require a login to start, and your conversations are private.</p>
+            </div>
+            <div className="bg-white p-4 rounded-xl border border-gray-100">
+              <h3 className="font-semibold text-gray-900 mb-1">Why charge a fee?</h3>
+              <p className="text-sm text-gray-600">The fee covers server costs and AI technology to keep this ministry running 24/7 for everyone.</p>
             </div>
           </div>
-
-          {/* FAQ/Trust Elements */}
-          <div className="bg-blue-300 rounded-xl p-6 border border-blue-500">
-            <h3 className="font-bold text-gray-900 mb-3 text-center">Why Premium?</h3>
-            <div className="space-y-3 text-sm text-gray-700">
-              <div>
-                <p className="font-semibold mb-1">💰 Transparent Pricing</p>
-                <p className="text-xs text-gray-600">$9.99/mo, cancel anytime. No hidden fees.</p>
-              </div>
-              <div>
-                <p className="font-semibold mb-1">🙏 Support the Mission</p>
-                <p className="text-xs text-gray-600">Your membership helps us continue providing spiritual support to thousands of people.</p>
-              </div>
-              <div>
-                <p className="font-semibold mb-1">🔐 Secure Payment</p>
-                <p className="text-xs text-gray-600">We use Stripe's secure payment system. Your data is protected.</p>
-              </div>
-            </div>
-          </div>
-
-          {/* Back Button */}
-          <div className="space-y-3 px-4">
-            <button
-              onClick={() => setCurrentView('confess')}
-              className="w-full text-gray-600 py-3 rounded-lg font-semibold hover:bg-gray-300 transition-colors border border-gray-500"
-            >
-              Back to Spiritual Guidance
+          
+          <div className="text-center pt-4">
+            <button onClick={() => setCurrentView('confess')} className="text-gray-500 text-sm hover:text-gray-700">
+              Return to Chat
             </button>
-          </div>
-
-          <div className="text-center text-xs text-gray-600 pt-4 px-4">
-            Questions or support? Email us: <a href="mailto:support@myconfessions.org" className="underline text-blue-950">support@myconfessions.org</a>
           </div>
         </div>
       </div>
@@ -1054,167 +800,51 @@ const handleSharePrayer = (confession) => {
   // Value-first upgrade modal component
   const UpgradeModal = () => (
     showUpgradeModal && (
-      <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 p-4">
-        <div className="bg-white rounded-xl max-w-md w-full p-6 max-h-[90vh] overflow-y-auto relative">
-          {/* Close button */}
+      <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[60] p-4 animate-fade-in">
+        <div className="bg-white rounded-2xl max-w-sm w-full p-6 shadow-2xl relative overflow-hidden">
+          
+          <div className="absolute top-0 left-0 w-full h-1 bg-blue-500"></div>
+          
           <button
             onClick={() => setShowUpgradeModal(false)}
-            className="absolute top-4 right-4 text-gray-500 hover:text-gray-600 text-2xl font-bold"
+            className="absolute top-4 right-4 text-gray-400 hover:text-gray-600"
           >
-            ×
+            ✕
           </button>
           
-          {/* Urgency Badge */}
-          <div className="bg-gradient-to-r from-red-600 to-orange-600 text-white p-2 rounded-lg mb-4 text-center">
-            <p className="text-xs font-bold">⚡ SPECIAL OFFER: Save up to 33% + Risk-Free Guarantee!</p>
-          </div>
-          
-          <div className="text-center mb-4">
-            <div className="text-5xl mb-3">💎</div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">
-              Continue Your Spiritual Journey
+          <div className="text-center pt-2 pb-6">
+            <div className="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-4">
+              <span className="text-3xl">💎</span>
+            </div>
+            
+            <h2 className="text-xl font-bold text-gray-900 mb-2">
+              Continue Your Journey
             </h2>
-            <p className="text-gray-600 mb-3 leading-relaxed text-sm">
-              I sense you're seeking deeper guidance. Many souls like you find that unlimited spiritual support helps them grow closer to God.
+            
+            <p className="text-gray-600 text-sm mb-6">
+              You've reached the free limit. Unlock unlimited spiritual guidance for less than the price of a coffee.
             </p>
-            <div className="bg-blue-300 rounded-lg p-3 border border-blue-500 mb-4">
-              <p className="text-sm text-blue-950">
-                You've had <strong>{conversationDepth} meaningful conversations</strong>
-              </p>
-              {/* Mini Progress Bar */}
-              <div className="w-full bg-blue-300 rounded-full h-2 mt-2">
-                <div 
-                  className="bg-blue-600 h-2 rounded-full transition-all"
-                  style={{ width: `${Math.min((conversationDepth / 4) * 100, 100)}%` }}
-                ></div>
-              </div>
-            </div>
-          </div>
-          
-          {/* Plan Selection in Modal */}
-          <div className="flex justify-center mb-4">
-            <div className="bg-gray-300 p-1 rounded-lg inline-flex text-sm">
-              <button
-                onClick={() => setSelectedPlan('monthly')}
-                className={`px-4 py-1.5 rounded-md font-semibold transition-all ${
-                  selectedPlan === 'monthly' 
-                    ? 'bg-white text-blue-950 shadow-md' 
-                    : 'text-gray-600'
-                }`}
-              >
-                Monthly
-              </button>
-              <button
-                onClick={() => setSelectedPlan('annual')}
-                className={`px-4 py-1.5 rounded-md font-semibold transition-all relative ${
-                  selectedPlan === 'annual' 
-                    ? 'bg-white text-blue-950 shadow-md' 
-                    : 'text-gray-600'
-                }`}
-              >
-                Annual
-                <span className="absolute -top-1 -right-1 bg-green-500 text-white text-xs px-1 py-0.5 rounded-full">
-                  -17%
-                </span>
-              </button>
-            </div>
-          </div>
-          
-          <div className="space-y-4">
-            {/* Pricing Card */}
-            <div className="border-2 border-blue-600 rounded-lg p-4 bg-gradient-to-br from-blue-100 to-white relative">
-              <div className="absolute -top-2 left-1/2 transform -translate-x-1/2">
-                <span className="bg-yellow-500 text-blue-950 px-3 py-1 text-xs font-bold rounded-full shadow-lg">⭐ MOST POPULAR</span>
-              </div>
-              <div className="text-center pt-3">
-                <h3 className="font-bold text-lg text-gray-900 mb-1">💎 Premium Membership</h3>
-                
-                {selectedPlan === 'monthly' ? (
-                  <div className="mb-3">
-                    <div className="text-xs text-gray-600">
-                      <span className="line-through">$14.99</span>
-                      <span className="ml-2 text-green-900 font-semibold">33% OFF</span>
-                    </div>
-                    <div className="text-3xl font-bold text-blue-950">
-                      $9.99<span className="text-base text-gray-600">/mo</span>
-                    </div>
-                    <p className="text-xs text-green-900 font-semibold">Instant access - Cancel anytime</p>
-                  </div>
-                ) : (
-                  <div className="mb-3">
-                    <div className="text-xs text-gray-600">
-                      <span className="line-through">$119.88</span>
-                      <span className="ml-2 text-green-900 font-semibold">SAVE $20.88</span>
-                    </div>
-                    <div className="text-3xl font-bold text-blue-950">
-                      $99<span className="text-base text-gray-600">/year</span>
-                    </div>
-                    <p className="text-xs text-green-900 font-semibold">Just $8.25/mo - Best Value!</p>
-                  </div>
-                )}
-                
-                {/* Benefits - Compact */}
-                <div className="text-left space-y-1.5 mb-4">
-                  <div className="flex items-center text-xs">
-                    <span className="text-green-900 mr-2">✓</span>
-                    <span className="font-medium text-gray-700">Unlimited Biblical guidance</span>
-                  </div>
-                  <div className="flex items-center text-xs">
-                    <span className="text-green-900 mr-2">✓</span>
-                    <span className="font-medium text-gray-700">View all shared prayers</span>
-                  </div>
-                  <div className="flex items-center text-xs">
-                    <span className="text-green-900 mr-2">✓</span>
-                    <span className="font-medium text-gray-700">Conversation history</span>
-                  </div>
-                  <div className="flex items-center text-xs">
-                    <span className="text-green-900 mr-2">✓</span>
-                    <span className="font-medium text-gray-700">Priority support</span>
-                  </div>
-                </div>
-                
-                <button
-                  onClick={() => handleUpgrade()}
-                  className="w-full bg-gradient-to-r from-blue-700 to-blue-800 hover:from-blue-800 hover:to-blue-900 text-white py-3 rounded-lg font-bold text-base transition-all duration-200 shadow-lg transform hover:scale-105"
-                >
-                  {selectedPlan === 'monthly' 
-                    ? 'Join Now - $9.99/mo' 
-                    : 'Get Best Value - $99/yr'
-                  }
-                </button>
-                
-                <div className="mt-3 space-y-1 text-center">
-                  <p className="text-xs text-gray-600 font-semibold">
-                    ✓ Instant access • ✓ 30-day money-back
-                  </p>
-                  <p className="text-xs text-gray-600">
-                    🔒 Secure payment • Cancel anytime
-                  </p>
-                </div>
-              </div>
-            </div>
             
-            {/* Mini Testimonial */}
-            <div className="bg-gray-300 p-3 rounded-lg border border-gray-500">
-              <div className="flex items-center mb-1">
-                <div className="text-yellow-400 text-xs">★★★★★</div>
-                <span className="ml-2 text-xs text-gray-600">Sarah M.</span>
+            <div className="bg-blue-50 rounded-xl p-4 mb-6 border border-blue-100">
+              <div className="flex justify-between items-baseline mb-1">
+                <span className="text-lg font-bold text-blue-900">$4.99</span>
+                <span className="text-sm text-blue-700">/ month</span>
               </div>
-              <p className="text-xs text-gray-700 italic">"This has been life-changing. Worth every penny!"</p>
-            </div>
-            
-            {/* Scarcity */}
-            <div className="bg-red-300 border-l-4 border-red-500 p-2 rounded">
-              <p className="text-xs text-red-800">
-                <strong>🔥 346 people</strong> joined in last 24h
-              </p>
+              <p className="text-xs text-blue-600 text-left">Cancel anytime. Secure payment.</p>
             </div>
             
             <button
-              onClick={() => setShowUpgradeModal(false)}
-              className="w-full text-gray-600 py-2 text-sm hover:text-gray-700 transition-colors"
+              onClick={() => handleUpgrade()}
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3.5 rounded-xl font-bold shadow-lg transition-all"
             >
-              Maybe Later
+              Upgrade Now
+            </button>
+            
+            <button
+              onClick={() => setShowUpgradeModal(false)}
+              className="mt-4 text-sm text-gray-400 hover:text-gray-600"
+            >
+              Not right now
             </button>
           </div>
         </div>
@@ -1225,13 +855,10 @@ const handleSharePrayer = (confession) => {
   // Login modal component
   const LoginModal = () => (
     showLoginModal && (
-      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-        <div className="bg-white rounded-xl max-w-md w-full p-6">
-          <div className="text-center mb-6">
-            <div className="text-4xl mb-4">🔐</div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">Welcome Back</h2>
-            <p className="text-gray-700">Sign in to manage your spiritual journey</p>
-          </div>
+      <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-[60] p-4">
+        <div className="bg-white rounded-2xl max-w-md w-full p-8 shadow-xl">
+          <h2 className="text-2xl font-bold text-gray-900 mb-2 text-center">Welcome Back</h2>
+          <p className="text-gray-500 text-center mb-8">Sign in to continue your journey</p>
           
           <form onSubmit={(e) => {
             e.preventDefault();
@@ -1239,53 +866,54 @@ const handleSharePrayer = (confession) => {
             handleLogin(formData.get('email'), formData.get('password'));
           }} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+              <label className="block text-xs font-semibold text-gray-700 mb-1 uppercase tracking-wide">Email</label>
               <input
                 type="email"
                 name="email"
                 required
-                className="w-full px-3 py-2 border border-gray-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="your@email.com"
+                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all outline-none"
+                placeholder="name@example.com"
               />
             </div>
             
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
+              <label className="block text-xs font-semibold text-gray-700 mb-1 uppercase tracking-wide">Password</label>
               <input
                 type="password"
                 name="password"
                 required
-                className="w-full px-3 py-2 border border-gray-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Your password"
+                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all outline-none"
+                placeholder="••••••••"
               />
             </div>
             
             <button
               type="submit"
-              className="w-full bg-blue-700 hover:bg-blue-600 text-white py-3 rounded-lg font-bold"
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3.5 rounded-xl font-bold shadow-md transition-all mt-2"
             >
               Sign In
             </button>
           </form>
           
-          <div className="mt-4 text-center">
+          <div className="mt-6 text-center space-y-3">
             <button
               onClick={() => {
                 setShowLoginModal(false);
                 setShowRegisterModal(true);
               }}
-              className="text-blue-950 hover:text-blue-950 text-sm font-medium"
+              className="text-blue-600 hover:text-blue-700 text-sm font-medium"
             >
-              Don't have an account? Sign up
+              Create an account
             </button>
+            <div>
+              <button
+                onClick={() => setShowLoginModal(false)}
+                className="text-gray-400 hover:text-gray-600 text-sm"
+              >
+                Cancel
+              </button>
+            </div>
           </div>
-          
-          <button
-            onClick={() => setShowLoginModal(false)}
-            className="w-full text-gray-600 py-2 rounded-lg font-semibold hover:bg-gray-300 transition-colors mt-4"
-          >
-            Cancel
-          </button>
         </div>
       </div>
     )
@@ -1294,13 +922,10 @@ const handleSharePrayer = (confession) => {
   // Register modal component
   const RegisterModal = () => (
     showRegisterModal && (
-      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-        <div className="bg-white rounded-xl max-w-md w-full p-6">
-          <div className="text-center mb-6">
-            <div className="text-4xl mb-4">✨</div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">Create Account</h2>
-            <p className="text-gray-700">Join our spiritual community</p>
-          </div>
+      <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-[60] p-4">
+        <div className="bg-white rounded-2xl max-w-md w-full p-8 shadow-xl">
+          <h2 className="text-2xl font-bold text-gray-900 mb-2 text-center">Create Account</h2>
+          <p className="text-gray-500 text-center mb-8">Join our supportive community</p>
           
           <form onSubmit={(e) => {
             e.preventDefault();
@@ -1308,77 +933,86 @@ const handleSharePrayer = (confession) => {
             handleRegister(formData.get('email'), formData.get('password'), formData.get('name'));
           }} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
+              <label className="block text-xs font-semibold text-gray-700 mb-1 uppercase tracking-wide">Name</label>
               <input
                 type="text"
                 name="name"
                 required
-                className="w-full px-3 py-2 border border-gray-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all outline-none"
                 placeholder="Your name"
               />
             </div>
             
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+              <label className="block text-xs font-semibold text-gray-700 mb-1 uppercase tracking-wide">Email</label>
               <input
                 type="email"
                 name="email"
                 required
-                className="w-full px-3 py-2 border border-gray-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="your@email.com"
+                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all outline-none"
+                placeholder="name@example.com"
               />
             </div>
             
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
+              <label className="block text-xs font-semibold text-gray-700 mb-1 uppercase tracking-wide">Password</label>
               <input
                 type="password"
                 name="password"
                 required
-                className="w-full px-3 py-2 border border-gray-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Create a password"
+                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all outline-none"
+                placeholder="Create password"
               />
             </div>
             
             <button
               type="submit"
-              className="w-full bg-blue-700 hover:bg-blue-600 text-white py-3 rounded-lg font-bold"
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3.5 rounded-xl font-bold shadow-md transition-all mt-2"
             >
               Create Account
             </button>
           </form>
           
-          <div className="mt-4 text-center">
+          <div className="mt-6 text-center space-y-3">
             <button
               onClick={() => {
                 setShowRegisterModal(false);
                 setShowLoginModal(true);
               }}
-              className="text-blue-950 hover:text-blue-950 text-sm font-medium"
+              className="text-blue-600 hover:text-blue-700 text-sm font-medium"
             >
               Already have an account? Sign in
             </button>
+            <div>
+              <button
+                onClick={() => setShowRegisterModal(false)}
+                className="text-gray-400 hover:text-gray-600 text-sm"
+              >
+                Cancel
+              </button>
+            </div>
           </div>
-          
-          <button
-            onClick={() => setShowRegisterModal(false)}
-            className="w-full text-gray-600 py-2 rounded-lg font-semibold hover:bg-gray-300 transition-colors mt-4"
-          >
-            Cancel
-          </button>
         </div>
       </div>
     )
   );
 
   const handleUpgrade = async () => {
+    // Track upgrade button click
+    track('upgrade_button_clicked', { 
+      plan: selectedPlan,
+      source: showUpgradeModal ? 'modal' : 'page',
+      conversation_depth: conversationDepth
+    });
+    
     try {
       const currentSessionId = isLoggedIn ? userSessionId : sessionId;
       const response = await fetch('/api/stripe/create-checkout-session', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          session_id: currentSessionId
+          session_id: currentSessionId,
+          plan: selectedPlan // 'monthly' or 'annual'
         })
       });
       
@@ -1414,6 +1048,8 @@ const handleSharePrayer = (confession) => {
   };
 
   const handleRegister = async (email, password, name) => {
+    track('register_attempt');
+    
     try {
       const response = await fetch('/api/user/register', {
         method: 'POST',
@@ -1427,6 +1063,7 @@ const handleSharePrayer = (confession) => {
       
       const data = await response.json();
       if (data.success) {
+        track('register_success', { tier: data.tier });
         setUserEmail(email);
         setUserName(name);
         setIsLoggedIn(true);
@@ -1448,6 +1085,8 @@ const handleSharePrayer = (confession) => {
   };
 
   const handleLogin = async (email, password) => {
+    track('login_attempt');
+    
     try {
       const response = await fetch('/api/user/login', {
         method: 'POST',
@@ -1460,6 +1099,7 @@ const handleSharePrayer = (confession) => {
       
       const data = await response.json();
       if (data.success) {
+        track('login_success', { tier: data.tier });
         setUserEmail(email);
         setUserName(data.name || '');
         setIsLoggedIn(true);
@@ -1495,92 +1135,139 @@ const handleSharePrayer = (confession) => {
   };
 
   const renderNavigation = () => (
-    <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-500 md:hidden shadow-lg z-40">
-      <div className="flex">
+    <div className="mobile-navigation md:hidden shadow-lg z-40 bg-white border-t border-gray-100">
+      <div className="flex h-full">
           <button
           onClick={() => setCurrentView('confess')}
           className={`flex-1 py-3 text-center transition-colors ${
-            currentView === 'confess' || currentView === 'review' || currentView === 'confession' ? 'text-blue-950 border-t-2 border-blue-700' : 'text-gray-600 hover:text-gray-800'
+            currentView === 'confess' || currentView === 'review' || currentView === 'confession' ? 'text-blue-600' : 'text-gray-400 hover:text-gray-600'
           }`}
         >
-          <div className="text-lg mb-1">✝️</div>
-          <div className="text-xs font-medium">Confess</div>
+          <div className="text-xl mb-1">✝️</div>
+          <div className="text-[10px] font-bold uppercase tracking-wide">Chat</div>
           </button>
               <button
           onClick={() => setCurrentView('discover')}
           className={`flex-1 py-3 text-center transition-colors relative ${
-            currentView === 'discover' ? 'text-blue-950 border-t-2 border-blue-700' : 'text-gray-600 hover:text-gray-800'
+            currentView === 'discover' ? 'text-blue-600' : 'text-gray-400 hover:text-gray-600'
           }`}
         >
           {userTier !== 'unlimited' && (
-            <div className="absolute top-0 right-1/4 bg-yellow-400 text-xs px-1 rounded-full">🔒</div>
+            <div className="absolute top-2 right-[25%] bg-yellow-400 w-2 h-2 rounded-full"></div>
           )}
-          <div className="text-lg mb-1">🔍</div>
-          <div className="text-xs font-medium">Prayers</div>
+          <div className="text-xl mb-1">🌍</div>
+          <div className="text-[10px] font-bold uppercase tracking-wide">Community</div>
               </button>
                 <button
             onClick={() => setCurrentView('subscription')}
           className={`flex-1 py-3 text-center transition-colors ${
-            currentView === 'subscription' ? 'text-blue-950 border-t-2 border-blue-700' : 'text-gray-600 hover:text-blue-950'
+            currentView === 'subscription' ? 'text-blue-600' : 'text-gray-400 hover:text-blue-600'
           }`}
         >
-          <div className="text-lg mb-1">💎</div>
-          <div className="text-xs font-medium">Premium</div>
+          <div className="text-xl mb-1">💎</div>
+          <div className="text-[10px] font-bold uppercase tracking-wide">Premium</div>
                 </button>
         </div>
       </div>
     );
 
     return (
-    <div className="h-screen bg-gray-300 flex flex-col">
+    <div className="h-screen bg-gray-50 flex flex-col overflow-hidden relative font-sans">
+      {/* Toast Notification */}
+      {showToast && (
+        <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-[70] animate-fade-in w-[90%] max-w-md">
+          <div className="bg-blue-600 text-white px-4 py-3 rounded-xl shadow-xl flex items-start space-x-3">
+            <div className="text-xl mt-0.5">💙</div>
+            <div className="flex-1">
+              <p className="text-sm font-medium leading-snug">{toastMessage}</p>
+            </div>
+            <button
+              onClick={() => setShowToast(false)}
+              className="text-white/80 hover:text-white"
+            >
+              ✕
+            </button>
+          </div>
+        </div>
+      )}
+      
       {/* Desktop Navigation */}
-      <div className="hidden md:block bg-white border-b border-gray-500">
+      <div className="hidden md:block bg-white border-b border-gray-100 shadow-sm z-20">
         <div className="max-w-4xl mx-auto px-4 py-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-8">
-              <h1 className="text-xl font-bold text-gray-900">✝️ My Confessions</h1>
-              <button
-                onClick={() => setCurrentView('confess')}
-                className={`px-3 py-2 rounded-lg ${
-                  currentView === 'confess' || currentView === 'review' || currentView === 'confession' ? 'bg-blue-300 text-blue-950' : 'text-gray-700 hover:text-gray-900'
-                }`}
-              >
-                Confess
-              </button>
+              <h1 className="text-xl font-bold text-blue-900 flex items-center gap-2">
+                <span>✝️</span> My Confessions
+              </h1>
+              <div className="flex bg-gray-50 p-1 rounded-lg">
                 <button
-                onClick={() => setCurrentView('discover')}
-                className={`px-3 py-2 rounded-lg relative ${
-                  currentView === 'discover' ? 'bg-blue-300 text-blue-950' : 'text-gray-700 hover:text-gray-900'
-                }`}
-              >
-                {userTier !== 'unlimited' && (
-                  <span className="absolute -top-1 -right-1 bg-yellow-400 text-xs px-1.5 py-0.5 rounded-full">🔒</span>
-                )}
-                Shared Prayers
+                  onClick={() => setCurrentView('confess')}
+                  className={`px-4 py-1.5 rounded-md text-sm font-medium transition-all ${
+                    currentView === 'confess' ? 'bg-white text-blue-900 shadow-sm' : 'text-gray-500 hover:text-gray-900'
+                  }`}
+                >
+                  Chat
                 </button>
                 <button
-                onClick={() => setCurrentView('subscription')}
-                className={`px-3 py-2 rounded-lg ${
-                  currentView === 'subscription' ? 'bg-blue-300 text-blue-950' : 'text-gray-700 hover:text-blue-950'
-                }`}
-              >
-                💎 Premium
+                  onClick={() => setCurrentView('discover')}
+                  className={`px-4 py-1.5 rounded-md text-sm font-medium transition-all ${
+                    currentView === 'discover' ? 'bg-white text-blue-900 shadow-sm' : 'text-gray-500 hover:text-gray-900'
+                  }`}
+                >
+                  Community
+                </button>
+                <button
+                  onClick={() => setCurrentView('subscription')}
+                  className={`px-4 py-1.5 rounded-md text-sm font-medium transition-all ${
+                    currentView === 'subscription' ? 'bg-white text-blue-900 shadow-sm' : 'text-gray-500 hover:text-gray-900'
+                  }`}
+                >
+                  Premium
                 </button>
               </div>
-            {userTier !== 'unlimited' && (
-            <button
-              onClick={() => setCurrentView('subscription')}
-                className="bg-blue-700 hover:bg-blue-600 text-white px-4 py-2 rounded-lg font-semibold transition-all duration-200 shadow-md"
-            >
-                💎 Join Premium
-            </button>
-            )}
+            </div>
+            
+            <div className="flex items-center gap-4">
+              {userTier !== 'unlimited' && (
+                <button
+                  onClick={() => setCurrentView('subscription')}
+                  className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-full text-sm font-bold transition-all shadow-sm hover:shadow-md"
+                >
+                  Unlock Premium - $4.99
+                </button>
+              )}
+              
+              {isLoggedIn ? (
+                <div className="flex items-center gap-3">
+                  <span className="text-sm text-gray-600">{userName}</span>
+                  <button 
+                    onClick={() => {
+                      setIsLoggedIn(false);
+                      setUserSessionId('');
+                      setMessages([]);
+                      // Reload anonymous session
+                      window.location.reload();
+                    }}
+                    className="text-xs text-gray-400 hover:text-gray-600"
+                  >
+                    Sign Out
+                  </button>
+                </div>
+              ) : (
+                <button 
+                  onClick={() => setShowLoginModal(true)}
+                  className="text-sm font-medium text-gray-600 hover:text-blue-600"
+                >
+                  Sign In
+                </button>
+              )}
+            </div>
           </div>
         </div>
-    </div>
+      </div>
 
       {/* Main Content */}
-      <div className="flex-1 overflow-hidden">
+      <div className="flex-1 overflow-hidden relative">
         {currentView === 'confess' && renderConfess()}
         {currentView === 'review' && renderReview()}
         {currentView === 'confession' && renderConfession()}
@@ -1589,7 +1276,9 @@ const handleSharePrayer = (confession) => {
       </div>
 
       {/* Mobile Navigation */}
-      {renderNavigation()}
+      <div className="md:hidden">
+        {renderNavigation()}
+      </div>
       
       {/* Value-first upgrade modal */}
       <UpgradeModal />

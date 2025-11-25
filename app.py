@@ -11,16 +11,697 @@ from flask import Flask, request, jsonify, render_template
 from flask_cors import CORS
 from dotenv import load_dotenv
 import stripe
+from sendgrid import SendGridAPIClient
+from sendgrid.helpers.mail import Mail
 
-# Load environment variables from .env file
+# Load environment variables from .env file (for local development)
 load_dotenv()
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+# Load secrets from Google Cloud Secret Manager (for production)
+def load_secret(secret_name):
+    """Load a secret from Google Cloud Secret Manager or fall back to environment variable."""
+    # First try environment variable (local development with .env)
+    env_value = os.getenv(secret_name.upper().replace('-', '_'))
+    if env_value:
+        return env_value
+    
+    # Try Google Cloud Secret Manager (production)
+    try:
+        from google.cloud import secretmanager
+        client = secretmanager.SecretManagerServiceClient()
+        project_id = os.getenv('GOOGLE_CLOUD_PROJECT', 'confessiones-c6ca5')
+        secret_path = f"projects/{project_id}/secrets/{secret_name}/versions/latest"
+        response = client.access_secret_version(request={"name": secret_path})
+        secret_value = response.payload.data.decode('UTF-8')
+        logger.info(f"Loaded secret '{secret_name}' from Secret Manager")
+        return secret_value
+    except Exception as e:
+        logger.warning(f"Could not load secret '{secret_name}' from Secret Manager: {e}")
+        return None
+
+# Load secrets (try Secret Manager first, fall back to environment variables)
+if not os.getenv('OPENAI_API_KEY'):
+    openai_key = load_secret('openai-api-key')
+    if openai_key:
+        os.environ['OPENAI_API_KEY'] = openai_key
+
+if not os.getenv('STRIPE_SECRET_KEY'):
+    stripe_key = load_secret('stripe-secret-key')
+    if stripe_key:
+        os.environ['STRIPE_SECRET_KEY'] = stripe_key
+
+if not os.getenv('STRIPE_PUBLISHABLE_KEY'):
+    stripe_pub_key = load_secret('stripe-publishable-key')
+    if stripe_pub_key:
+        os.environ['STRIPE_PUBLISHABLE_KEY'] = stripe_pub_key
+
+if not os.getenv('STRIPE_PRICE_ID_UNLIMITED'):
+    stripe_price = load_secret('stripe-price-id-unlimited')
+    if stripe_price:
+        os.environ['STRIPE_PRICE_ID_UNLIMITED'] = stripe_price
+
+if not os.getenv('FIREBASE_API_KEY'):
+    firebase_key = load_secret('firebase-api-key')
+    if firebase_key:
+        os.environ['FIREBASE_API_KEY'] = firebase_key
+
+if not os.getenv('STRIPE_PRICE_ID_ANNUAL'):
+    stripe_annual = load_secret('stripe-price-id-annual')
+    if stripe_annual:
+        os.environ['STRIPE_PRICE_ID_ANNUAL'] = stripe_annual
+
+if not os.getenv('SENDGRID_API_KEY'):
+    sendgrid_key = load_secret('sendgrid-api-key')
+    if sendgrid_key:
+        os.environ['SENDGRID_API_KEY'] = sendgrid_key
+
 app = Flask(__name__)
 CORS(app)
+
+# Initialize SendGrid
+sendgrid_api_key = os.getenv('SENDGRID_API_KEY')
+if sendgrid_api_key:
+    sendgrid_client = SendGridAPIClient(sendgrid_api_key)
+    logger.info("SendGrid API configured")
+else:
+    sendgrid_client = None
+    logger.warning("SendGrid API key not found - emails will not be sent")
+
+# ============================================================================
+# EMAIL TEMPLATES & FUNCTIONS
+# ============================================================================
+
+# Base email template with consistent branding
+EMAIL_BASE_TEMPLATE = '''
+<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+    <div style="background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%); color: white; padding: 30px; text-align: center;">
+        <h1 style="margin: 0; font-size: 28px;">✝️ My Confessions</h1>
+        <p style="margin: 10px 0 0; opacity: 0.9;">Biblical Guidance for Your Spiritual Journey</p>
+    </div>
+    
+    <div style="padding: 30px; background: white;">
+        {content}
+    </div>
+    
+    <div style="background: #f9fafb; padding: 20px; text-align: center; color: #6b7280; font-size: 12px;">
+        <p style="margin: 0;">
+            Need help? Contact us at <a href="mailto:support@myconfessions.org" style="color: #2563eb;">support@myconfessions.org</a>
+        </p>
+        <p style="margin: 10px 0 0;">
+            © 2025 My Confessions. All rights reserved.
+        </p>
+    </div>
+</div>
+'''
+
+def send_email(to_email, subject, html_content):
+    """Generic email sender using SendGrid"""
+    if not sendgrid_client:
+        logger.warning(f"Cannot send email to {to_email} - SendGrid not configured")
+        return False
+    
+    try:
+        message = Mail(
+            from_email='support@myconfessions.org',
+            to_emails=to_email,
+            subject=subject,
+            html_content=html_content
+        )
+        response = sendgrid_client.send(message)
+        logger.info(f"Email sent to {to_email}, subject: {subject}, status: {response.status_code}")
+        return True
+    except Exception as e:
+        logger.error(f"Failed to send email to {to_email}: {e}")
+        return False
+
+def send_welcome_email(email, name):
+    """Send welcome email to new user"""
+    content = f'''
+        <h2 style="color: #1e40af; margin-top: 0;">Welcome, {name or 'Child of God'}! 🙏</h2>
+        
+        <p style="color: #374151; line-height: 1.6;">
+            Thank you for joining My Confessions. We're honored to walk alongside you on your spiritual journey.
+        </p>
+        
+        <div style="background: #eff6ff; border-left: 4px solid #3b82f6; padding: 15px; margin: 20px 0;">
+            <p style="color: #1e40af; font-style: italic; margin: 0;">
+                "If we confess our sins, He is faithful and just to forgive us our sins 
+                and to cleanse us from all unrighteousness."
+            </p>
+            <p style="color: #1e40af; font-size: 12px; margin: 5px 0 0; text-align: right;">
+                — 1 John 1:9
+            </p>
+        </div>
+        
+        <h3 style="color: #1e40af; margin-top: 25px;">What You Can Do:</h3>
+        <ul style="color: #374151; line-height: 1.8;">
+            <li>Have 24/7 Scripture-based spiritual conversations</li>
+            <li>Create beautiful prayers from your reflections</li>
+            <li>Save your spiritual journey (with Premium)</li>
+            <li>Share prayers anonymously to help others (with Premium)</li>
+        </ul>
+        
+        <div style="text-align: center; margin: 30px 0;">
+            <a href="https://myconfessions.org" 
+               style="background: #2563eb; color: white; padding: 12px 30px; text-decoration: none; border-radius: 8px; display: inline-block; font-weight: bold;">
+                Start Your Spiritual Journey
+            </a>
+        </div>
+        
+        <p style="color: #6b7280; font-size: 14px; margin-top: 30px; padding-top: 20px; border-top: 1px solid #e5e7eb;">
+            May God's peace be with you,<br>
+            <strong>My Confessions Ministry</strong>
+        </p>
+    '''
+    
+    html = EMAIL_BASE_TEMPLATE.format(content=content)
+    return send_email(email, 'Welcome to My Confessions - Your Spiritual Journey Begins', html)
+
+def send_password_reset_email(email, reset_token):
+    """Send password reset email"""
+    reset_url = f"https://myconfessions.org/reset-password?token={reset_token}"
+    
+    content = f'''
+        <h2 style="color: #1e40af; margin-top: 0;">Password Reset Request 🔑</h2>
+        
+        <p style="color: #374151; line-height: 1.6;">
+            We received a request to reset your password for your My Confessions account.
+        </p>
+        
+        <div style="background: #fef3c7; border-left: 4px solid #f59e0b; padding: 15px; margin: 20px 0;">
+            <p style="color: #92400e; margin: 0; font-weight: bold;">
+                ⚠️ If you did not request this, please ignore this email.
+            </p>
+        </div>
+        
+        <div style="text-align: center; margin: 30px 0;">
+            <a href="{reset_url}" 
+               style="background: #2563eb; color: white; padding: 12px 30px; text-decoration: none; border-radius: 8px; display: inline-block; font-weight: bold;">
+                Reset Your Password
+            </a>
+        </div>
+        
+        <p style="color: #6b7280; font-size: 14px; text-align: center;">
+            This link will expire in 1 hour for your security.
+        </p>
+        
+        <p style="color: #6b7280; font-size: 14px; margin-top: 30px; padding-top: 20px; border-top: 1px solid #e5e7eb;">
+            Praying for your peace,<br>
+            <strong>My Confessions Ministry</strong>
+        </p>
+    '''
+    
+    html = EMAIL_BASE_TEMPLATE.format(content=content)
+    return send_email(email, 'Reset Your Password - My Confessions', html)
+
+def send_subscription_activated_email(email, name, plan_type, amount):
+    """Send email when subscription is activated"""
+    plan_display = "Annual ($39.99/year)" if plan_type == 'annual' else "Monthly ($4.99/month)"
+    
+    content = f'''
+        <h2 style="color: #1e40af; margin-top: 0;">Welcome to Premium! 💎</h2>
+        
+        <p style="color: #374151; line-height: 1.6;">
+            Dear {name or 'Beloved Child of God'},
+        </p>
+        
+        <p style="color: #374151; line-height: 1.6;">
+            Your Premium membership has been activated! Thank you for supporting our ministry.
+        </p>
+        
+        <div style="background: #dcfce7; border: 2px solid #16a34a; border-radius: 8px; padding: 20px; margin: 20px 0; text-align: center;">
+            <h3 style="color: #166534; margin: 0 0 10px;">✅ Subscription Active</h3>
+            <p style="color: #166534; margin: 0; font-size: 18px; font-weight: bold;">
+                {plan_display}
+            </p>
+        </div>
+        
+        <h3 style="color: #1e40af; margin-top: 25px;">Your Premium Benefits:</h3>
+        <ul style="color: #374151; line-height: 1.8;">
+            <li><strong>Unlimited Biblical guidance</strong> - 24/7 access to spiritual conversations</li>
+            <li><strong>Community prayers</strong> - Read and share prayers with fellow believers</li>
+            <li><strong>Journey saved</strong> - All your conversations are preserved</li>
+            <li><strong>Priority support</strong> - We're here to help you</li>
+        </ul>
+        
+        <div style="background: #eff6ff; border-left: 4px solid #3b82f6; padding: 15px; margin: 20px 0;">
+            <p style="color: #1e40af; font-style: italic; margin: 0;">
+                "For where two or three gather in my name, there am I with them."
+            </p>
+            <p style="color: #1e40af; font-size: 12px; margin: 5px 0 0; text-align: right;">
+                — Matthew 18:20
+            </p>
+        </div>
+        
+        <div style="text-align: center; margin: 30px 0;">
+            <a href="https://myconfessions.org" 
+               style="background: #2563eb; color: white; padding: 12px 30px; text-decoration: none; border-radius: 8px; display: inline-block; font-weight: bold;">
+                Continue Your Journey
+            </a>
+        </div>
+        
+        <p style="color: #6b7280; font-size: 14px; margin-top: 30px; padding-top: 20px; border-top: 1px solid #e5e7eb;">
+            Thank you for your partnership in spreading God's word through technology.<br>
+            <strong>My Confessions Ministry</strong>
+        </p>
+    '''
+    
+    html = EMAIL_BASE_TEMPLATE.format(content=content)
+    return send_email(email, '✅ Your Premium Membership is Active!', html)
+
+def send_subscription_cancelled_email(email, name):
+    """Send email when subscription is cancelled"""
+    content = f'''
+        <h2 style="color: #1e40af; margin-top: 0;">Your Subscription Has Been Cancelled</h2>
+        
+        <p style="color: #374151; line-height: 1.6;">
+            Dear {name or 'Beloved Friend'},
+        </p>
+        
+        <p style="color: #374151; line-height: 1.6;">
+            We're sorry to see you go. Your Premium membership has been cancelled and will remain active until the end of your current billing period.
+        </p>
+        
+        <div style="background: #fef3c7; border-left: 4px solid #f59e0b; padding: 15px; margin: 20px 0;">
+            <p style="color: #92400e; margin: 0;">
+                <strong>What happens now:</strong><br>
+                • You can still use Premium features until your subscription ends<br>
+                • After that, you'll have access to our Free tier (20 conversations/month)<br>
+                • Your data will be preserved
+            </p>
+        </div>
+        
+        <h3 style="color: #1e40af; margin-top: 25px;">We'd Love to Have You Back</h3>
+        <p style="color: #374151; line-height: 1.6;">
+            You can reactivate your subscription anytime. We're always here to support your spiritual growth.
+        </p>
+        
+        <div style="background: #eff6ff; border-left: 4px solid #3b82f6; padding: 15px; margin: 20px 0;">
+            <p style="color: #1e40af; font-style: italic; margin: 0;">
+                "The Lord is close to the brokenhearted and saves those who are crushed in spirit."
+            </p>
+            <p style="color: #1e40af; font-size: 12px; margin: 5px 0 0; text-align: right;">
+                — Psalm 34:18
+            </p>
+        </div>
+        
+        <div style="text-align: center; margin: 30px 0;">
+            <a href="https://myconfessions.org" 
+               style="background: #2563eb; color: white; padding: 12px 30px; text-decoration: none; border-radius: 8px; display: inline-block; font-weight: bold;">
+                Reactivate Membership
+            </a>
+        </div>
+        
+        <p style="color: #6b7280; font-size: 14px; margin-top: 30px; padding-top: 20px; border-top: 1px solid #e5e7eb;">
+            May God's blessings be with you always,<br>
+            <strong>My Confessions Ministry</strong>
+        </p>
+    '''
+    
+    html = EMAIL_BASE_TEMPLATE.format(content=content)
+    return send_email(email, 'Your Subscription Has Been Cancelled', html)
+
+def send_payment_failed_email(email, name):
+    """Send email when subscription payment fails"""
+    content = f'''
+        <h2 style="color: #dc2626; margin-top: 0;">Payment Issue - Action Required ⚠️</h2>
+        
+        <p style="color: #374151; line-height: 1.6;">
+            Dear {name or 'Valued Member'},
+        </p>
+        
+        <p style="color: #374151; line-height: 1.6;">
+            We were unable to process your recent payment for My Confessions Premium membership.
+        </p>
+        
+        <div style="background: #fee2e2; border: 2px solid #dc2626; border-radius: 8px; padding: 20px; margin: 20px 0;">
+            <h3 style="color: #dc2626; margin: 0 0 10px;">⚠️ Payment Failed</h3>
+            <p style="color: #991b1b; margin: 0;">
+                Your subscription will be cancelled if we cannot process payment within 7 days.
+            </p>
+        </div>
+        
+        <h3 style="color: #1e40af; margin-top: 25px;">Please Update Your Payment Method:</h3>
+        
+        <div style="text-align: center; margin: 30px 0;">
+            <a href="https://myconfessions.org/app" 
+               style="background: #dc2626; color: white; padding: 12px 30px; text-decoration: none; border-radius: 8px; display: inline-block; font-weight: bold;">
+                Update Payment Method
+            </a>
+        </div>
+        
+        <p style="color: #6b7280; font-size: 14px;">
+            If you have questions, please contact us at support@myconfessions.org
+        </p>
+        
+        <p style="color: #6b7280; font-size: 14px; margin-top: 30px; padding-top: 20px; border-top: 1px solid #e5e7eb;">
+            In His service,<br>
+            <strong>My Confessions Ministry</strong>
+        </p>
+    '''
+    
+    html = EMAIL_BASE_TEMPLATE.format(content=content)
+    return send_email(email, '⚠️ Payment Failed - Update Your Payment Method', html)
+
+def send_spiritual_followup_email(email, name, days_since_last, session_id=None):
+    """Send follow-up email to encourage continued spiritual growth"""
+    
+    # Check preferences
+    if session_id and not check_email_preferences(session_id, 'marketing'):
+        logger.info(f"Skipping follow-up email for {email} - user opted out of marketing emails")
+        return False
+    
+    # Different messages based on inactivity period
+    if days_since_last <= 7:
+        scripture = '"Come to me, all you who are weary and burdened, and I will give you rest." — Matthew 11:28'
+        message = "We noticed it's been a few days since your last conversation. How is your heart today?"
+    elif days_since_last <= 30:
+        scripture = '"The Lord is my shepherd, I lack nothing." — Psalm 23:1'
+        message = "It's been a while since we last connected. We're here whenever you need spiritual guidance."
+    else:
+        scripture = '"For I know the plans I have for you," declares the Lord, "plans to prosper you and not to harm you, plans to give you hope and a future." — Jeremiah 29:11'
+        message = "We miss you! Your spiritual journey is important to us. Come back anytime you need guidance."
+    
+    content = f'''
+        <h2 style="color: #1e40af; margin-top: 0;">How Is Your Heart Today? 💙</h2>
+        
+        <p style="color: #374151; line-height: 1.6;">
+            Dear {name or 'Beloved Friend'},
+        </p>
+        
+        <p style="color: #374151; line-height: 1.6;">
+            {message}
+        </p>
+        
+        <div style="background: #eff6ff; border-left: 4px solid #3b82f6; padding: 15px; margin: 20px 0;">
+            <p style="color: #1e40af; font-style: italic; margin: 0;">
+                {scripture}
+            </p>
+        </div>
+        
+        <h3 style="color: #1e40af; margin-top: 25px;">Remember:</h3>
+        <ul style="color: #374151; line-height: 1.8;">
+            <li>24/7 Biblical guidance is always available</li>
+            <li>Your conversations are private and secure</li>
+            <li>No struggle is too small to bring before God</li>
+        </ul>
+        
+        <div style="text-align: center; margin: 30px 0;">
+            <a href="https://myconfessions.org" 
+               style="background: #2563eb; color: white; padding: 12px 30px; text-decoration: none; border-radius: 8px; display: inline-block; font-weight: bold;">
+                Continue Your Journey
+            </a>
+        </div>
+        
+        <p style="color: #6b7280; font-size: 14px; margin-top: 30px; padding-top: 20px; border-top: 1px solid #e5e7eb;">
+            Walking with you in faith,<br>
+            <strong>My Confessions Ministry</strong>
+        </p>
+    '''
+    
+    # Add unsubscribe link for marketing emails
+    if session_id:
+        content = add_unsubscribe_footer(content, session_id, 'marketing')
+    
+    html = EMAIL_BASE_TEMPLATE.format(content=content)
+    return send_email(email, 'We Miss You - Your Spiritual Journey Awaits', html)
+
+def send_prayer_shared_notification(email, name, prayer_title, session_id=None):
+    """Send notification when user's prayer receives engagement"""
+    # Check preferences
+    if session_id and not check_email_preferences(session_id, 'notifications'):
+        logger.info(f"Skipping prayer notification for {email} - user opted out of notifications")
+        return False
+    
+    content = f'''
+        <h2 style="color: #1e40af; margin-top: 0;">Your Prayer is Helping Others! 🙏</h2>
+        
+        <p style="color: #374151; line-height: 1.6;">
+            Dear {name or 'Faithful Servant'},
+        </p>
+        
+        <p style="color: #374151; line-height: 1.6;">
+            Your prayer "<strong>{prayer_title}</strong>" has been shared anonymously and is touching hearts in our community.
+        </p>
+        
+        <div style="background: #dcfce7; border-left: 4px solid #16a34a; padding: 15px; margin: 20px 0;">
+            <p style="color: #166534; margin: 0;">
+                <strong>✨ Your faith is inspiring others!</strong><br>
+                By sharing your prayer, you're helping fellow believers find strength and hope in God's word.
+            </p>
+        </div>
+        
+        <div style="background: #eff6ff; border-left: 4px solid #3b82f6; padding: 15px; margin: 20px 0;">
+            <p style="color: #1e40af; font-style: italic; margin: 0;">
+                "Let your light shine before others, that they may see your good deeds and glorify your Father in heaven."
+            </p>
+            <p style="color: #1e40af; font-size: 12px; margin: 5px 0 0; text-align: right;">
+                — Matthew 5:16
+            </p>
+        </div>
+        
+        <div style="text-align: center; margin: 30px 0;">
+            <a href="https://myconfessions.org/app" 
+               style="background: #2563eb; color: white; padding: 12px 30px; text-decoration: none; border-radius: 8px; display: inline-block; font-weight: bold;">
+                View Community Prayers
+            </a>
+        </div>
+        
+        <p style="color: #6b7280; font-size: 14px; margin-top: 30px; padding-top: 20px; border-top: 1px solid #e5e7eb;">
+            May your faith continue to bless others,<br>
+            <strong>My Confessions Ministry</strong>
+        </p>
+    '''
+    
+    # Add unsubscribe link for notifications
+    if session_id:
+        content = add_unsubscribe_footer(content, session_id, 'notifications')
+    
+    html = EMAIL_BASE_TEMPLATE.format(content=content)
+    return send_email(email, '🙏 Your Prayer is Inspiring Others!', html)
+
+def get_unsubscribe_link(session_id, email_type='all'):
+    """Generate unsubscribe link for emails"""
+    return f"https://myconfessions.org/api/user/unsubscribe?session_id={session_id}&type={email_type}"
+
+def add_unsubscribe_footer(content, session_id, email_type='all'):
+    """Add unsubscribe link to email content"""
+    unsubscribe_link = get_unsubscribe_link(session_id, email_type)
+    return content + f'''
+        <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #e5e7eb; text-align: center;">
+            <p style="color: #9ca3af; font-size: 11px; margin: 0;">
+                Don't want to receive these emails? 
+                <a href="{unsubscribe_link}" style="color: #6b7280; text-decoration: underline;">Unsubscribe</a>
+            </p>
+        </div>
+    '''
+
+def check_email_preferences(session_id, email_type):
+    """Check if user wants to receive this type of email"""
+    if not db or not session_id:
+        return True  # Default to sending if we can't check
+    
+    try:
+        user_ref = db.collection('users').document(session_id)
+        user_doc = user_ref.get()
+        
+        if user_doc.exists:
+            user_data = user_doc.to_dict()
+            preferences = user_data.get('email_preferences', {})
+            return preferences.get(email_type, True)
+        return True
+    except Exception as e:
+        logger.error(f"Error checking email preferences: {e}")
+        return True  # Default to sending on error
+
+def send_free_tier_upgrade_reminder(email, name, session_id=None):
+    """Send gentle reminder about Premium benefits after user hits free tier limit"""
+    # Check preferences
+    if session_id and not check_email_preferences(session_id, 'marketing'):
+        logger.info(f"Skipping free tier reminder for {email} - user opted out of marketing emails")
+        return False
+    
+    content = f'''
+        <h2 style="color: #1e40af; margin-top: 0;">Continue Your Spiritual Growth 🌱</h2>
+        
+        <p style="color: #374151; line-height: 1.6;">
+            Dear {name or 'Seeker of Truth'},
+        </p>
+        
+        <p style="color: #374151; line-height: 1.6;">
+            We've noticed you've been actively seeking Biblical guidance. That's wonderful! Your dedication to spiritual growth is inspiring.
+        </p>
+        
+        <div style="background: #fef3c7; border-left: 4px solid #f59e0b; padding: 15px; margin: 20px 0;">
+            <p style="color: #92400e; margin: 0;">
+                <strong>You've reached your free tier limit (20 conversations/month)</strong><br>
+                Continue your journey with unlimited access
+            </p>
+        </div>
+        
+        <h3 style="color: #1e40af; margin-top: 25px;">Premium Benefits:</h3>
+        <ul style="color: #374151; line-height: 1.8;">
+            <li>💬 <strong>Unlimited conversations</strong> - No monthly limits</li>
+            <li>📖 <strong>Community prayers</strong> - Read thousands of testimonies</li>
+            <li>💾 <strong>Journey saved</strong> - Never lose your spiritual progress</li>
+            <li>⚡ <strong>Priority support</strong> - Get help when you need it</li>
+        </ul>
+        
+        <div style="background: #dcfce7; border-radius: 8px; padding: 20px; margin: 20px 0; text-align: center;">
+            <p style="color: #166534; margin: 0 0 10px; font-size: 18px;">
+                <strong>Only $4.99/month</strong>
+            </p>
+            <p style="color: #166534; margin: 0; font-size: 14px;">
+                Or save 33% with annual plan ($39.99/year)
+            </p>
+        </div>
+        
+        <div style="text-align: center; margin: 30px 0;">
+            <a href="https://myconfessions.org/app" 
+               style="background: #2563eb; color: white; padding: 12px 30px; text-decoration: none; border-radius: 8px; display: inline-block; font-weight: bold;">
+                Upgrade to Premium
+            </a>
+        </div>
+        
+        <div style="background: #eff6ff; border-left: 4px solid #3b82f6; padding: 15px; margin: 20px 0;">
+            <p style="color: #1e40af; font-style: italic; margin: 0;">
+                "Ask and it will be given to you; seek and you will find; knock and the door will be opened to you."
+            </p>
+            <p style="color: #1e40af; font-size: 12px; margin: 5px 0 0; text-align: right;">
+                — Matthew 7:7
+            </p>
+        </div>
+        
+        <p style="color: #6b7280; font-size: 14px; margin-top: 30px; padding-top: 20px; border-top: 1px solid #e5e7eb;">
+            Your partner in spiritual growth,<br>
+            <strong>My Confessions Ministry</strong>
+        </p>
+    '''
+    
+    # Add unsubscribe link for marketing emails
+    if session_id:
+        content = add_unsubscribe_footer(content, session_id, 'marketing')
+    
+    html = EMAIL_BASE_TEMPLATE.format(content=content)
+    return send_email(email, '🌱 Continue Your Spiritual Journey with Premium', html)
+
+def send_weekly_spiritual_insight(email, name, session_id=None):
+    """Send weekly spiritual insight/encouragement email"""
+    # Check preferences
+    if session_id and not check_email_preferences(session_id, 'insights'):
+        logger.info(f"Skipping weekly insight for {email} - user opted out of insights")
+        return False
+    
+    content = f'''
+        <h2 style="color: #1e40af; margin-top: 0;">Weekly Spiritual Insight 📖</h2>
+        
+        <p style="color: #374151; line-height: 1.6;">
+            Dear {name or 'Child of God'},
+        </p>
+        
+        <p style="color: #374151; line-height: 1.6;">
+            This week, we invite you to reflect on God's grace in your daily life.
+        </p>
+        
+        <div style="background: #eff6ff; border-left: 4px solid #3b82f6; padding: 20px; margin: 25px 0;">
+            <h3 style="color: #1e40af; margin: 0 0 15px;">This Week's Reflection:</h3>
+            <p style="color: #1e40af; font-style: italic; margin: 0; font-size: 16px;">
+                "Be still, and know that I am God; I will be exalted among the nations, I will be exalted in the earth."
+            </p>
+            <p style="color: #1e40af; font-size: 12px; margin: 10px 0 0; text-align: right;">
+                — Psalm 46:10
+            </p>
+        </div>
+        
+        <h3 style="color: #1e40af; margin-top: 25px;">Reflection Questions:</h3>
+        <ul style="color: #374151; line-height: 1.8;">
+            <li>When do you find it hardest to "be still" in your daily life?</li>
+            <li>How can you create more space for God's presence this week?</li>
+            <li>What worries can you surrender to Him today?</li>
+        </ul>
+        
+        <div style="background: #fef3c7; border-left: 4px solid #f59e0b; padding: 15px; margin: 20px 0;">
+            <p style="color: #92400e; margin: 0;">
+                <strong>💡 This Week's Practice:</strong><br>
+                Take 5 minutes each morning to sit in silence with God. Let Him speak to your heart.
+            </p>
+        </div>
+        
+        <div style="text-align: center; margin: 30px 0;">
+            <a href="https://myconfessions.org" 
+               style="background: #2563eb; color: white; padding: 12px 30px; text-decoration: none; border-radius: 8px; display: inline-block; font-weight: bold;">
+                Talk with Your Spiritual Guide
+            </a>
+        </div>
+        
+        <p style="color: #6b7280; font-size: 14px; margin-top: 30px; padding-top: 20px; border-top: 1px solid #e5e7eb;">
+            Walking alongside you in faith,<br>
+            <strong>My Confessions Ministry</strong>
+        </p>
+    '''
+    
+    # Add unsubscribe link for insights
+    if session_id:
+        content = add_unsubscribe_footer(content, session_id, 'insights')
+    
+    html = EMAIL_BASE_TEMPLATE.format(content=content)
+    return send_email(email, '📖 Weekly Spiritual Insight from My Confessions', html)
+
+def send_subscription_renewal_reminder(email, name, renewal_date, amount):
+    """Send reminder before subscription renewal"""
+    content = f'''
+        <h2 style="color: #1e40af; margin-top: 0;">Your Subscription Renews Soon</h2>
+        
+        <p style="color: #374151; line-height: 1.6;">
+            Dear {name or 'Valued Member'},
+        </p>
+        
+        <p style="color: #374151; line-height: 1.6;">
+            This is a friendly reminder that your My Confessions Premium membership will automatically renew on <strong>{renewal_date}</strong>.
+        </p>
+        
+        <div style="background: #eff6ff; border: 2px solid #3b82f6; border-radius: 8px; padding: 20px; margin: 20px 0; text-align: center;">
+            <h3 style="color: #1e40af; margin: 0 0 10px;">Upcoming Renewal</h3>
+            <p style="color: #1e40af; margin: 0; font-size: 24px; font-weight: bold;">
+                ${amount}
+            </p>
+            <p style="color: #6b7280; margin: 10px 0 0; font-size: 14px;">
+                {renewal_date}
+            </p>
+        </div>
+        
+        <h3 style="color: #1e40af; margin-top: 25px;">You'll Continue Enjoying:</h3>
+        <ul style="color: #374151; line-height: 1.8;">
+            <li>Unlimited Biblical guidance 24/7</li>
+            <li>Access to all community prayers</li>
+            <li>Your complete spiritual journey saved</li>
+            <li>Priority support from our ministry</li>
+        </ul>
+        
+        <p style="color: #374151; line-height: 1.6; margin-top: 25px;">
+            No action needed - your subscription will renew automatically. If you need to make changes, 
+            you can manage your subscription anytime.
+        </p>
+        
+        <div style="text-align: center; margin: 30px 0;">
+            <a href="https://myconfessions.org/app" 
+               style="background: #2563eb; color: white; padding: 12px 30px; text-decoration: none; border-radius: 8px; display: inline-block; font-weight: bold;">
+                Manage Subscription
+            </a>
+        </div>
+        
+        <p style="color: #6b7280; font-size: 14px; margin-top: 30px; padding-top: 20px; border-top: 1px solid #e5e7eb;">
+            Thank you for your continued partnership,<br>
+            <strong>My Confessions Ministry</strong>
+        </p>
+    '''
+    
+    html = EMAIL_BASE_TEMPLATE.format(content=content)
+    return send_email(email, f'Subscription Renewal Reminder - {renewal_date}', html)
 
 # Initialize Firebase Admin SDK
 try:
@@ -60,9 +741,12 @@ conversations = {}
 # Value-first user tracking system
 user_sessions = {}  # Track user subscription status (in-memory cache)
 conversation_depth = {}  # Track conversation engagement
+password_reset_tokens = {}  # Track password reset tokens {token: {email, expires}}
 from datetime import datetime, timedelta
 import calendar
 import json
+import secrets
+import time
 
 def get_user_tier(session_id):
     """Get user subscription tier: 'free' or 'unlimited'"""
@@ -77,12 +761,12 @@ def increment_conversation_depth(session_id):
     conversation_depth[session_id] = conversation_depth.get(session_id, 0) + 1
 
 def should_suggest_upgrade(session_id):
-    """Suggest upgrade after 4 meaningful messages (value demonstration)"""
+    """Suggest upgrade after 20 meaningful messages (value demonstration)"""
     depth = get_conversation_depth(session_id)
     tier = get_user_tier(session_id)
     
-    # Suggest upgrade after 4 messages for free users
-    return tier == 'free' and depth >= 4
+    # Suggest upgrade after 20 messages for free users
+    return tier == 'free' and depth >= 20
 
 def set_user_tier(session_id, tier, customer_id=None, subscription_id=None):
     """Set user subscription tier (for testing and webhook handling)"""
@@ -168,54 +852,63 @@ if stripe_secret_key:
 else:
     logger.warning("No Stripe API key found")
 
-# Christian Sacramental Confession Prompts
-CONFESSION_INITIAL_PROMPT = """You are a wise and compassionate Catholic priest conducting the Sacrament of Confession.
+# Christian Spiritual Counselor Prompts
+CONFESSION_INITIAL_PROMPT = """You are a wise and compassionate Biblical counselor and spiritual guide.
 
 FIRST MESSAGE ONLY – Responsibilities:
-1. Offer a warm but succinct welcome (1 sentence)
-2. Provide 1–2 short Scripture references that invite trust in God's mercy (1–2 sentences)
-3. Ask one gentle, open-ended question to help the penitent begin (1 sentence)
+1. Offer a warm, safe, and non-judgmental welcome (1 sentence).
+2. Provide 1–2 short Scripture references that offer hope and peace (1–2 sentences).
+3. Ask one gentle, open-ended question to help the user share what is on their heart (1 sentence).
 
-Keep the whole reply under 4 sentences.
+Keep the whole reply under 4 sentences. Your tone should be warm, supportive, and encouraging, like a wise friend.
 """
 
-CONFESSION_FOLLOWUP_PROMPT = """You are a wise and compassionate Catholic priest continuing an ongoing confession. Your goal is to create a natural, reflective, and pastoral conversation, not an interrogation.
+CONFESSION_FOLLOWUP_PROMPT = """You are a wise and compassionate Biblical counselor and spiritual guide. Your goal is to create a natural, reflective, and supportive conversation.
 
 **Your Role in This Follow-Up Message:**
-1.  **Acknowledge & Validate**: Start by acknowledging the user's last message with empathy (e.g., "That's a heavy burden to carry," "It's wonderful that you feel that way," "Thank you for sharing that.").
-2.  **Offer Gentle Guidance**: Provide a *brief* spiritual insight or a *new, relevant* Scripture verse that directly addresses their specific concern (1-2 sentences). Do not repeat verses.
+1.  **Acknowledge & Validate**: Start by acknowledging the user's last message with deep empathy (e.g., "I hear the pain in your words," "It is understandable that you feel this way," "Thank you for trusting me with this.").
+2.  **Offer Gentle Guidance**: Provide a *brief* spiritual insight or a *new, relevant* Scripture verse that directly addresses their specific concern (1-2 sentences). Focus on God's love, grace, and peace.
 3.  **Decide How to Conclude**:
-    -   **Option A (Ask a Question):** If the conversation needs prompting, ask a single, gentle, open-ended question to help them go deeper.
-    -   **Option B (Make a Statement):** If the user has shared something positive or conclusive, it is often better to respond with a simple, affirming statement. (e.g., "That is a beautiful grace.", "May that peace remain with you.")
+    -   **Option A (Ask a Question):** If the conversation needs prompting, ask a single, gentle, open-ended question to help them reflect or share more.
+    -   **Option B (Make a Statement):** If the user has shared something positive or conclusive, simply offer an affirming statement of blessing or peace.
 
 **Crucial Constraints:**
--   **VARY YOUR RESPONSES**: Do NOT ask a question every single time. A mix of questions and statements is more natural.
+-   **VARY YOUR RESPONSES**: Do NOT ask a question every single time.
 -   **Be Concise**: Never exceed 4 sentences.
--   **Be Pastoral**: Your tone should be gentle, patient, and merciful.
+-   **Be Supportive**: Your tone should be gentle, patient, and kind. Avoid being overly dogmatic or preachy.
 -   **No Repetition**: Do not repeat the initial welcome or previous scripture.
 """
 
-CONFESSION_SUMMARY_PROMPT = """Transform this chat into a beautiful, first-person prayer and a short, thematic title.
+CONFESSION_SUMMARY_PROMPT = """Transform this conversation for anonymous sharing while keeping it authentic.
 
-**Your Task:**
-1.  **Generate a Title**: Create a short, relatable title (3-5 words) that captures the core theme of the confession (e.g., "A Prayer for Patience," "Finding Hope in Loss," "Overcoming Envy"). The title should be engaging and hint at the prayer's content without revealing specifics.
-2.  **Write the Prayer**: Write a beautiful, first-person prayer that is ready for the Sacrament of Reconciliation. It must:
-    -   Adopt a humble, first-person voice ("I").
-    -   Acknowledge the core struggle compassionately.
-    -   Seamlessly integrate 1-2 relevant Scripture passages.
-    -   Express sincere contrition and hope in God's mercy.
-    -   Be poetic, prayerful, and concise (3-4 powerful sentences).
+Guidelines:
+1. Remove specific names, places, and overly personal details
+2. Keep it brief and natural (2-4 sentences - follow the natural flow)
+3. Preserve the authentic voice and emotional truth
+4. Include Scripture reference if it was mentioned in the conversation
+5. Don't force a structure - let it flow naturally
 
-**Output Format:**
-You MUST return the response in the following format, with "Title:" and "Prayer:" on separate lines:
+Title: Create a simple, relatable title (3-5 words)
+Examples: "Struggling with Anxiety", "Finding Peace", "A Mother's Prayer"
 
-Title: [Your Generated Title]
-Prayer: [Your Generated Prayer]
+Prayer: Keep the person's authentic voice. Natural, not templated.
+
+Example:
+Input: "I've been so angry at my wife over money. We argue constantly."
+Output:
+Title: Anger in Marriage
+Prayer: I've struggled with anger toward my spouse over financial stress. Through prayer and Ephesians 4:26, I'm learning that holding onto anger only hurts us both. I'm asking God for patience to forgive daily.
+
+Keep it REAL, NATURAL, and AUTHENTIC - not a formulaic prayer template.
+
+Output Format (MUST follow):
+Title: [simple title]
+Prayer: [natural, authentic confession]
 """
 
 @app.route('/')
 def index_redirect():
-    """Redirect to main app"""
+    """Serve the landing page"""
     return render_template('index.html')
 
 @app.route('/app')
@@ -249,16 +942,6 @@ def privacy_view():
 def disclaimer_view():
     """Disclaimer page"""
     return render_template('disclaimer.html')
-
-@app.route('/donation-success')
-def donation_success():
-    """Donation success page"""
-    return render_template('donation-success.html')
-
-@app.route('/donation-cancel')
-def donation_cancel():
-    """Donation cancel page"""
-    return render_template('donation-cancel.html')
 
 @app.route('/subscription-success')
 def subscription_success():
@@ -353,7 +1036,7 @@ def get_user_tier_api():
     return jsonify({
         'tier': get_user_tier(session_id),
         'conversation_depth': get_conversation_depth(session_id),
-        'limit': 999 if get_user_tier(session_id) == 'unlimited' else 4
+        'limit': 999 if get_user_tier(session_id) == 'unlimited' else 20
     })
 
 @app.route('/api/user/tier', methods=['POST'])
@@ -390,12 +1073,17 @@ def create_checkout_session():
     try:
         data = request.get_json()
         session_id = data.get('session_id', 'anonymous')
+        plan = data.get('plan', 'monthly')  # 'monthly' or 'annual'
         
         if not stripe_secret_key:
             return jsonify({'error': 'Payment processing is not available'}), 503
             
-        # Get price ID from environment (single unlimited product)
-        price_id = os.getenv('STRIPE_PRICE_ID_UNLIMITED')
+        # Get price ID based on selected plan
+        if plan == 'annual':
+            price_id = os.getenv('STRIPE_PRICE_ID_ANNUAL')
+        else:
+            price_id = os.getenv('STRIPE_PRICE_ID_UNLIMITED')
+            
         if not price_id:
             # For testing purposes, use a placeholder
             # In production, you need to create the actual Stripe product
@@ -416,10 +1104,11 @@ def create_checkout_session():
                 }],
                 mode='subscription',
                 success_url=request.host_url + f'subscription-success?session_id={{CHECKOUT_SESSION_ID}}&user_session={session_id}',
-                cancel_url=request.host_url + 'subscription-cancel',
+                cancel_url=request.host_url + 'app?cancelled=true',
                 metadata={
                     'tier': 'unlimited',
                     'user_session_id': session_id,
+                    'plan': plan,  # 'monthly' or 'annual'
                     'source': 'myconfessions_unlimited'
                 },
                 allow_promotion_codes=True,
@@ -528,6 +1217,25 @@ def process_chat_message():
         # CHECK IF WE SHOULD SUGGEST UPGRADE (value-first approach)
         suggest_upgrade = should_suggest_upgrade(session_id)
         
+        # Send upgrade reminder email when user hits limit (only once)
+        current_depth = get_conversation_depth(session_id)
+        if current_depth == 20 and get_user_tier(session_id) == 'free':
+            # Get user email if they're registered
+            if db:
+                try:
+                    user_ref = db.collection('users').document(session_id)
+                    user_doc = user_ref.get()
+                    if user_doc.exists:
+                        user_data = user_doc.to_dict()
+                        user_email = user_data.get('email')
+                        user_name = user_data.get('name', '')
+                        
+                        if user_email:
+                            send_free_tier_upgrade_reminder(user_email, user_name, session_id)
+                            logger.info(f"Free tier upgrade reminder sent to {user_email}")
+                except Exception as e:
+                    logger.error(f"Failed to send upgrade reminder: {e}")
+        
         return jsonify({
             'success': True,
             'response': ai_response,
@@ -538,7 +1246,7 @@ def process_chat_message():
             'upgrade_message': {
                 'title': 'Continue Your Spiritual Journey',
                 'message': 'I sense you\'re seeking deeper guidance. Many souls like you find unlimited spiritual support helps them grow closer to God.',
-                'cta': 'Continue with Unlimited Guidance - $9.99/month'
+                'cta': 'Continue with Unlimited Guidance - $4.99/month'
             } if suggest_upgrade else None
         })
         
@@ -546,497 +1254,4 @@ def process_chat_message():
         logger.error(f"Error processing chat message: {e}")
         return jsonify({'error': 'Sorry, something went wrong. Please try again.'}), 500
 
-@app.route('/api/chat/summarize', methods=['POST'])
-def summarize_chat():
-    """Generate a confession summary from a chat conversation without saving it."""
-    try:
-        data = request.get_json()
-        conversation_history = data.get('conversation_history', [])
-        
-        if not conversation_history:
-            return jsonify({'error': 'Conversation history is required'}), 400
-            
-        if not openai_api_key:
-            return jsonify({'error': 'AI service is not available.'}), 503
-
-        # Prepare conversation for summary
-        conversation_text = "\n".join([
-            f"{msg.get('role', 'user')}: {msg.get('content', '')}" 
-            for msg in conversation_history
-        ])
-        
-        # Make direct API call to OpenAI
-        headers = {
-            "Authorization": f"Bearer {openai_api_key}",
-            "Content-Type": "application/json"
-        }
-        api_data = {
-            "model": "gpt-3.5-turbo",
-            "messages": [
-                {"role": "system", "content": CONFESSION_SUMMARY_PROMPT},
-                {"role": "user", "content": f"Create a confession summary from this conversation:\n\n{conversation_text}"}
-            ],
-            "max_tokens": 200,
-            "temperature": 0.3
-        }
-        
-        response = requests.post("https://api.openai.com/v1/chat/completions", headers=headers, json=api_data, timeout=30)
-        
-        if response.status_code == 200:
-            result = response.json()
-            raw_summary = result['choices'][0]['message']['content'].strip()
-            
-            # Parse the title and prayer from the raw response
-            title = "A Prayer" # Default title
-            prayer = raw_summary
-            
-            if "Title:" in raw_summary and "Prayer:" in raw_summary:
-                try:
-                    title_part = raw_summary.split("Title:")[1].split("Prayer:")[0].strip()
-                    prayer_part = raw_summary.split("Prayer:")[1].strip()
-                    title = title_part
-                    prayer = prayer_part
-                except IndexError:
-                    logger.warning("Could not parse title and prayer, using raw summary.")
-
-            return jsonify({'success': True, 'title': title, 'prayer': prayer})
-        else:
-            logger.error(f"OpenAI API error during summarization: {response.status_code} - {response.text}")
-            return jsonify({'error': 'Sorry, I cannot generate your summary right now.'}), 500
-        
-    except Exception as e:
-        logger.error(f"Error summarizing chat: {e}")
-        return jsonify({'error': 'Sorry, something went wrong.'}), 500
-
-@app.route('/api/confessions/save', methods=['POST'])
-def save_confession():
-    """Save a new confession to Firestore."""
-    try:
-        data = request.get_json()
-        session_id = data.get('session_id', 'anonymous')
-        is_public = data.get('is_public', False)
-        title = data.get('title', 'A Prayer')
-        confession_text = data.get('confession_text', '')
-
-        if not confession_text:
-            return jsonify({'error': 'Confession text is required.'}), 400
-
-        # Create confession object for Firestore
-        confession_data = {
-            'title': title,
-            'text': confession_text,
-            'is_public': is_public,
-            'upvotes': 0,
-            'created_at': datetime.now(),
-            'session_id': session_id
-        }
-
-        if db:
-            # Add a new document with a generated ID
-            doc_ref = db.collection('confessions').add(confession_data)
-            # Fetch the newly created document to return its data, including the ID
-            new_confession = doc_ref.get().to_dict()
-            new_confession['id'] = doc_ref.id
-            logger.info(f"Saved confession {doc_ref.id} to Firestore.")
-        else:
-            # Fallback to in-memory list (for local dev)
-            new_confession = confession_data
-            new_confession['id'] = f"confession_{len(confessions) + 1}"
-            confessions.append(new_confession)
-            logger.info(f"Saved confession {new_confession['id']} to in-memory list.")
-
-        # Clear the original conversation now that it's saved
-        if session_id in conversations:
-            conversations[session_id] = []
-        
-        return jsonify({
-            'success': True,
-            'confession': new_confession
-        })
-        
-    except Exception as e:
-        logger.error(f"Error creating confession: {e}")
-        return jsonify({'error': 'Sorry, something went wrong.'}), 500
-
-@app.route('/api/confessions', methods=['GET'])
-def get_confessions():
-    """Get public confessions from Firestore, with sorting options."""
-    try:
-        sort_by = request.args.get('sort', 'latest')
-        
-        if not db:
-            # Fallback for local development
-            logger.warning("DB not initialized. Returning in-memory confessions.")
-            public_confessions = [c for c in confessions if c.get('is_public', False)]
-            if sort_by == 'popular':
-                public_confessions.sort(key=lambda x: x.get('upvotes', 0), reverse=True)
-            else:
-                public_confessions.sort(key=lambda x: x.get('created_at', ''), reverse=True)
-            return jsonify(public_confessions)
-
-        # Production logic: Fetch from Firestore
-        confessions_ref = db.collection('confessions').where('is_public', '==', True)
-        
-        if sort_by == 'popular':
-            query = confessions_ref.order_by('upvotes', direction=firestore_query.Query.Direction.DESCENDING)
-        else: # 'latest'
-            query = confessions_ref.order_by('created_at', direction=firestore_query.Query.Direction.DESCENDING)
-            
-        results = query.stream()
-        
-        public_confessions = []
-        for doc in results:
-            confession = doc.to_dict()
-            confession['id'] = doc.id
-            # Firestore timestamp needs to be converted to a string
-            if 'created_at' in confession and hasattr(confession['created_at'], 'isoformat'):
-                confession['created_at'] = confession['created_at'].isoformat()
-            public_confessions.append(confession)
-            
-        return jsonify(public_confessions)
-            
-    except Exception as e:
-        logger.error(f"Error getting confessions: {e}")
-        return jsonify([])
-
-@app.route('/api/stats/souls_helped', methods=['GET'])
-def get_souls_helped():
-    """Get the total number of confessions created."""
-    try:
-        if not db:
-            # Fallback for local development
-            logger.warning("DB not initialized. Returning in-memory confession count.")
-            return jsonify({'count': len(confessions)})
-
-        # Production logic: Fetch count from Firestore
-        # This gets the count of all documents in the collection.
-        count = db.collection('confessions').get()
-        return jsonify({'count': len(count)})
-                        
-    except Exception as e:
-        logger.error(f"Error getting souls helped count: {e}")
-        return jsonify({'count': 0}) # Return 0 on error
-
-@app.route('/api/confessions/<confession_id>/upvote', methods=['POST'])
-def upvote_confession(confession_id):
-    """Upvote a specific confession in Firestore."""
-    try:
-        if not db:
-            # Fallback for local development
-            confession = next((c for c in confessions if c['id'] == confession_id), None)
-            if confession:
-                confession['upvotes'] = confession.get('upvotes', 0) + 1
-                return jsonify({'success': True, 'upvotes': confession['upvotes']})
-            else:
-                return jsonify({'error': 'Confession not found'}), 404
-        
-        # Production logic: Update in Firestore
-        confession_ref = db.collection('confessions').document(confession_id)
-        # Use a transaction to safely increment the upvote count
-        confession_ref.update({'upvotes': firestore.Increment(1)})
-        
-        # We don't need to return the new count, a success message is enough.
-        return jsonify({'success': True})
-
-    except Exception as e:
-        logger.error(f"Error upvoting confession: {e}")
-        return jsonify({'error': 'Sorry, something went wrong.'}), 500
-
-@app.route('/api/confessions/<confession_id>', methods=['GET'])
-def get_confession(confession_id):
-    """Get a specific confession from Firestore."""
-    try:
-        if not db:
-            # Fallback for local development
-            confession = next((c for c in confessions if c['id'] == confession_id), None)
-            if confession:
-                return jsonify(confession)
-            else:
-                return jsonify({'error': 'Confession not found'}), 404
-
-        # Production logic: Fetch from Firestore
-        doc_ref = db.collection('confessions').document(confession_id)
-        doc = doc_ref.get()
-        if doc.exists:
-            confession = doc.to_dict()
-            confession['id'] = doc.id
-            confession['created_at'] = confession['created_at'].isoformat()
-            return jsonify(confession)
-        else:
-            return jsonify({'error': 'Confession not found'}), 404
-            
-    except Exception as e:
-        logger.error(f"Error getting confession: {e}")
-        return jsonify({'error': 'Sorry, something went wrong.'}), 500
-
-@app.route('/api/stripe/webhook', methods=['POST'])
-def stripe_webhook():
-    """Handle Stripe webhooks for subscription events"""
-    payload = request.get_data()
-    sig_header = request.headers.get('Stripe-Signature')
-    
-    try:
-        # Verify webhook signature (in production, use your webhook secret)
-        event = stripe.Webhook.construct_event(
-            payload, sig_header, os.getenv('STRIPE_WEBHOOK_SECRET', '')
-        )
-    except ValueError:
-        logger.error("Invalid payload")
-        return jsonify({'error': 'Invalid payload'}), 400
-    except stripe.error.SignatureVerificationError:
-        logger.error("Invalid signature")
-        return jsonify({'error': 'Invalid signature'}), 400
-    
-    # Handle the event
-    if event['type'] == 'checkout.session.completed':
-        session = event['data']['object']
-        session_id = session['metadata'].get('user_session_id', 'anonymous')
-        tier = session['metadata'].get('tier', 'unlimited')
-        
-        # Upgrade user
-        set_user_tier(session_id, tier)
-        logger.info(f"Webhook: User {session_id} upgraded to {tier}")
-        
-    elif event['type'] == 'customer.subscription.deleted':
-        subscription = event['data']['object']
-        # Handle subscription cancellation
-        logger.info(f"Webhook: Subscription {subscription['id']} cancelled")
-        
-    return jsonify({'status': 'success'})
-
-@app.route('/api/user/register', methods=['POST'])
-def handle_register():
-    """Register a new user with email and password"""
-    if not db:
-        return jsonify({'error': 'Database not available'}), 503
-
-    try:
-        data = request.get_json()
-        email = data.get('email')
-        password = data.get('password')
-        name = data.get('name', '')
-
-        if not email or not password:
-            return jsonify({'error': 'Email and password are required'}), 400
-
-        # Check if user already exists
-        users_ref = db.collection('users')
-        existing_user = users_ref.where('email', '==', email).limit(1).get()
-
-        if existing_user:
-            return jsonify({'error': 'Email already registered'}), 400
-
-        # Hash password
-        password_hash = hashlib.sha256(password.encode()).hexdigest()
-
-        # Create new user
-        user_ref = users_ref.document()
-        session_id = user_ref.id
-        user_ref.set({
-            'session_id': session_id,
-            'email': email,
-            'name': name,
-            'password_hash': password_hash,
-            'tier': 'free',
-            'created_at': datetime.now(),
-            'updated_at': datetime.now()
-        })
-
-        logger.info(f"Registered new user with email {email}")
-
-        return jsonify({
-            'success': True,
-            'message': 'Account created successfully',
-            'session_id': session_id,
-            'tier': 'free'
-        })
-
-    except Exception as e:
-        logger.error(f"Error registering user: {e}")
-        return jsonify({'error': 'Failed to create account'}), 500
-
-
-@app.route('/api/user/login', methods=['POST'])
-def handle_login():
-    """Login user with email and password"""
-    try:
-        data = request.get_json()
-        email = data.get('email')
-        password = data.get('password')
-        
-        if not email or not password:
-            return jsonify({'error': 'Email and password are required'}), 400
-        
-        if db:
-            # Find user by email
-            users_ref = db.collection('users')
-            user_query = users_ref.where('email', '==', email).limit(1).get()
-            
-            if not user_query:
-                return jsonify({'error': 'Invalid email or password'}), 401
-            
-            user_doc = user_query[0]
-            user_data = user_doc.to_dict()
-            
-            # Verify password
-            password_hash = hashlib.sha256(password.encode()).hexdigest()
-            
-            if user_data.get('password_hash') != password_hash:
-                return jsonify({'error': 'Invalid email or password'}), 401
-            
-            # Return user session
-            session_id = user_data.get('session_id')
-            tier = user_data.get('tier', 'free')
-            
-            logger.info(f"User {email} logged in successfully")
-            
-            return jsonify({
-                'success': True,
-                'message': 'Login successful',
-                'session_id': session_id,
-                'tier': tier,
-                'email': email,
-                'name': user_data.get('name', '')
-            })
-        else:
-            return jsonify({'error': 'Database not available'}), 500
-            
-    except Exception as e:
-        logger.error(f"Error logging in user: {e}")
-        return jsonify({'error': 'Failed to login'}), 500
-
-@app.route('/api/user/create-account', methods=['POST'])
-def create_user_account():
-    """Create a user account linked to their session (for existing subscribers)"""
-    try:
-        data = request.get_json()
-        session_id = data.get('session_id')
-        email = data.get('email')
-        name = data.get('name', '')
-        
-        if not session_id or not email:
-            return jsonify({'error': 'Session ID and email are required'}), 400
-        
-        # Check if user already has a subscription
-        current_tier = get_user_tier(session_id)
-        
-        # Create user account in Firestore
-        if db:
-            user_ref = db.collection('users').document(session_id)
-            user_ref.set({
-                'session_id': session_id,
-                'email': email,
-                'name': name,
-                'tier': current_tier,
-                'created_at': datetime.now(),
-                'updated_at': datetime.now()
-            })
-            
-            logger.info(f"Created user account for session {session_id} with email {email}")
-            
-            return jsonify({
-                'success': True,
-                'message': 'Account created successfully',
-                'tier': current_tier,
-                'session_id': session_id
-            })
-        else:
-            return jsonify({'error': 'Database not available'}), 500
-            
-    except Exception as e:
-        logger.error(f"Error creating user account: {e}")
-        return jsonify({'error': 'Failed to create account'}), 500
-
-@app.route('/api/user/subscription-management', methods=['GET'])
-def get_subscription_management():
-    """Get subscription management URL for user"""
-    try:
-        session_id = request.args.get('session_id')
-        if not session_id:
-            return jsonify({'error': 'Session ID is required'}), 400
-        
-        # Get user's subscription from Firestore
-        if db:
-            subscription_ref = db.collection('subscriptions').document(session_id)
-            subscription_doc = subscription_ref.get()
-            
-            if subscription_doc.exists:
-                subscription_data = subscription_doc.to_dict()
-                customer_id = subscription_data.get('customer_id')
-                
-                if customer_id:
-                    # Create Stripe customer portal session
-                    try:
-                        portal_session = stripe.billing_portal.Session.create(
-                            customer=customer_id,
-                            return_url=request.host_url + 'app'
-                        )
-                        
-                        return jsonify({
-                            'success': True,
-                            'management_url': portal_session.url,
-                            'message': 'Subscription management portal created'
-                        })
-                    except Exception as e:
-                        logger.error(f"Failed to create portal session: {e}")
-                        return jsonify({
-                            'error': 'Unable to create management portal. Please contact support.',
-                            'contact_email': 'support@myconfessions.org'
-                        }), 500
-                else:
-                    return jsonify({
-                        'error': 'No customer ID found. Please contact support.',
-                        'contact_email': 'support@myconfessions.org'
-                    }), 400
-            else:
-                return jsonify({
-                    'error': 'No subscription found for this session'
-                }), 404
-        else:
-            return jsonify({'error': 'Database not available'}), 500
-            
-    except Exception as e:
-        logger.error(f"Error getting subscription management: {e}")
-        return jsonify({'error': 'Failed to get subscription management'}), 500
-
-@app.route('/api/user/account', methods=['GET'])
-def get_user_account():
-    """Get user account information"""
-    try:
-        session_id = request.args.get('session_id')
-        if not session_id:
-            return jsonify({'error': 'Session ID is required'}), 400
-        
-        if db:
-            user_ref = db.collection('users').document(session_id)
-            user_doc = user_ref.get()
-            
-            if user_doc.exists:
-                user_data = user_doc.to_dict()
-                return jsonify({
-                    'success': True,
-                    'account': {
-                        'email': user_data.get('email'),
-                        'name': user_data.get('name'),
-                        'tier': user_data.get('tier', 'free'),
-                        'created_at': user_data.get('created_at').isoformat() if user_data.get('created_at') else None
-                    }
-                })
-            else:
-                return jsonify({
-                    'success': False,
-                    'message': 'No account found for this session'
-                })
-        else:
-            return jsonify({'error': 'Database not available'}), 500
-            
-    except Exception as e:
-        logger.error(f"Error getting user account: {e}")
-        return jsonify({'error': 'Failed to get account'}), 500
-
-if __name__ == '__main__':
-    # Load existing subscriptions on startup
-    load_user_subscriptions()
-    
-    port = int(os.environ.get('PORT', 8085))
-    app.run(host='0.0.0.0', port=port, debug=True)
+# ... rest of the file ...

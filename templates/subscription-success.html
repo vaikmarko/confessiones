@@ -1,22 +1,100 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <!-- Google Analytics 4 -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-GPB1ZF7QK2"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-GPB1ZF7QK2');
+    </script>
+    <!-- End Google Analytics 4 -->
+    
+    <!-- Google Tag Manager -->
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-TVFVC4P2');</script>
+    <!-- End Google Tag Manager -->
+    
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Subscription Successful - My Confessions</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/tailwind.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/components.css') }}">
+    <meta name="description" content="Your Premium subscription is now active. Thank you for supporting our Christian ministry.">
+    <meta name="robots" content="noindex, nofollow">
+    <link rel="canonical" href="https://myconfessions.org/subscription-success">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+    <script>
+        // Auto-redirect after 8 seconds
+        setTimeout(function() {
+            window.location.href = '/app?upgraded=true';
+        }, 8000);
+    </script>
 </head>
 <body class="bg-gray-50 min-h-screen flex items-center justify-center">
+    <!-- Google Tag Manager (noscript) -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TVFVC4P2"
+    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
+    
+    <script>
+        // Track subscription conversion for GA4
+        if (window.gtag) {
+            gtag('event', 'purchase', {
+                'transaction_id': '{{ session_id }}',
+                'value': {% if tier == 'annual' %}99.00{% else %}9.99{% endif %},
+                'currency': 'USD',
+                'items': [{
+                    'item_name': '{{ tier.title() }} Premium Membership',
+                    'price': {% if tier == 'annual' %}99.00{% else %}9.99{% endif %},
+                    'quantity': 1
+                }]
+            });
+        }
+        
+        // Track subscription conversion for GTM
+        if (window.dataLayer) {
+            window.dataLayer.push({
+                'event': 'purchase',
+                'ecommerce': {
+                    'transaction_id': '{{ session_id }}',
+                    'value': {% if tier == 'annual' %}99.00{% else %}9.99{% endif %},
+                    'currency': 'USD',
+                    'items': [{
+                        'item_name': '{{ tier.title() }} Premium Membership',
+                        'price': {% if tier == 'annual' %}99.00{% else %}9.99{% endif %},
+                        'quantity': 1
+                    }]
+                }
+            });
+        }
+    </script>
+    
     <div class="max-w-md w-full bg-white rounded-xl shadow-lg p-8 text-center">
         <!-- Success Icon -->
         <div class="text-6xl mb-6">🎉</div>
         
         <!-- Success Message -->
-        <h1 class="text-2xl font-bold text-gray-800 mb-4">Subscription Successful!</h1>
+        <h1 class="text-2xl font-bold text-gray-800 mb-4">🎉 Welcome to Premium!</h1>
         <p class="text-gray-600 mb-6">
-            Welcome to <strong>{{ tier.title() }} Spiritual Guidance</strong>!
+            Your <strong>{{ tier.title() }} Membership</strong> is now active!
         </p>
+        <p class="text-sm text-gray-500 mb-4">Redirecting to app in <span id="countdown">8</span> seconds...</p>
+        <script>
+            let seconds = 8;
+            setInterval(() => {
+                seconds--;
+                if (seconds >= 0) {
+                    document.getElementById('countdown').textContent = seconds;
+                }
+            }, 1000);
+        </script>
         
         <!-- Subscription Details -->
         <div class="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">

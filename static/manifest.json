@@ -1,6 +1,6 @@
 {
-  "name": "Confessiones",
-  "short_name": "Confessiones",
+  "name": "My Confessions",
+  "short_name": "My Confessions",
   "description": "Anonymous religious confession app with AI guidance",
   "start_url": "/app",
   "display": "standalone",

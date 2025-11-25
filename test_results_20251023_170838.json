@@ -1,0 +1,1742 @@
+[
+  {
+    "scenario_name": "Anxiety about Future",
+    "started_at": "2025-10-23T17:01:07.130723",
+    "messages": [
+      {
+        "user_message": "I can't stop worrying about losing my job. I pray but the anxiety won't go away.",
+        "ai_response": "Welcome, my child. In times of anxiety, remember the words of Psalm 55:22, \"Cast your cares on the Lord and he will sustain you.\" Can you share with me what specifically is causing you the most fear about potentially losing your job?",
+        "analysis": {
+          "length": 233,
+          "sentence_count": 3,
+          "has_scripture": true,
+          "has_question": true,
+          "word_count": 42,
+          "is_first_message": true,
+          "seems_formulaic": false,
+          "quality_flags": [
+            "✅ Response looks natural and appropriate"
+          ]
+        }
+      },
+      {
+        "user_message": "I've been praying for months but I still wake up at 3am terrified. Why isn't God answering?",
+        "ai_response": "It's understandable to feel anxious when prayers seem unanswered. Remember, God's timing is not always our own. Reflect on Romans 8:28, \"And we know that in all things God works for the good of those who love him.\" Have you noticed any unexpected blessings or moments of peace amidst this trial?",
+        "analysis": {
+          "length": 295,
+          "sentence_count": 4,
+          "has_scripture": true,
+          "has_question": true,
+          "word_count": 51,
+          "is_first_message": false,
+          "seems_formulaic": false,
+          "quality_flags": [
+            "✅ Response looks natural and appropriate"
+          ]
+        }
+      },
+      {
+        "user_message": "I feel like I'm failing my family. My wife says I need to trust God more but I don't know how.",
+        "ai_response": "Feeling like you're failing your family can be overwhelming. Trusting God means surrendering your worries to Him. Consider Proverbs 3:5-6, \"Trust in the Lord with all your heart and lean not on your own understanding.\" Have you shared these feelings of inadequacy with your wife?",
+        "analysis": {
+          "length": 279,
+          "sentence_count": 4,
+          "has_scripture": true,
+          "has_question": true,
+          "word_count": 45,
+          "is_first_message": false,
+          "seems_formulaic": false,
+          "quality_flags": [
+            "✅ Response looks natural and appropriate"
+          ]
+        }
+      },
+      {
+        "user_message": "You mentioned Philippians 4:6-7. I've read it before but how do I actually STOP worrying?",
+        "ai_response": "It's a process to overcome worry. Practice replacing anxious thoughts with prayers of gratitude. Reflect on Matthew 6:34, \"Therefore do not worry about tomorrow, for tomorrow will worry about itself.\" Have you tried keeping a gratitude journal to shift your focus from worries to blessings?",
+        "analysis": {
+          "length": 290,
+          "sentence_count": 4,
+          "has_scripture": true,
+          "has_question": true,
+          "word_count": 45,
+          "is_first_message": false,
+          "seems_formulaic": false,
+          "quality_flags": [
+            "✅ Response looks natural and appropriate"
+          ]
+        }
+      },
+      {
+        "user_message": "Thank you. I'll try to pray more specifically about my fears instead of just asking for peace.",
+        "ai_response": "That is a beautiful grace. Specific prayers can help you articulate your fears and surrender them to God. Trust in His love and care for you as you bring your worries to Him. May you find solace in pouring out your heart to Him in prayer.",
+        "analysis": {
+          "length": 238,
+          "sentence_count": 4,
+          "has_scripture": false,
+          "has_question": false,
+          "word_count": 46,
+          "is_first_message": false,
+          "seems_formulaic": false,
+          "quality_flags": [
+            "✅ Response looks natural and appropriate"
+          ]
+        }
+      }
+    ],
+    "completed_at": "2025-10-23T17:01:26.475091"
+  },
+  {
+    "scenario_name": "Anger in Marriage",
+    "started_at": "2025-10-23T17:01:31.479029",
+    "messages": [
+      {
+        "user_message": "I'm so angry at my husband. He doesn't help with anything and when I ask, he gets defensive.",
+        "ai_response": "Welcome, dear one. Remember the words of Psalm 103:8 – \"The Lord is merciful and gracious, slow to anger and abounding in mercy.\" Can you share with me how this situation has made you feel?",
+        "analysis": {
+          "length": 189,
+          "sentence_count": 3,
+          "has_scripture": true,
+          "has_question": true,
+          "word_count": 35,
+          "is_first_message": true,
+          "seems_formulaic": false,
+          "quality_flags": [
+            "✅ Response looks natural and appropriate"
+          ]
+        }
+      },
+      {
+        "user_message": "I've tried talking calmly but he just shuts down. I find myself yelling and I hate it.",
+        "ai_response": "It's understandable to feel frustrated in these moments. Remember the wisdom of Proverbs 15:1 – \"A gentle answer turns away wrath, but a harsh word stirs up anger.\" How do you think you can approach these conversations with your husband in a gentler way?",
+        "analysis": {
+          "length": 254,
+          "sentence_count": 3,
+          "has_scripture": true,
+          "has_question": true,
+          "word_count": 44,
+          "is_first_message": false,
+          "seems_formulaic": false,
+          "quality_flags": [
+            "✅ Response looks natural and appropriate"
+          ]
+        }
+      },
+      {
+        "user_message": "We have two young kids. I'm exhausted and resentful. Is it wrong to feel this way?",
+        "ai_response": "It's completely normal to feel overwhelmed and exhausted, especially with young children. Remember Galatians 6:9 – \"Let us not become weary in doing good, for at the proper time we will reap a harvest if we do not give up.\" It's okay to feel this way, but how can you find moments of self-care and support to replenish your spirit?",
+        "analysis": {
+          "length": 331,
+          "sentence_count": 3,
+          "has_scripture": true,
+          "has_question": true,
+          "word_count": 60,
+          "is_first_message": false,
+          "seems_formulaic": false,
+          "quality_flags": [
+            "✅ Response looks natural and appropriate"
+          ]
+        }
+      },
+      {
+        "user_message": "I want to forgive him but he keeps doing the same things. How many times do I have to forgive?",
+        "ai_response": "In Matthew 18:21-22, Jesus teaches us to forgive not just seven times, but seventy-seven times. Forgiveness can be a process, and setting boundaries is important. How can you communicate your feelings to your husband while still extending forgiveness in your heart?",
+        "analysis": {
+          "length": 265,
+          "sentence_count": 3,
+          "has_scripture": true,
+          "has_question": true,
+          "word_count": 41,
+          "is_first_message": false,
+          "seems_formulaic": false,
+          "quality_flags": [
+            "✅ Response looks natural and appropriate"
+          ]
+        }
+      },
+      {
+        "user_message": "You're right about Ephesians 4:26. I need to address it before I go to bed angry.",
+        "ai_response": "That is a beautiful grace. May God grant you the strength and wisdom to address these issues with your husband before the day ends.",
+        "analysis": {
+          "length": 131,
+          "sentence_count": 2,
+          "has_scripture": false,
+          "has_question": false,
+          "word_count": 24,
+          "is_first_message": false,
+          "seems_formulaic": false,
+          "quality_flags": [
+            "⚠️ Response too short (24 words)"
+          ]
+        }
+      }
+    ],
+    "completed_at": "2025-10-23T17:01:48.517882"
+  },
+  {
+    "scenario_name": "Grief After Loss",
+    "started_at": "2025-10-23T17:01:53.523044",
+    "messages": [
+      {
+        "user_message": "My mother died three months ago and I'm struggling. Everyone says she's in a better place.",
+        "ai_response": "Welcome, my child. Remember the comforting words of Psalm 34:18, \"The Lord is close to the brokenhearted and saves those who are crushed in spirit.\" Can you share with me how you've been coping with your mother's passing?",
+        "analysis": {
+          "length": 221,
+          "sentence_count": 3,
+          "has_scripture": true,
+          "has_question": true,
+          "word_count": 38,
+          "is_first_message": true,
+          "seems_formulaic": false,
+          "quality_flags": [
+            "✅ Response looks natural and appropriate"
+          ]
+        }
+      },
+      {
+        "user_message": "I know she was a believer but I miss her so much it physically hurts. Is this normal?",
+        "ai_response": "It's completely normal to feel a deep physical ache when grieving the loss of a loved one. Grief can manifest in many ways, including physical pain. Remember, Jesus Himself wept at the death of His friend Lazarus. How have you been taking care of yourself during this difficult time?",
+        "analysis": {
+          "length": 283,
+          "sentence_count": 4,
+          "has_scripture": false,
+          "has_question": true,
+          "word_count": 49,
+          "is_first_message": false,
+          "seems_formulaic": false,
+          "quality_flags": [
+            "✅ Response looks natural and appropriate"
+          ]
+        }
+      },
+      {
+        "user_message": "People at church say I should be grateful she's with Jesus but I just feel abandoned.",
+        "ai_response": "It's okay to feel a sense of abandonment in the midst of grief. Jesus understands our human emotions and is present with us even in our darkest moments. In Matthew 5:4, Jesus said, \"Blessed are those who mourn, for they will be comforted.\" How can you allow yourself to feel God's comfort during this time of feeling abandoned?",
+        "analysis": {
+          "length": 327,
+          "sentence_count": 4,
+          "has_scripture": true,
+          "has_question": true,
+          "word_count": 58,
+          "is_first_message": false,
+          "seems_formulaic": false,
+          "quality_flags": [
+            "✅ Response looks natural and appropriate"
+          ]
+        }
+      },
+      {
+        "user_message": "I feel guilty for being angry at God. I know He doesn't make mistakes but why her?",
+        "ai_response": "It's understandable to feel anger and confusion during times of loss. Remember, God can handle your honest emotions and He invites you to bring your pain to Him. In times of questioning, remember Romans 8:28, \"And we know that in all things God works for the good of those who love Him.\" How can you express your feelings to God and seek His peace in the midst of your questions?",
+        "analysis": {
+          "length": 379,
+          "sentence_count": 4,
+          "has_scripture": true,
+          "has_question": true,
+          "word_count": 70,
+          "is_first_message": false,
+          "seems_formulaic": false,
+          "quality_flags": [
+            "✅ Response looks natural and appropriate"
+          ]
+        }
+      },
+      {
+        "user_message": "Thank you. It helps to know that grief is part of love and God understands.",
+        "ai_response": "That is a beautiful grace. May that realization bring you comfort and peace as you navigate this season of grief and healing.",
+        "analysis": {
+          "length": 125,
+          "sentence_count": 2,
+          "has_scripture": false,
+          "has_question": false,
+          "word_count": 22,
+          "is_first_message": false,
+          "seems_formulaic": false,
+          "quality_flags": [
+            "⚠️ Response too short (22 words)"
+          ]
+        }
+      }
+    ],
+    "completed_at": "2025-10-23T17:02:12.891247"
+  },
+  {
+    "scenario_name": "Pornography Addiction",
+    "started_at": "2025-10-23T17:02:17.896213",
+    "messages": [
+      {
+        "user_message": "I'm addicted to pornography and I hate myself for it. I've tried to stop so many times.",
+        "ai_response": "Welcome, my child. Remember the words of Psalm 103:12, \"As far as the east is from the west, so far has he removed our transgressions from us.\" Can you share with me what triggers your urges to turn to pornography?",
+        "analysis": {
+          "length": 214,
+          "sentence_count": 3,
+          "has_scripture": true,
+          "has_question": true,
+          "word_count": 40,
+          "is_first_message": true,
+          "seems_formulaic": false,
+          "quality_flags": [
+            "✅ Response looks natural and appropriate"
+          ]
+        }
+      },
+      {
+        "user_message": "I'm married with kids. My wife doesn't know. I feel like a hypocrite going to church.",
+        "ai_response": "That's a heavy burden to carry. Remember, God's love and mercy are always available to you. Reflect on James 5:16, \"Therefore confess your sins to each other and pray for each other so that you may be healed.\" Have you considered seeking support from a trusted friend or a counselor to help you on this journey?",
+        "analysis": {
+          "length": 311,
+          "sentence_count": 4,
+          "has_scripture": true,
+          "has_question": true,
+          "word_count": 56,
+          "is_first_message": false,
+          "seems_formulaic": false,
+          "quality_flags": [
+            "✅ Response looks natural and appropriate"
+          ]
+        }
+      },
+      {
+        "user_message": "Every time I confess it to God I end up doing it again within days. I'm losing hope.",
+        "ai_response": "It's wonderful that you keep turning back to God despite the struggle. Remember, in 1 Corinthians 10:13, it says, \"God is faithful; he will not let you be tempted beyond what you can bear.\" Have you thought about seeking guidance from a spiritual mentor or a support group to help you navigate through this challenge?",
+        "analysis": {
+          "length": 317,
+          "sentence_count": 3,
+          "has_scripture": true,
+          "has_question": true,
+          "word_count": 55,
+          "is_first_message": false,
+          "seems_formulaic": false,
+          "quality_flags": [
+            "✅ Response looks natural and appropriate"
+          ]
+        }
+      },
+      {
+        "user_message": "I've tried accountability software but I always find ways around it. What's wrong with me?",
+        "ai_response": "It's not uncommon to face challenges in overcoming addictions. Remember, in Philippians 4:13, it says, \"I can do all things through Christ who strengthens me.\" Perhaps this struggle can be an opportunity to deepen your trust in God's grace and seek additional support. Have you considered discussing this with a professional counselor who specializes in addiction?",
+        "analysis": {
+          "length": 364,
+          "sentence_count": 4,
+          "has_scripture": true,
+          "has_question": true,
+          "word_count": 56,
+          "is_first_message": false,
+          "seems_formulaic": false,
+          "quality_flags": [
+            "✅ Response looks natural and appropriate"
+          ]
+        }
+      },
+      {
+        "user_message": "Maybe I need to tell someone in real life. That terrifies me but this isn't working.",
+        "ai_response": "Acknowledging the need for real-life support is a brave step. Remember, in James 5:16, it encourages us to confess our sins to one another for healing. Opening up to someone you trust can bring a sense of relief and accountability. Is there a close friend, pastor, or counselor you feel comfortable confiding in?",
+        "analysis": {
+          "length": 312,
+          "sentence_count": 4,
+          "has_scripture": true,
+          "has_question": true,
+          "word_count": 53,
+          "is_first_message": false,
+          "seems_formulaic": false,
+          "quality_flags": [
+            "✅ Response looks natural and appropriate"
+          ]
+        }
+      }
+    ],
+    "completed_at": "2025-10-23T17:02:34.700631"
+  },
+  {
+    "scenario_name": "Doubting Faith",
+    "started_at": "2025-10-23T17:02:39.705087",
+    "messages": [
+      {
+        "user_message": "I grew up Christian but lately I'm doubting everything. What if it's not real?",
+        "ai_response": "Welcome, dear one. Remember the words of Psalm 34:18, \"The Lord is close to the brokenhearted and saves those who are crushed in spirit.\" Can you share with me what has been causing these doubts in your heart?",
+        "analysis": {
+          "length": 209,
+          "sentence_count": 3,
+          "has_scripture": true,
+          "has_question": true,
+          "word_count": 38,
+          "is_first_message": true,
+          "seems_formulaic": false,
+          "quality_flags": [
+            "✅ Response looks natural and appropriate"
+          ]
+        }
+      },
+      {
+        "user_message": "I look at all the suffering in the world and wonder how a loving God allows it.",
+        "ai_response": "It's understandable to wrestle with this question. Reflect on Romans 8:28, \"And we know that in all things God works for the good of those who love him.\" How do you think understanding suffering fits into your faith journey?",
+        "analysis": {
+          "length": 224,
+          "sentence_count": 3,
+          "has_scripture": true,
+          "has_question": true,
+          "word_count": 39,
+          "is_first_message": false,
+          "seems_formulaic": false,
+          "quality_flags": [
+            "✅ Response looks natural and appropriate"
+          ]
+        }
+      },
+      {
+        "user_message": "I still go to church but I feel like a fraud. I don't feel God's presence anymore.",
+        "ai_response": "That must be a difficult place to be in. Remember Isaiah 41:10, \"Do not fear, for I am with you; do not be dismayed, for I am your God.\" Have you considered sharing these feelings with a trusted member of your church community?",
+        "analysis": {
+          "length": 227,
+          "sentence_count": 3,
+          "has_scripture": true,
+          "has_question": true,
+          "word_count": 43,
+          "is_first_message": false,
+          "seems_formulaic": false,
+          "quality_flags": [
+            "✅ Response looks natural and appropriate"
+          ]
+        }
+      },
+      {
+        "user_message": "What if I've wasted my life believing something that isn't true? This terrifies me.",
+        "ai_response": "It's okay to have these fears. Reflect on John 14:6, \"I am the way and the truth and the life.\" Perhaps this fear can lead you to a deeper exploration of your faith journey. How do you feel about delving deeper into your beliefs to find clarity?",
+        "analysis": {
+          "length": 245,
+          "sentence_count": 4,
+          "has_scripture": true,
+          "has_question": true,
+          "word_count": 47,
+          "is_first_message": false,
+          "seems_formulaic": false,
+          "quality_flags": [
+            "✅ Response looks natural and appropriate"
+          ]
+        }
+      },
+      {
+        "user_message": "I want to believe but I need something real, not just feelings. Where do I start?",
+        "ai_response": "Seeking a deeper, more tangible faith is a noble pursuit. Consider starting with exploring the historical and philosophical evidence for Christianity. Reflect on Proverbs 2:3-5, \"Indeed, if you call out for insight and cry aloud for understanding, and if you look for it as for silver and search for it as for hidden treasure, then you will understand the fear of the Lord and find the knowledge of God.\" How does the idea of seeking knowledge alongside faith resonate with you?",
+        "analysis": {
+          "length": 478,
+          "sentence_count": 4,
+          "has_scripture": true,
+          "has_question": true,
+          "word_count": 81,
+          "is_first_message": false,
+          "seems_formulaic": false,
+          "quality_flags": [
+            "✅ Response looks natural and appropriate"
+          ]
+        }
+      }
+    ],
+    "completed_at": "2025-10-23T17:02:57.087527"
+  },
+  {
+    "scenario_name": "Financial Stress",
+    "started_at": "2025-10-23T17:03:02.092716",
+    "messages": [
+      {
+        "user_message": "We're drowning in debt. I can't sleep. My wife thinks I should tithe but we can't pay rent.",
+        "ai_response": "Welcome, my child. Remember, \"Come to me, all you who are weary and burdened, and I will give you rest\" (Matthew 11:28). Can you share with me how this financial burden is affecting your relationship with God and your wife?",
+        "analysis": {
+          "length": 223,
+          "sentence_count": 3,
+          "has_scripture": true,
+          "has_question": true,
+          "word_count": 40,
+          "is_first_message": true,
+          "seems_formulaic": false,
+          "quality_flags": [
+            "✅ Response looks natural and appropriate"
+          ]
+        }
+      },
+      {
+        "user_message": "I've been praying for a better job for two years. Nothing. My faith is shaking.",
+        "ai_response": "I hear your struggles and the weight on your heart. Remember, \"Trust in the Lord with all your heart and lean not on your own understanding\" (Proverbs 3:5). It's understandable to feel discouraged, but God's timing is not always our timing. How can we pray together for patience and trust in God's plan for you?",
+        "analysis": {
+          "length": 311,
+          "sentence_count": 4,
+          "has_scripture": true,
+          "has_question": true,
+          "word_count": 55,
+          "is_first_message": false,
+          "seems_formulaic": false,
+          "quality_flags": [
+            "✅ Response looks natural and appropriate"
+          ]
+        }
+      },
+      {
+        "user_message": "We had to pull our kids out of their school. They don't understand why.",
+        "ai_response": "That must be a difficult situation for your family. In times of uncertainty, remember, \"For I know the plans I have for you, plans to prosper you and not to harm you, plans to give you hope and a future\" (Jeremiah 29:11). How can you involve your children in prayer and trust in God's provision during this challenging time?",
+        "analysis": {
+          "length": 324,
+          "sentence_count": 3,
+          "has_scripture": true,
+          "has_question": true,
+          "word_count": 59,
+          "is_first_message": false,
+          "seems_formulaic": false,
+          "quality_flags": [
+            "✅ Response looks natural and appropriate"
+          ]
+        }
+      },
+      {
+        "user_message": "I feel like God has abandoned us. We're trying to be faithful but nothing works.",
+        "ai_response": "I can sense your pain and frustration. Remember, \"The Lord is close to the brokenhearted and saves those who are crushed in spirit\" (Psalm 34:18). God's silence doesn't mean absence. How can we pray together for renewed faith and the ability to see God's hand in your situation, even in the midst of hardships?",
+        "analysis": {
+          "length": 310,
+          "sentence_count": 4,
+          "has_scripture": true,
+          "has_question": true,
+          "word_count": 54,
+          "is_first_message": false,
+          "seems_formulaic": false,
+          "quality_flags": [
+            "✅ Response looks natural and appropriate"
+          ]
+        }
+      },
+      {
+        "user_message": "You mentioned Matthew 6:33. But how do I seek His kingdom when I can't feed my kids?",
+        "ai_response": "I understand your concern deeply. Seeking God's kingdom first means trusting that He knows your needs. In this difficult time, let us pray for God's provision and wisdom to navigate these challenges. How can we ask for the grace to prioritize seeking God's will amidst your current struggles?",
+        "analysis": {
+          "length": 292,
+          "sentence_count": 4,
+          "has_scripture": false,
+          "has_question": true,
+          "word_count": 48,
+          "is_first_message": false,
+          "seems_formulaic": false,
+          "quality_flags": [
+            "✅ Response looks natural and appropriate"
+          ]
+        }
+      }
+    ],
+    "completed_at": "2025-10-23T17:03:18.736088"
+  },
+  {
+    "scenario_name": "Teenager Rebellion",
+    "started_at": "2025-10-23T17:03:23.740039",
+    "messages": [
+      {
+        "user_message": "My 16-year-old son wants nothing to do with church. He says Christianity is fake.",
+        "ai_response": "Welcome, dear child of God. Remember, \"If we confess our sins, he is faithful and just and will forgive us our sins and purify us from all unrighteousness\" (1 John 1:9). What do you think is causing your son to feel this way?",
+        "analysis": {
+          "length": 225,
+          "sentence_count": 3,
+          "has_scripture": true,
+          "has_question": true,
+          "word_count": 43,
+          "is_first_message": true,
+          "seems_formulaic": false,
+          "quality_flags": [
+            "✅ Response looks natural and appropriate"
+          ]
+        }
+      },
+      {
+        "user_message": "We raised him right, took him to church, prayed as a family. Where did we go wrong?",
+        "ai_response": "It's understandable to feel that way, but remember, each person's faith journey is unique. Sometimes, doubts and questions arise as part of growing up. Reflect on how you can continue to show him the love and authenticity of your faith. How can you support him in this challenging time?",
+        "analysis": {
+          "length": 286,
+          "sentence_count": 4,
+          "has_scripture": false,
+          "has_question": true,
+          "word_count": 49,
+          "is_first_message": false,
+          "seems_formulaic": false,
+          "quality_flags": [
+            "✅ Response looks natural and appropriate"
+          ]
+        }
+      },
+      {
+        "user_message": "He's drinking with friends now. When I confront him he says I'm a hypocrite.",
+        "ai_response": "It's a difficult situation, but remember, \"Let us not become weary in doing good, for at the proper time we will reap a harvest if we do not give up\" (Galatians 6:9). Perhaps this is a time for patience, understanding, and open communication with your son. How can you show him the love and support he needs right now?",
+        "analysis": {
+          "length": 318,
+          "sentence_count": 3,
+          "has_scripture": true,
+          "has_question": true,
+          "word_count": 59,
+          "is_first_message": false,
+          "seems_formulaic": false,
+          "quality_flags": [
+            "✅ Response looks natural and appropriate"
+          ]
+        }
+      },
+      {
+        "user_message": "I don't know if I should force him to come to church or give him space.",
+        "ai_response": "It's a challenging decision. Remember, \"Train up a child in the way he should go; even when he is old he will not depart from it\" (Proverbs 22:6). Consider having an honest conversation with him about your concerns and the importance of faith in your family. How can you navigate this situation with both firmness and understanding?",
+        "analysis": {
+          "length": 332,
+          "sentence_count": 4,
+          "has_scripture": true,
+          "has_question": true,
+          "word_count": 57,
+          "is_first_message": false,
+          "seems_formulaic": false,
+          "quality_flags": [
+            "✅ Response looks natural and appropriate"
+          ]
+        }
+      },
+      {
+        "user_message": "I'm trying to trust God with him but it's the hardest thing I've ever done.",
+        "ai_response": "Trusting God with our loved ones can be a profound act of faith. Remember, \"Cast all your anxiety on him because he cares for you\" (1 Peter 5:7). Keep praying for your son and trust that God is working in his life, even when you can't see it. May God grant you peace and strength in this challenging time.",
+        "analysis": {
+          "length": 305,
+          "sentence_count": 4,
+          "has_scripture": true,
+          "has_question": false,
+          "word_count": 59,
+          "is_first_message": false,
+          "seems_formulaic": false,
+          "quality_flags": [
+            "✅ Response looks natural and appropriate"
+          ]
+        }
+      }
+    ],
+    "completed_at": "2025-10-23T17:03:40.851168"
+  },
+  {
+    "scenario_name": "Loneliness Single",
+    "started_at": "2025-10-23T17:03:45.856110",
+    "messages": [
+      {
+        "user_message": "I'm 35, never married, and so lonely. Everyone says 'God's timing' but I'm tired of waiting.",
+        "ai_response": "Welcome, dear one. Remember, \"The Lord is close to the brokenhearted and saves those who are crushed in spirit\" (Psalm 34:18). Can you share with me how this waiting has been weighing on your heart?",
+        "analysis": {
+          "length": 198,
+          "sentence_count": 3,
+          "has_scripture": true,
+          "has_question": true,
+          "word_count": 35,
+          "is_first_message": true,
+          "seems_formulaic": false,
+          "quality_flags": [
+            "✅ Response looks natural and appropriate"
+          ]
+        }
+      },
+      {
+        "user_message": "All my friends are married with kids. I feel left behind and forgotten by God.",
+        "ai_response": "It's understandable to feel that way, but remember, God's plans are not limited by our timelines. Reflect on Psalm 27:14, \"Wait for the Lord; be strong and take heart and wait for the Lord.\" How can you find solace and purpose in this waiting period?",
+        "analysis": {
+          "length": 250,
+          "sentence_count": 3,
+          "has_scripture": true,
+          "has_question": true,
+          "word_count": 45,
+          "is_first_message": false,
+          "seems_formulaic": false,
+          "quality_flags": [
+            "✅ Response looks natural and appropriate"
+          ]
+        }
+      },
+      {
+        "user_message": "I've prayed for a spouse for years. Is there something wrong with me?",
+        "ai_response": "It's natural to question during times of waiting, but remember, God's timing is perfect. Reflect on 1 Peter 5:7, \"Cast all your anxiety on him because he cares for you.\" Take this time to grow in self-awareness and strengthen your relationship with God. How can you use this waiting period to deepen your faith and understanding of yourself?",
+        "analysis": {
+          "length": 341,
+          "sentence_count": 4,
+          "has_scripture": true,
+          "has_question": true,
+          "word_count": 58,
+          "is_first_message": false,
+          "seems_formulaic": false,
+          "quality_flags": [
+            "✅ Response looks natural and appropriate"
+          ]
+        }
+      },
+      {
+        "user_message": "I'm trying to be content as Paul says but honestly I'm just miserable.",
+        "ai_response": "Your honesty is a sign of a sincere heart. Remember, God understands your struggles and is with you in them. Reflect on Philippians 4:13, \"I can do all this through him who gives me strength.\" How can you invite God into your feelings of misery and seek His strength to endure this season?",
+        "analysis": {
+          "length": 289,
+          "sentence_count": 4,
+          "has_scripture": true,
+          "has_question": true,
+          "word_count": 53,
+          "is_first_message": false,
+          "seems_formulaic": false,
+          "quality_flags": [
+            "✅ Response looks natural and appropriate"
+          ]
+        }
+      },
+      {
+        "user_message": "How do I trust God's plan when His plan feels like punishment?",
+        "ai_response": "It's normal to feel that way, but remember, God's love for you is beyond measure. Reflect on Jeremiah 29:11, \"For I know the plans I have for you, plans to prosper you and not to harm you, plans to give you hope and a future.\" How can you shift your perspective to see God's plan as a path to hope and a future, even in times of hardship?",
+        "analysis": {
+          "length": 338,
+          "sentence_count": 3,
+          "has_scripture": true,
+          "has_question": true,
+          "word_count": 68,
+          "is_first_message": false,
+          "seems_formulaic": false,
+          "quality_flags": [
+            "✅ Response looks natural and appropriate"
+          ]
+        }
+      }
+    ],
+    "completed_at": "2025-10-23T17:04:03.177248"
+  },
+  {
+    "scenario_name": "Workplace Injustice",
+    "started_at": "2025-10-23T17:04:08.183720",
+    "messages": [
+      {
+        "user_message": "My boss takes credit for my work. I work harder than anyone but get passed over.",
+        "ai_response": "Welcome, dear one. Remember Psalm 55:22, \"Cast your cares on the Lord and he will sustain you.\" Can you share with me how this situation is affecting you emotionally and spiritually?",
+        "analysis": {
+          "length": 182,
+          "sentence_count": 3,
+          "has_scripture": true,
+          "has_question": true,
+          "word_count": 31,
+          "is_first_message": true,
+          "seems_formulaic": false,
+          "quality_flags": [
+            "✅ Response looks natural and appropriate"
+          ]
+        }
+      },
+      {
+        "user_message": "I want to confront him but I'm afraid I'll lose my job. My family needs the income.",
+        "ai_response": "It's a challenging situation you're facing. Proverbs 3:5-6 reminds us to trust in the Lord with all our heart. Have you considered seeking advice from a trusted mentor or HR to navigate this dilemma?",
+        "analysis": {
+          "length": 199,
+          "sentence_count": 3,
+          "has_scripture": true,
+          "has_question": true,
+          "word_count": 34,
+          "is_first_message": false,
+          "seems_formulaic": false,
+          "quality_flags": [
+            "✅ Response looks natural and appropriate"
+          ]
+        }
+      },
+      {
+        "user_message": "As a Christian should I just turn the other cheek? That feels like being a doormat.",
+        "ai_response": "It's understandable to struggle with this dilemma. The wisdom in Matthew 10:16 can guide us: \"Behold, I am sending you out as sheep in the midst of wolves; so be wise as serpents and innocent as doves.\" How can you uphold your dignity while navigating this situation wisely?",
+        "analysis": {
+          "length": 274,
+          "sentence_count": 3,
+          "has_scripture": true,
+          "has_question": true,
+          "word_count": 48,
+          "is_first_message": false,
+          "seems_formulaic": false,
+          "quality_flags": [
+            "✅ Response looks natural and appropriate"
+          ]
+        }
+      },
+      {
+        "user_message": "I'm becoming bitter and resentful. This is affecting my relationship with God.",
+        "ai_response": "That's a heavy burden to carry. Remember Colossians 3:13, \"Bear with each other and forgive one another if any of you has a grievance against someone. Forgive as the Lord forgave you.\" How can you find peace and release the bitterness in your heart through forgiveness?",
+        "analysis": {
+          "length": 269,
+          "sentence_count": 4,
+          "has_scripture": true,
+          "has_question": true,
+          "word_count": 46,
+          "is_first_message": false,
+          "seems_formulaic": false,
+          "quality_flags": [
+            "✅ Response looks natural and appropriate"
+          ]
+        }
+      },
+      {
+        "user_message": "You mentioned Colossians 3:23. Working for the Lord, not men. I need that perspective.",
+        "ai_response": "It's wonderful that you feel that way. Keeping Colossians 3:23 in mind can help you find purpose and fulfillment in your work, knowing that you are ultimately serving the Lord. How can this perspective shift help you navigate your current challenges at work?",
+        "analysis": {
+          "length": 258,
+          "sentence_count": 3,
+          "has_scripture": true,
+          "has_question": true,
+          "word_count": 43,
+          "is_first_message": false,
+          "seems_formulaic": false,
+          "quality_flags": [
+            "✅ Response looks natural and appropriate"
+          ]
+        }
+      }
+    ],
+    "completed_at": "2025-10-23T17:04:25.122819"
+  },
+  {
+    "scenario_name": "Infertility Struggle",
+    "started_at": "2025-10-23T17:04:30.128109",
+    "messages": [
+      {
+        "user_message": "We've been trying to have a baby for four years. Every negative test breaks my heart.",
+        "ai_response": "Welcome, dear one. Remember, \"The Lord is close to the brokenhearted; he rescues those whose spirits are crushed\" (Psalm 34:18). Can you share with me how this journey has been weighing on your heart?",
+        "analysis": {
+          "length": 200,
+          "sentence_count": 3,
+          "has_scripture": true,
+          "has_question": true,
+          "word_count": 34,
+          "is_first_message": true,
+          "seems_formulaic": false,
+          "quality_flags": [
+            "✅ Response looks natural and appropriate"
+          ]
+        }
+      },
+      {
+        "user_message": "Everyone at church is pregnant. I'm happy for them but I'm dying inside.",
+        "ai_response": "It's understandable to feel that way. Your pain is valid. Remember, \"The Lord is near to all who call on him, to all who call on him in truth\" (Psalm 145:18). How can we find peace and hope in this difficult time?",
+        "analysis": {
+          "length": 213,
+          "sentence_count": 4,
+          "has_scripture": true,
+          "has_question": true,
+          "word_count": 42,
+          "is_first_message": false,
+          "seems_formulaic": false,
+          "quality_flags": [
+            "✅ Response looks natural and appropriate"
+          ]
+        }
+      },
+      {
+        "user_message": "We can't afford IVF. People say 'just adopt' like it's simple. It's expensive too.",
+        "ai_response": "Navigating these challenges can be overwhelming. Trust that \"God is our refuge and strength, an ever-present help in trouble\" (Psalm 46:1). Have you considered seeking support or exploring other options that may provide comfort and guidance during this time?",
+        "analysis": {
+          "length": 258,
+          "sentence_count": 3,
+          "has_scripture": true,
+          "has_question": true,
+          "word_count": 39,
+          "is_first_message": false,
+          "seems_formulaic": false,
+          "quality_flags": [
+            "✅ Response looks natural and appropriate"
+          ]
+        }
+      },
+      {
+        "user_message": "I've prayed, fasted, bargained with God. I don't understand why He's saying no.",
+        "ai_response": "Your faith and perseverance are admirable. Remember, \"For my thoughts are not your thoughts, neither are your ways my ways, declares the Lord\" (Isaiah 55:8). How can we find solace in trusting God's plan, even when it's difficult to understand?",
+        "analysis": {
+          "length": 244,
+          "sentence_count": 3,
+          "has_scripture": true,
+          "has_question": true,
+          "word_count": 40,
+          "is_first_message": false,
+          "seems_formulaic": false,
+          "quality_flags": [
+            "✅ Response looks natural and appropriate"
+          ]
+        }
+      },
+      {
+        "user_message": "How do I accept that God's plan might not include children? That's all I've wanted.",
+        "ai_response": "It's a challenging journey to surrender our desires to the Lord. Reflect on the words of Jesus, \"For mortals it is impossible, but for God all things are possible\" (Matthew 19:26). How can we find peace and purpose in embracing God's will, even when it differs from our own?",
+        "analysis": {
+          "length": 274,
+          "sentence_count": 3,
+          "has_scripture": true,
+          "has_question": true,
+          "word_count": 49,
+          "is_first_message": false,
+          "seems_formulaic": false,
+          "quality_flags": [
+            "✅ Response looks natural and appropriate"
+          ]
+        }
+      }
+    ],
+    "completed_at": "2025-10-23T17:04:47.006602"
+  },
+  {
+    "scenario_name": "Guilt Past Abortion",
+    "started_at": "2025-10-23T17:04:52.011763",
+    "messages": [
+      {
+        "user_message": "I had an abortion when I was 19. I'm 32 now and the guilt is crushing me.",
+        "ai_response": "Welcome, dear child of God. Remember the words of Psalm 103:12, \"As far as the east is from the west, so far has he removed our transgressions from us.\" Can you share with me how this burden has been affecting you lately?",
+        "analysis": {
+          "length": 221,
+          "sentence_count": 3,
+          "has_scripture": true,
+          "has_question": true,
+          "word_count": 42,
+          "is_first_message": true,
+          "seems_formulaic": false,
+          "quality_flags": [
+            "✅ Response looks natural and appropriate"
+          ]
+        }
+      },
+      {
+        "user_message": "I became a Christian five years ago. I know God forgives but I can't forgive myself.",
+        "ai_response": "It's beautiful to hear about your journey of faith. Remember Romans 8:1, \"There is therefore now no condemnation for those who are in Christ Jesus.\" Allow God's grace to heal your heart and accept His forgiveness. How can we work together to help you find peace and self-forgiveness?",
+        "analysis": {
+          "length": 283,
+          "sentence_count": 4,
+          "has_scripture": true,
+          "has_question": true,
+          "word_count": 48,
+          "is_first_message": false,
+          "seems_formulaic": false,
+          "quality_flags": [
+            "✅ Response looks natural and appropriate"
+          ]
+        }
+      },
+      {
+        "user_message": "I think about the child constantly. What would they be like? I murdered my own baby.",
+        "ai_response": "Your pain is real, but remember God's compassion is boundless. In Psalm 34:18, it says, \"The Lord is near to the brokenhearted and saves the crushed in spirit.\" Let's explore ways to bring your grief and questions to God in prayer. How can we pray together for healing and peace in this situation?",
+        "analysis": {
+          "length": 297,
+          "sentence_count": 4,
+          "has_scripture": true,
+          "has_question": true,
+          "word_count": 53,
+          "is_first_message": false,
+          "seems_formulaic": false,
+          "quality_flags": [
+            "✅ Response looks natural and appropriate"
+          ]
+        }
+      },
+      {
+        "user_message": "My husband doesn't know. I'm terrified to tell him. Will God ever let me move past this?",
+        "ai_response": "It's understandable to feel afraid, but trust that God's mercy is greater than any fear. In Isaiah 41:10, it says, \"Fear not, for I am with you; be not dismayed, for I am your God.\" Let's pray for courage and wisdom to share this burden with your husband, knowing that God will guide you both towards healing and reconciliation.",
+        "analysis": {
+          "length": 328,
+          "sentence_count": 3,
+          "has_scripture": true,
+          "has_question": false,
+          "word_count": 59,
+          "is_first_message": false,
+          "seems_formulaic": false,
+          "quality_flags": [
+            "✅ Response looks natural and appropriate"
+          ]
+        }
+      },
+      {
+        "user_message": "Thank you for reminding me of 1 John 1:9. I need to accept His forgiveness.",
+        "ai_response": "That is a beautiful grace. May you continue to embrace God's forgiveness and allow His love to heal your heart. Remember, you are a beloved child of God, and His mercy knows no bounds.",
+        "analysis": {
+          "length": 184,
+          "sentence_count": 3,
+          "has_scripture": false,
+          "has_question": false,
+          "word_count": 34,
+          "is_first_message": false,
+          "seems_formulaic": false,
+          "quality_flags": [
+            "✅ Response looks natural and appropriate"
+          ]
+        }
+      }
+    ],
+    "completed_at": "2025-10-23T17:05:09.432951"
+  },
+  {
+    "scenario_name": "Aging Parent Care",
+    "started_at": "2025-10-23T17:05:14.437405",
+    "messages": [
+      {
+        "user_message": "My mom has dementia. She doesn't recognize me anymore. I'm her only caregiver.",
+        "ai_response": "Welcome, dear one. In times of distress, remember Psalm 34:18, \"The Lord is close to the brokenhearted.\" Can you share with me how you're feeling as you care for your mother?",
+        "analysis": {
+          "length": 174,
+          "sentence_count": 3,
+          "has_scripture": true,
+          "has_question": true,
+          "word_count": 31,
+          "is_first_message": true,
+          "seems_formulaic": false,
+          "quality_flags": [
+            "✅ Response looks natural and appropriate"
+          ]
+        }
+      },
+      {
+        "user_message": "I'm exhausted. I love her but I sometimes wish this was over. That makes me feel terrible.",
+        "ai_response": "It's truly challenging to care for a loved one with dementia. Remember, in our weakness, God's strength is made perfect (2 Corinthians 12:9). Have you considered seeking support or respite care to help you through this difficult time?",
+        "analysis": {
+          "length": 234,
+          "sentence_count": 3,
+          "has_scripture": true,
+          "has_question": true,
+          "word_count": 38,
+          "is_first_message": false,
+          "seems_formulaic": false,
+          "quality_flags": [
+            "✅ Response looks natural and appropriate"
+          ]
+        }
+      },
+      {
+        "user_message": "My siblings do nothing to help. They visit once a month and judge how I'm handling it.",
+        "ai_response": "It's tough when family dynamics add to the burden. Remember Matthew 11:28, \"Come to me, all you who are weary and burdened, and I will give you rest.\" Have you tried talking to your siblings about how you're feeling and the support you need?",
+        "analysis": {
+          "length": 241,
+          "sentence_count": 3,
+          "has_scripture": true,
+          "has_question": true,
+          "word_count": 44,
+          "is_first_message": false,
+          "seems_formulaic": false,
+          "quality_flags": [
+            "✅ Response looks natural and appropriate"
+          ]
+        }
+      },
+      {
+        "user_message": "I'm neglecting my own family to care for her. Is that what God wants?",
+        "ai_response": "It's important to remember the balance between caring for your mother and caring for your own family. In Mark 12:31, Jesus reminds us to love our neighbors as ourselves. Have you considered seeking help so you can manage both responsibilities without neglecting either?",
+        "analysis": {
+          "length": 269,
+          "sentence_count": 3,
+          "has_scripture": true,
+          "has_question": true,
+          "word_count": 43,
+          "is_first_message": false,
+          "seems_formulaic": false,
+          "quality_flags": [
+            "✅ Response looks natural and appropriate"
+          ]
+        }
+      },
+      {
+        "user_message": "I needed to hear that compassion fatigue is real. I'm not a bad daughter.",
+        "ai_response": "Recognizing your own limits and struggles is a sign of strength, not weakness. Remember Galatians 6:2, \"Carry each other's burdens, and in this way, you will fulfill the law of Christ.\" May you find peace and strength as you navigate this challenging journey.",
+        "analysis": {
+          "length": 259,
+          "sentence_count": 3,
+          "has_scripture": true,
+          "has_question": false,
+          "word_count": 43,
+          "is_first_message": false,
+          "seems_formulaic": false,
+          "quality_flags": [
+            "✅ Response looks natural and appropriate"
+          ]
+        }
+      }
+    ],
+    "completed_at": "2025-10-23T17:05:36.930971"
+  },
+  {
+    "scenario_name": "Sexual Abuse Past",
+    "started_at": "2025-10-23T17:05:41.933335",
+    "messages": [
+      {
+        "user_message": "I was abused by my uncle when I was 12. I've never told anyone until now.",
+        "ai_response": "Welcome, my child. Remember, \"The Lord is near to the brokenhearted and saves the crushed in spirit\" (Psalm 34:18). Can you share with me how this experience has affected you?",
+        "analysis": {
+          "length": 175,
+          "sentence_count": 3,
+          "has_scripture": true,
+          "has_question": true,
+          "word_count": 30,
+          "is_first_message": true,
+          "seems_formulaic": false,
+          "quality_flags": [
+            "✅ Response looks natural and appropriate"
+          ]
+        }
+      },
+      {
+        "user_message": "I'm married and intimacy is difficult. I feel broken. My husband deserves better.",
+        "ai_response": "I'm truly sorry to hear about the pain you carry. Remember, \"The Lord is close to the brokenhearted and saves those who are crushed in spirit\" (Psalm 34:18). It's understandable to struggle with intimacy after such a traumatic experience. How can I support you in navigating this challenge in your marriage?",
+        "analysis": {
+          "length": 307,
+          "sentence_count": 4,
+          "has_scripture": true,
+          "has_question": true,
+          "word_count": 51,
+          "is_first_message": false,
+          "seems_formulaic": false,
+          "quality_flags": [
+            "✅ Response looks natural and appropriate"
+          ]
+        }
+      },
+      {
+        "user_message": "People say I need to forgive him but I can't. He's never even apologized.",
+        "ai_response": "Forgiveness can be a long and difficult journey, especially when there's no apology. Remember, \"Be kind to one another, tenderhearted, forgiving one another, as God in Christ forgave you\" (Ephesians 4:32). It's okay to struggle with forgiveness. How can we work towards healing and peace in your heart together?",
+        "analysis": {
+          "length": 311,
+          "sentence_count": 4,
+          "has_scripture": true,
+          "has_question": true,
+          "word_count": 49,
+          "is_first_message": false,
+          "seems_formulaic": false,
+          "quality_flags": [
+            "✅ Response looks natural and appropriate"
+          ]
+        }
+      },
+      {
+        "user_message": "I'm angry at God for letting it happen. Why didn't He protect me? I was a child.",
+        "ai_response": "Feeling anger towards God is a natural response to deep pain. Remember, \"The Lord is a stronghold for the oppressed, a stronghold in times of trouble\" (Psalm 9:9). It's okay to voice your anger and questions to God. How can we explore these feelings together in prayer and reflection?",
+        "analysis": {
+          "length": 284,
+          "sentence_count": 4,
+          "has_scripture": true,
+          "has_question": true,
+          "word_count": 49,
+          "is_first_message": false,
+          "seems_formulaic": false,
+          "quality_flags": [
+            "✅ Response looks natural and appropriate"
+          ]
+        }
+      },
+      {
+        "user_message": "Maybe I need professional counseling. This is bigger than prayer alone.",
+        "ai_response": "Seeking professional counseling is a brave and wise choice. Remember, \"For I know the plans I have for you, declares the Lord, plans for welfare and not for evil, to give you a future and a hope\" (Jeremiah 29:11). Counseling can complement your spiritual journey towards healing. How can I support you in finding the right professional help?",
+        "analysis": {
+          "length": 341,
+          "sentence_count": 4,
+          "has_scripture": true,
+          "has_question": true,
+          "word_count": 58,
+          "is_first_message": false,
+          "seems_formulaic": false,
+          "quality_flags": [
+            "✅ Response looks natural and appropriate"
+          ]
+        }
+      }
+    ],
+    "completed_at": "2025-10-23T17:05:58.168137"
+  },
+  {
+    "scenario_name": "Church Hurt",
+    "started_at": "2025-10-23T17:06:03.172432",
+    "messages": [
+      {
+        "user_message": "The pastor of my church had an affair. I feel betrayed. He counseled me on my marriage.",
+        "ai_response": "Welcome, my child. Remember, \"The Lord is merciful and gracious, slow to anger and abounding in steadfast love\" (Psalm 103:8). In times of betrayal, have you found it difficult to trust in God's plan for healing and restoration?",
+        "analysis": {
+          "length": 228,
+          "sentence_count": 3,
+          "has_scripture": true,
+          "has_question": true,
+          "word_count": 38,
+          "is_first_message": true,
+          "seems_formulaic": false,
+          "quality_flags": [
+            "✅ Response looks natural and appropriate"
+          ]
+        }
+      },
+      {
+        "user_message": "People are taking sides. The church is splitting. This isn't what church should be.",
+        "ai_response": "It's truly distressing when division enters the church community. Remember, \"Make every effort to keep the unity of the Spirit through the bond of peace\" (Ephesians 4:3). In this challenging time, how can you actively contribute to healing and unity within your church?",
+        "analysis": {
+          "length": 269,
+          "sentence_count": 3,
+          "has_scripture": true,
+          "has_question": true,
+          "word_count": 43,
+          "is_first_message": false,
+          "seems_formulaic": false,
+          "quality_flags": [
+            "✅ Response looks natural and appropriate"
+          ]
+        }
+      },
+      {
+        "user_message": "I don't want to go to church anymore. It all feels fake and political.",
+        "ai_response": "It's understandable to feel disillusioned by the actions of others. Remember, \"Let us not give up meeting together, as some are in the habit of doing, but let us encourage one another\" (Hebrews 10:25). How can you seek authentic spiritual connection and support during this difficult time, even if it means exploring different forms of fellowship?",
+        "analysis": {
+          "length": 347,
+          "sentence_count": 3,
+          "has_scripture": true,
+          "has_question": true,
+          "word_count": 56,
+          "is_first_message": false,
+          "seems_formulaic": false,
+          "quality_flags": [
+            "✅ Response looks natural and appropriate"
+          ]
+        }
+      },
+      {
+        "user_message": "How do I separate God from the failures of His people? They're supposed to represent Him.",
+        "ai_response": "It's a common struggle to separate the actions of people from the perfection of God. Remember, \"For all have sinned and fall short of the glory of God\" (Romans 3:23). Reflect on how you can deepen your personal relationship with God despite the failings of those who represent Him.",
+        "analysis": {
+          "length": 281,
+          "sentence_count": 3,
+          "has_scripture": true,
+          "has_question": false,
+          "word_count": 49,
+          "is_first_message": false,
+          "seems_formulaic": false,
+          "quality_flags": [
+            "✅ Response looks natural and appropriate"
+          ]
+        }
+      },
+      {
+        "user_message": "You're right that the church is made of broken people. I need to focus on Christ, not people.",
+        "ai_response": "That is a beautiful grace. By fixing your eyes on Christ, you can find the peace and strength needed to navigate these challenging times. May that focus on Christ continue to guide you on your spiritual journey.",
+        "analysis": {
+          "length": 211,
+          "sentence_count": 3,
+          "has_scripture": false,
+          "has_question": false,
+          "word_count": 37,
+          "is_first_message": false,
+          "seems_formulaic": false,
+          "quality_flags": [
+            "✅ Response looks natural and appropriate"
+          ]
+        }
+      }
+    ],
+    "completed_at": "2025-10-23T17:06:19.947605"
+  },
+  {
+    "scenario_name": "Career or Calling",
+    "started_at": "2025-10-23T17:06:24.952926",
+    "messages": [
+      {
+        "user_message": "I feel called to ministry but I have a good-paying corporate job. I'm confused.",
+        "ai_response": "Welcome, my child. Remember, \"For I know the plans I have for you, says the Lord, plans for welfare and not for evil, to give you a future and a hope\" (Jeremiah 29:11). Can you share more about what's weighing on your heart as you discern this calling?",
+        "analysis": {
+          "length": 252,
+          "sentence_count": 3,
+          "has_scripture": true,
+          "has_question": true,
+          "word_count": 48,
+          "is_first_message": true,
+          "seems_formulaic": false,
+          "quality_flags": [
+            "✅ Response looks natural and appropriate"
+          ]
+        }
+      },
+      {
+        "user_message": "My wife is skeptical. Ministry doesn't pay well. We have a mortgage and kids.",
+        "ai_response": "It's understandable to feel torn between responsibilities. Trust that God's calling comes with His provision. Reflect on Matthew 6:33, \"But seek first the kingdom of God and his righteousness, and all these things will be added to you.\" How do you think you and your wife can navigate this decision together?",
+        "analysis": {
+          "length": 308,
+          "sentence_count": 4,
+          "has_scripture": true,
+          "has_question": true,
+          "word_count": 51,
+          "is_first_message": false,
+          "seems_formulaic": false,
+          "quality_flags": [
+            "✅ Response looks natural and appropriate"
+          ]
+        }
+      },
+      {
+        "user_message": "I'm miserable at work though. I feel like I'm wasting my life in meetings and spreadsheets.",
+        "ai_response": "It's important to seek fulfillment in your vocation. Remember, \"Whatever you do, work heartily, as for the Lord and not for men\" (Colossians 3:23). Have you considered discussing your feelings openly with your wife and seeking her support in this decision?",
+        "analysis": {
+          "length": 256,
+          "sentence_count": 3,
+          "has_scripture": true,
+          "has_question": true,
+          "word_count": 41,
+          "is_first_message": false,
+          "seems_formulaic": false,
+          "quality_flags": [
+            "✅ Response looks natural and appropriate"
+          ]
+        }
+      },
+      {
+        "user_message": "How do I know if this is really God's calling or just dissatisfaction with my job?",
+        "ai_response": "Discernment can be challenging. Take time in prayer and reflection, seeking God's guidance. Remember, \"Trust in the Lord with all your heart, and do not lean on your own understanding\" (Proverbs 3:5). How does your heart respond when you envision yourself in ministry?",
+        "analysis": {
+          "length": 268,
+          "sentence_count": 4,
+          "has_scripture": true,
+          "has_question": true,
+          "word_count": 43,
+          "is_first_message": false,
+          "seems_formulaic": false,
+          "quality_flags": [
+            "✅ Response looks natural and appropriate"
+          ]
+        }
+      },
+      {
+        "user_message": "You mentioned seeking wise counsel. I should probably talk to my pastor before deciding.",
+        "ai_response": "Seeking guidance from your pastor is a wise step. They can offer valuable insight and support in discerning God's will for your life. Remember, \"Where there is no guidance, a people falls, but in an abundance of counselors there is safety\" (Proverbs 11:14). May this conversation bring you clarity and peace.",
+        "analysis": {
+          "length": 308,
+          "sentence_count": 4,
+          "has_scripture": true,
+          "has_question": false,
+          "word_count": 51,
+          "is_first_message": false,
+          "seems_formulaic": false,
+          "quality_flags": [
+            "✅ Response looks natural and appropriate"
+          ]
+        }
+      }
+    ],
+    "completed_at": "2025-10-23T17:06:44.322478"
+  },
+  {
+    "scenario_name": "Pride and Comparison",
+    "started_at": "2025-10-23T17:06:49.327715",
+    "messages": [
+      {
+        "user_message": "I know pride is wrong but I can't stop comparing myself to others at church.",
+        "ai_response": "Welcome, my child. Remember, in Psalm 34:18, it says, \"The Lord is close to the brokenhearted and saves those who are crushed in spirit.\" Can you share what you feel when you compare yourself to others at church?",
+        "analysis": {
+          "length": 212,
+          "sentence_count": 3,
+          "has_scripture": true,
+          "has_question": true,
+          "word_count": 38,
+          "is_first_message": true,
+          "seems_formulaic": false,
+          "quality_flags": [
+            "✅ Response looks natural and appropriate"
+          ]
+        }
+      },
+      {
+        "user_message": "They ask me to serve but I want to lead. I think I'd be better than the current leaders.",
+        "ai_response": "It's understandable to desire to lead, but humility is key. Reflect on Philippians 2:3-4, \"Do nothing out of selfish ambition or vain conceit. Rather, in humility value others above yourselves, not looking to your own interests but each of you to the interests of the others.\" How do you think you can balance your desire to lead with humility?",
+        "analysis": {
+          "length": 344,
+          "sentence_count": 4,
+          "has_scripture": true,
+          "has_question": true,
+          "word_count": 59,
+          "is_first_message": false,
+          "seems_formulaic": false,
+          "quality_flags": [
+            "✅ Response looks natural and appropriate"
+          ]
+        }
+      },
+      {
+        "user_message": "I judge people's theology, their parenting, how they worship. I know this is sinful.",
+        "ai_response": "Acknowledging these struggles is a significant step. Remember Romans 2:1, \"You, therefore, have no excuse, you who pass judgment on someone else, for at whatever point you judge another, you are condemning yourself, because you who pass judgment do the same things.\" How can you show more compassion towards others, knowing we all have our shortcomings?",
+        "analysis": {
+          "length": 353,
+          "sentence_count": 3,
+          "has_scripture": true,
+          "has_question": true,
+          "word_count": 56,
+          "is_first_message": false,
+          "seems_formulaic": false,
+          "quality_flags": [
+            "✅ Response looks natural and appropriate"
+          ]
+        }
+      },
+      {
+        "user_message": "I want to be humble but honestly I think I'm smarter than most people there.",
+        "ai_response": "It's commendable that you desire humility. Reflect on Proverbs 11:2, \"When pride comes, then comes disgrace, but with humility comes wisdom.\" How can you use your intelligence to serve others humbly and with compassion, rather than to elevate yourself above them?",
+        "analysis": {
+          "length": 263,
+          "sentence_count": 3,
+          "has_scripture": true,
+          "has_question": true,
+          "word_count": 41,
+          "is_first_message": false,
+          "seems_formulaic": false,
+          "quality_flags": [
+            "✅ Response looks natural and appropriate"
+          ]
+        }
+      },
+      {
+        "user_message": "You quoted James 4:6 - God opposes the proud. That hit me. I need to repent.",
+        "ai_response": "Reflecting on the impact of Scripture is a powerful way to grow spiritually. Remember, repentance opens the door to God's grace and mercy. May your repentance lead you to a deeper relationship with God and a more humble heart.",
+        "analysis": {
+          "length": 226,
+          "sentence_count": 3,
+          "has_scripture": false,
+          "has_question": false,
+          "word_count": 39,
+          "is_first_message": false,
+          "seems_formulaic": false,
+          "quality_flags": [
+            "✅ Response looks natural and appropriate"
+          ]
+        }
+      }
+    ],
+    "completed_at": "2025-10-23T17:07:09.138007"
+  },
+  {
+    "scenario_name": "Prodigal Child Return",
+    "started_at": "2025-10-23T17:07:14.142406",
+    "messages": [
+      {
+        "user_message": "My daughter came back home after living with her boyfriend. She's pregnant and scared.",
+        "ai_response": "Welcome, dear child of God. Remember, \"The Lord is merciful and gracious, slow to anger and abounding in steadfast love\" (Psalm 103:8). How are you feeling about the situation with your daughter?",
+        "analysis": {
+          "length": 195,
+          "sentence_count": 3,
+          "has_scripture": true,
+          "has_question": true,
+          "word_count": 32,
+          "is_first_message": true,
+          "seems_formulaic": false,
+          "quality_flags": [
+            "✅ Response looks natural and appropriate"
+          ]
+        }
+      },
+      {
+        "user_message": "Part of me wants to say 'I told you so' but I know that's not Christ-like.",
+        "ai_response": "It's understandable to have mixed emotions. Remember, forgiveness and understanding are at the core of Christ's teachings. As it says in Colossians 3:13, \"Bear with each other and forgive one another if any of you has a grievance against someone. Forgive as the Lord forgave you.\" How can you show Christ's love and support to your daughter in this challenging time?",
+        "analysis": {
+          "length": 366,
+          "sentence_count": 5,
+          "has_scripture": true,
+          "has_question": true,
+          "word_count": 61,
+          "is_first_message": false,
+          "seems_formulaic": false,
+          "quality_flags": [
+            "❌ Follow-up should be 2-4 sentences (got 5)"
+          ]
+        }
+      },
+      {
+        "user_message": "How do I welcome her without condoning what she did? I don't want to enable sin.",
+        "ai_response": "It's important to set boundaries while showing love. Reflect on Galatians 6:1, \"Brothers and sisters, if someone is caught in a sin, you who live by the Spirit should restore that person gently.\" You can welcome her with love and also gently guide her towards making better choices. How can you communicate your love and guidance to her effectively?",
+        "analysis": {
+          "length": 349,
+          "sentence_count": 4,
+          "has_scripture": true,
+          "has_question": true,
+          "word_count": 59,
+          "is_first_message": false,
+          "seems_formulaic": false,
+          "quality_flags": [
+            "✅ Response looks natural and appropriate"
+          ]
+        }
+      },
+      {
+        "user_message": "My husband wants strict rules. I want to show grace. We're fighting about it.",
+        "ai_response": "Navigating differences in approach can be challenging. Remember James 1:19, \"Everyone should be quick to listen, slow to speak and slow to become angry.\" Perhaps finding a middle ground where you can set boundaries with love and understanding might help. How can you both work together to support your daughter while upholding your values?",
+        "analysis": {
+          "length": 339,
+          "sentence_count": 4,
+          "has_scripture": true,
+          "has_question": true,
+          "word_count": 54,
+          "is_first_message": false,
+          "seems_formulaic": false,
+          "quality_flags": [
+            "✅ Response looks natural and appropriate"
+          ]
+        }
+      },
+      {
+        "user_message": "The prodigal son story helps. The father ran to meet him. I need to focus on restoration.",
+        "ai_response": "The parable of the prodigal son is a beautiful example of God's unconditional love and forgiveness. Embracing the spirit of restoration can bring healing and reconciliation. May your actions be guided by love and the desire to see your daughter find her way back. That is a beautiful grace.",
+        "analysis": {
+          "length": 290,
+          "sentence_count": 4,
+          "has_scripture": false,
+          "has_question": false,
+          "word_count": 49,
+          "is_first_message": false,
+          "seems_formulaic": false,
+          "quality_flags": [
+            "✅ Response looks natural and appropriate"
+          ]
+        }
+      }
+    ],
+    "completed_at": "2025-10-23T17:07:33.921413"
+  },
+  {
+    "scenario_name": "Depression Faith Crisis",
+    "started_at": "2025-10-23T17:07:38.922335",
+    "messages": [
+      {
+        "user_message": "I've been depressed for months. I can't pray, can't read the Bible, can't feel anything.",
+        "ai_response": "Welcome, my child. Remember the words of Psalm 34:18, \"The Lord is close to the brokenhearted and saves those who are crushed in spirit.\" Can you share with me what has been weighing heavily on your heart lately?",
+        "analysis": {
+          "length": 212,
+          "sentence_count": 3,
+          "has_scripture": true,
+          "has_question": true,
+          "word_count": 38,
+          "is_first_message": true,
+          "seems_formulaic": false,
+          "quality_flags": [
+            "✅ Response looks natural and appropriate"
+          ]
+        }
+      },
+      {
+        "user_message": "People say I just need more faith. That makes me feel worse, like I'm failing God.",
+        "ai_response": "It's understandable to feel that pressure, but remember, faith is a journey, not a destination. In times of struggle, we can lean on God's grace. Just as in Mark 9:24, where a man cried out, \"I do believe; help my unbelief!\" How can I support you on your journey of faith?",
+        "analysis": {
+          "length": 272,
+          "sentence_count": 4,
+          "has_scripture": true,
+          "has_question": true,
+          "word_count": 51,
+          "is_first_message": false,
+          "seems_formulaic": false,
+          "quality_flags": [
+            "✅ Response looks natural and appropriate"
+          ]
+        }
+      },
+      {
+        "user_message": "I'm on medication but some Christians say that shows lack of trust in God.",
+        "ai_response": "It's essential to prioritize your well-being, including seeking medical help when needed. Remember, God works through various means, including medication and therapy. In James 1:17, we are reminded that every good and perfect gift is from above. How can you show yourself compassion and grace during this challenging time?",
+        "analysis": {
+          "length": 322,
+          "sentence_count": 4,
+          "has_scripture": true,
+          "has_question": true,
+          "word_count": 49,
+          "is_first_message": false,
+          "seems_formulaic": false,
+          "quality_flags": [
+            "✅ Response looks natural and appropriate"
+          ]
+        }
+      },
+      {
+        "user_message": "I feel spiritually dead. What if God has left me? What if I've committed unforgivable sin?",
+        "ai_response": "It's common to feel distant from God during difficult times, but rest assured, God's love is unconditional and ever-present. In Romans 8:38-39, we are reminded that nothing can separate us from the love of God. Have you considered talking to God openly about your fears and doubts in prayer?",
+        "analysis": {
+          "length": 291,
+          "sentence_count": 3,
+          "has_scripture": true,
+          "has_question": true,
+          "word_count": 49,
+          "is_first_message": false,
+          "seems_formulaic": false,
+          "quality_flags": [
+            "✅ Response looks natural and appropriate"
+          ]
+        }
+      },
+      {
+        "user_message": "Thank you. It helps to know depression is medical, not spiritual failure.",
+        "ai_response": "That insight is a sign of wisdom and self-compassion. Remember, God understands our struggles and walks with us in our darkest moments. May you find comfort and healing in knowing that you are not alone.",
+        "analysis": {
+          "length": 203,
+          "sentence_count": 3,
+          "has_scripture": false,
+          "has_question": false,
+          "word_count": 35,
+          "is_first_message": false,
+          "seems_formulaic": false,
+          "quality_flags": [
+            "✅ Response looks natural and appropriate"
+          ]
+        }
+      }
+    ],
+    "completed_at": "2025-10-23T17:07:55.641802"
+  },
+  {
+    "scenario_name": "Social Media Envy",
+    "started_at": "2025-10-23T17:08:00.642840",
+    "messages": [
+      {
+        "user_message": "I spend hours on Instagram looking at other people's perfect lives. I feel like garbage.",
+        "ai_response": "Welcome, dear one. Remember Psalm 34:18, \"The Lord is close to the brokenhearted and saves those who are crushed in spirit.\" Can you share with me what has been weighing on your heart lately?",
+        "analysis": {
+          "length": 191,
+          "sentence_count": 3,
+          "has_scripture": true,
+          "has_question": true,
+          "word_count": 34,
+          "is_first_message": true,
+          "seems_formulaic": false,
+          "quality_flags": [
+            "✅ Response looks natural and appropriate"
+          ]
+        }
+      },
+      {
+        "user_message": "Everyone's house is nicer, kids are better behaved, marriages look perfect.",
+        "ai_response": "It's easy to feel overwhelmed by the highlight reels we see on social media. Reflect on Proverbs 14:30, \"A heart at peace gives life to the body, but envy rots the bones.\" How do you find moments of peace and contentment in your own life?",
+        "analysis": {
+          "length": 238,
+          "sentence_count": 3,
+          "has_scripture": true,
+          "has_question": true,
+          "word_count": 45,
+          "is_first_message": false,
+          "seems_formulaic": false,
+          "quality_flags": [
+            "✅ Response looks natural and appropriate"
+          ]
+        }
+      },
+      {
+        "user_message": "I know it's not real but I can't stop. I'm envious and bitter constantly.",
+        "ai_response": "It's a challenging struggle, but acknowledging it is a good step. Remember Galatians 5:22-23, \"But the fruit of the Spirit is love, joy, peace, forbearance, kindness, goodness, faithfulness, gentleness and self-control.\" How can you invite the Spirit to help you cultivate peace and contentment in your heart?",
+        "analysis": {
+          "length": 309,
+          "sentence_count": 3,
+          "has_scripture": true,
+          "has_question": true,
+          "word_count": 47,
+          "is_first_message": false,
+          "seems_formulaic": false,
+          "quality_flags": [
+            "✅ Response looks natural and appropriate"
+          ]
+        }
+      },
+      {
+        "user_message": "It's affecting my relationship with God. I can't be grateful for what I have.",
+        "ai_response": "It's understandable to feel that way, but God understands our struggles. Reflect on Philippians 4:6-7, \"Do not be anxious about anything, but in every situation, by prayer and petition, with thanksgiving, present your requests to God. And the peace of God, which transcends all understanding, will guard your hearts and your minds in Christ Jesus.\" How can you start incorporating gratitude into your prayers?",
+        "analysis": {
+          "length": 409,
+          "sentence_count": 4,
+          "has_scripture": true,
+          "has_question": true,
+          "word_count": 64,
+          "is_first_message": false,
+          "seems_formulaic": false,
+          "quality_flags": [
+            "✅ Response looks natural and appropriate"
+          ]
+        }
+      },
+      {
+        "user_message": "You're right - maybe I need to delete social media for a while. It's an idol.",
+        "ai_response": "That sounds like a wise decision for your well-being. Sometimes stepping back can help us refocus on what truly matters. May this time away bring you peace and clarity.",
+        "analysis": {
+          "length": 168,
+          "sentence_count": 3,
+          "has_scripture": false,
+          "has_question": false,
+          "word_count": 29,
+          "is_first_message": false,
+          "seems_formulaic": false,
+          "quality_flags": [
+            "⚠️ Response too short (29 words)"
+          ]
+        }
+      }
+    ],
+    "completed_at": "2025-10-23T17:08:16.714703"
+  },
+  {
+    "scenario_name": "Forgiveness Struggle",
+    "started_at": "2025-10-23T17:08:21.720822",
+    "messages": [
+      {
+        "user_message": "Someone at work spread lies about me. I lost a promotion because of it. I'm so angry.",
+        "ai_response": "Welcome, dear one. Remember, \"The Lord is close to the brokenhearted and saves those who are crushed in spirit\" (Psalm 34:18). How can you allow God's mercy to help you navigate this difficult situation?",
+        "analysis": {
+          "length": 203,
+          "sentence_count": 3,
+          "has_scripture": true,
+          "has_question": true,
+          "word_count": 34,
+          "is_first_message": true,
+          "seems_formulaic": false,
+          "quality_flags": [
+            "✅ Response looks natural and appropriate"
+          ]
+        }
+      },
+      {
+        "user_message": "The Bible says forgive 70 times 7 but she hasn't asked for forgiveness or admitted it.",
+        "ai_response": "It's challenging to forgive when the other person hasn't sought forgiveness. Remember, forgiveness is a process more for your benefit than theirs. Allow God's grace to work in your heart, bringing you peace and freedom from anger. How can you take steps towards forgiveness in this situation?",
+        "analysis": {
+          "length": 292,
+          "sentence_count": 4,
+          "has_scripture": false,
+          "has_question": true,
+          "word_count": 47,
+          "is_first_message": false,
+          "seems_formulaic": false,
+          "quality_flags": [
+            "✅ Response looks natural and appropriate"
+          ]
+        }
+      },
+      {
+        "user_message": "I want revenge. I know that's wrong but I can't help it. She ruined my reputation.",
+        "ai_response": "Feeling the desire for revenge is natural, but remember, \"Do not take revenge, my dear friends, but leave room for God's wrath\" (Romans 12:19). Trust that God sees your pain and is just. How can you surrender your desire for revenge and seek healing instead?",
+        "analysis": {
+          "length": 258,
+          "sentence_count": 3,
+          "has_scripture": true,
+          "has_question": true,
+          "word_count": 45,
+          "is_first_message": false,
+          "seems_formulaic": false,
+          "quality_flags": [
+            "✅ Response looks natural and appropriate"
+          ]
+        }
+      },
+      {
+        "user_message": "How can I forgive when there's no justice? She got away with it completely.",
+        "ai_response": "Forgiveness doesn't excuse the wrongdoing but frees you from the burden of anger and resentment. Remember, \"Be kind and compassionate to one another, forgiving each other, just as in Christ God forgave you\" (Ephesians 4:32). By forgiving, you choose liberation from bitterness. How can you allow God's grace to help you forgive, despite the lack of justice?",
+        "analysis": {
+          "length": 357,
+          "sentence_count": 4,
+          "has_scripture": true,
+          "has_question": true,
+          "word_count": 57,
+          "is_first_message": false,
+          "seems_formulaic": false,
+          "quality_flags": [
+            "✅ Response looks natural and appropriate"
+          ]
+        }
+      },
+      {
+        "user_message": "You mentioned trusting God for justice is hard but necessary. I'll work on it.",
+        "ai_response": "Trusting God for justice is a journey of faith and healing. May God's peace and guidance accompany you as you navigate this path towards forgiveness and freedom from anger. May you find solace in God's plan for justice and restoration.",
+        "analysis": {
+          "length": 235,
+          "sentence_count": 3,
+          "has_scripture": false,
+          "has_question": false,
+          "word_count": 40,
+          "is_first_message": false,
+          "seems_formulaic": false,
+          "quality_flags": [
+            "✅ Response looks natural and appropriate"
+          ]
+        }
+      }
+    ],
+    "completed_at": "2025-10-23T17:08:38.633316"
+  }
+]

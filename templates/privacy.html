@@ -1,9 +1,30 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <!-- Google Analytics 4 -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-GPB1ZF7QK2"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-GPB1ZF7QK2');
+    </script>
+    <!-- End Google Analytics 4 -->
+    
+    <!-- Google Tag Manager -->
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-TVFVC4P2');</script>
+    <!-- End Google Tag Manager -->
+    
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Privacy Policy - My Confessions</title>
+    <meta name="description" content="Privacy Policy for My Confessions - How we protect your data, handle subscriptions, and secure your spiritual conversations.">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://myconfessions.org/privacy">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/tailwind.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/components.css') }}">
     <style>
@@ -12,9 +33,14 @@
     </style>
 </head>
 <body class="bg-gray-50 min-h-screen">
+    <!-- Google Tag Manager (noscript) -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TVFVC4P2"
+    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
+    
     <div class="max-w-4xl mx-auto p-6 bg-white shadow-lg rounded-lg mt-8 mb-8">
         <h1 class="text-3xl font-bold text-gray-900 mb-6">Privacy Policy</h1>
-        <p class="text-gray-600 mb-6"><strong>Effective Date:</strong> September 16, 2025</p>
+        <p class="text-gray-600 mb-6"><strong>Effective Date:</strong> October 23, 2025</p>
         
         <div class="space-y-6 text-gray-700 leading-relaxed">
             <section>
@@ -27,16 +53,19 @@
                 
                 <h3 class="text-lg font-medium text-gray-800 mb-2">2.1 Information You Provide</h3>
                 <ul class="list-disc ml-6 space-y-1">
+                    <li><strong>Account Information:</strong> Email address, name, and password (hashed) when you create an account</li>
                     <li><strong>Spiritual Content:</strong> Messages, prayers, and confessions you share with our AI</li>
-                    <li><strong>Donation Information:</strong> Name, email address, and payment information when making donations</li>
+                    <li><strong>Subscription Information:</strong> Name, email address, and payment information when subscribing to Premium</li>
                     <li><strong>Contact Information:</strong> Email address when contacting support</li>
+                    <li><strong>Email Preferences:</strong> Your preferences for receiving different types of emails</li>
                 </ul>
 
                 <h3 class="text-lg font-medium text-gray-800 mb-2 mt-4">2.2 Information Collected Automatically</h3>
                 <ul class="list-disc ml-6 space-y-1">
-                    <li><strong>Usage Data:</strong> How you interact with our service</li>
+                    <li><strong>Usage Data:</strong> How you interact with our service, conversation depth, feature usage</li>
                     <li><strong>Device Information:</strong> Browser type, operating system, IP address</li>
-                    <li><strong>Cookies:</strong> Small data files to improve your experience</li>
+                    <li><strong>Cookies:</strong> Small data files to improve your experience and maintain sessions</li>
+                    <li><strong>Session Data:</strong> Anonymous session identifiers for tracking usage and subscriptions</li>
                 </ul>
             </section>
 
@@ -44,39 +73,50 @@
                 <h2 class="text-xl font-semibold text-gray-900 mb-3">3. How We Use Your Information</h2>
                 <p>We use your information to:</p>
                 <ul class="list-disc ml-6 mt-2 space-y-1">
+                    <li>Create and manage your account</li>
                     <li>Provide AI-powered spiritual guidance and confession services</li>
-                    <li>Process donations securely through our payment processor (Stripe)</li>
+                    <li>Process subscriptions securely through our payment processor (Stripe)</li>
                     <li>Improve our services and user experience</li>
-                    <li>Communicate with you about your donations or support requests</li>
+                    <li>Send you important account emails (welcome, password resets, subscription confirmations)</li>
+                    <li>Send you optional emails (spiritual insights, follow-ups, prayer notifications) based on your preferences</li>
+                    <li>Communicate with you about your subscription or support requests</li>
                     <li>Comply with legal obligations and prevent fraud</li>
                     <li>Generate anonymous usage statistics</li>
                 </ul>
             </section>
 
             <section>
-                <h2 class="text-xl font-semibold text-gray-900 mb-3">4. Payment and Donation Data</h2>
+                <h2 class="text-xl font-semibold text-gray-900 mb-3">4. Payment and Subscription Data</h2>
                 
                 <h3 class="text-lg font-medium text-gray-800 mb-2">4.1 Payment Processing</h3>
-                <p>All donation payments are processed by Stripe, Inc., a PCI-compliant payment processor. We do not store your credit card information on our servers.</p>
+                <p>All subscription payments are processed by Stripe, Inc., a PCI-compliant payment processor. We do not store your credit card information on our servers.</p>
                 
                 <h3 class="text-lg font-medium text-gray-800 mb-2 mt-4">4.2 Information Shared with Stripe</h3>
-                <p>When you make a donation, we share the following information with Stripe:</p>
+                <p>When you subscribe to Premium, we share the following information with Stripe:</p>
                 <ul class="list-disc ml-6 mt-2 space-y-1">
-                    <li>Donation amount and currency</li>
+                    <li>Subscription plan (Monthly or Annual Premium)</li>
                     <li>Your name and email address</li>
                     <li>Payment method information</li>
+                    <li>Session identifier to link your payment to your account</li>
                 </ul>
                 <p class="mt-2">Stripe's privacy policy governs their use of this information: <a href="https://stripe.com/privacy" class="text-blue-600 underline" target="_blank">https://stripe.com/privacy</a></p>
                 
-                <h3 class="text-lg font-medium text-gray-800 mb-2 mt-4">4.3 Donation Records</h3>
-                <p>We maintain records of donations for operational and legal purposes, including donor name, email, amount, and date.</p>
+                <h3 class="text-lg font-medium text-gray-800 mb-2 mt-4">4.3 Subscription Records</h3>
+                <p>We maintain records of subscriptions for operational, billing, and legal purposes, including subscriber name, email, subscription tier (Free/Monthly Premium/Annual Premium), payment amounts, renewal dates, and transaction history.</p>
             </section>
 
             <section>
                 <h2 class="text-xl font-semibold text-gray-900 mb-3">5. Data Sharing and Disclosure</h2>
                 <p>We do not sell, trade, or otherwise transfer your personal information to outside parties except:</p>
                 <ul class="list-disc ml-6 mt-2 space-y-1">
-                    <li><strong>Service Providers:</strong> Trusted third parties (like Stripe) who assist in operating our service</li>
+                    <li><strong>Service Providers:</strong> Trusted third parties who assist in operating our service:
+                        <ul class="list-circle ml-6 mt-1 space-y-1">
+                            <li>Stripe - Payment processing</li>
+                            <li>SendGrid - Email delivery</li>
+                            <li>Firebase/Google Cloud - Data storage and hosting</li>
+                            <li>OpenAI - AI-powered spiritual guidance</li>
+                        </ul>
+                    </li>
                     <li><strong>Legal Requirements:</strong> When required by law or to protect our rights</li>
                     <li><strong>Anonymous Data:</strong> Aggregated, non-personal data for research or improvement purposes</li>
                 </ul>
@@ -87,9 +127,11 @@
                 <p>We implement appropriate security measures to protect your information:</p>
                 <ul class="list-disc ml-6 mt-2 space-y-1">
                     <li>SSL/TLS encryption for data transmission</li>
-                    <li>Secure servers and databases</li>
+                    <li>Password hashing (SHA-256) - we never store passwords in plain text</li>
+                    <li>Secure servers and databases (Firebase/Google Cloud)</li>
                     <li>Regular security audits and updates</li>
                     <li>Limited access to personal information</li>
+                    <li>Secure password reset token system with expiration</li>
                 </ul>
                 <p class="mt-2">However, no method of transmission over the internet is 100% secure. We cannot guarantee absolute security.</p>
             </section>
@@ -98,12 +140,13 @@
                 <h2 class="text-xl font-semibold text-gray-900 mb-3">7. Data Retention</h2>
                 <p>We retain your information for as long as necessary to:</p>
                 <ul class="list-disc ml-6 mt-2 space-y-1">
-                    <li>Provide our services to you</li>
+                    <li>Provide our services to you and maintain your account</li>
                     <li>Comply with legal obligations</li>
                     <li>Resolve disputes and enforce agreements</li>
-                    <li>Maintain donation records for tax and legal purposes</li>
+                    <li>Maintain subscription and payment records for billing, tax, and legal purposes</li>
+                    <li>Process password reset requests (tokens expire after 1 hour)</li>
                 </ul>
-                <p class="mt-2">Spiritual conversations may be retained to improve our AI services, but are anonymized and not linked to personal identifiers.</p>
+                <p class="mt-2">Spiritual conversations may be retained to improve our AI services, but are anonymized and not linked to personal identifiers. Password reset tokens are automatically deleted after use or expiration.</p>
             </section>
 
             <section>
@@ -114,9 +157,11 @@
                     <li><strong>Correction:</strong> Request correction of inaccurate information</li>
                     <li><strong>Deletion:</strong> Request deletion of your personal information (subject to legal requirements)</li>
                     <li><strong>Portability:</strong> Request transfer of your data in a machine-readable format</li>
-                    <li><strong>Opt-out:</strong> Unsubscribe from communications</li>
+                    <li><strong>Email Preferences:</strong> Manage which types of emails you receive through your account settings</li>
+                    <li><strong>Opt-out:</strong> Unsubscribe from marketing and optional communications via unsubscribe links</li>
+                    <li><strong>Account Deletion:</strong> Delete your account and associated data</li>
                 </ul>
-                <p class="mt-2">To exercise these rights, contact us at <a href="mailto:support@myconfessions.org" class="text-blue-600 underline">support@myconfessions.org</a>.</p>
+                <p class="mt-2">To exercise these rights, contact us at <a href="mailto:support@myconfessions.org" class="text-blue-600 underline">support@myconfessions.org</a> or manage your preferences in your account settings.</p>
             </section>
 
             <section>
@@ -135,9 +180,12 @@
                 <p>Our service integrates with third-party providers:</p>
                 <ul class="list-disc ml-6 mt-2 space-y-1">
                     <li><strong>Stripe:</strong> Payment processing (see their privacy policy at stripe.com/privacy)</li>
+                    <li><strong>SendGrid:</strong> Email delivery (see their privacy policy at sendgrid.com/privacy)</li>
+                    <li><strong>Firebase/Google Cloud:</strong> Database and hosting (see Google's privacy policy)</li>
                     <li><strong>OpenAI:</strong> AI-powered spiritual guidance (see their privacy policy at openai.com/privacy)</li>
                     <li><strong>Google Analytics:</strong> Website analytics (anonymized data)</li>
                 </ul>
+                <p class="mt-2">Each third-party service has its own privacy policy governing how they handle data. We carefully select trusted providers who maintain high security and privacy standards.</p>
             </section>
 
             <section>

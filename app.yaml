@@ -1,14 +1,14 @@
-runtime: python39
+runtime: python312
+entrypoint: gunicorn -b :$PORT app:app --access-logfile - --error-logfile -
 
-# Environment variables should be stored securely, not in source code.
-# I have removed the hardcoded secrets from this file.
-# Please use Google Cloud Secret Manager or a similar service to manage your secrets.
-# You can set them in the GAE console or reference them from Secret Manager.
+# Environment variables for Firebase (public values)
+# Sensitive API keys are loaded from Google Cloud Secret Manager at runtime
 env_variables:
-  OPENAI_API_KEY: "YOUR_OPENAI_API_KEY"
-  STRIPE_SECRET_KEY: "YOUR_STRIPE_SECRET_KEY"
-  STRIPE_PUBLISHABLE_KEY: "YOUR_STRIPE_PUBLISHABLE_KEY"
-  STRIPE_PRICE_ID_UNLIMITED: "YOUR_STRIPE_PRICE_ID"
+  FIREBASE_AUTH_DOMAIN: "confessiones-c6ca5.firebaseapp.com"
+  FIREBASE_PROJECT_ID: "confessiones-c6ca5"
+  FIREBASE_STORAGE_BUCKET: "confessiones-c6ca5.firebasestorage.app"
+  FIREBASE_MESSAGING_SENDER_ID: "973055633561"
+  FIREBASE_APP_ID: "1:973055633561:web:f3f3c453669925fa42f008"
 
 automatic_scaling:
   min_instances: 0
