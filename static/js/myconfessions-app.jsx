@@ -256,56 +256,6 @@ const handleSharePrayer = (confession) => {
 
   const renderConfess = () => (
     <div className="flex flex-col h-full bg-white">
-      {/* Header */}
-      <div className="flex-shrink-0 bg-white border-b border-gray-100 p-3 md:p-4 shadow-sm z-10">
-        <div className="max-w-3xl mx-auto flex items-center justify-between">
-          <a href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity text-decoration-none">
-            <span className="text-2xl text-blue-800">✝</span>
-            <h1 className="text-lg font-bold text-blue-900">My Confessions</h1>
-          </a>
-
-          {/* Mobile login buttons */}
-          <div className="md:hidden">
-            {!isLoggedIn ? (
-              <div className="flex gap-2">
-                <button
-                  onClick={() => setShowLoginModal(true)}
-                  className="text-blue-600 px-2 py-1 rounded text-xs font-medium"
-                >
-                  Sign In
-                </button>
-                <button
-                  onClick={() => setShowRegisterModal(true)}
-                  className="bg-blue-600 text-white px-3 py-1 rounded-full text-xs font-semibold shadow-sm"
-                >
-                  Sign Up
-                </button>
-              </div>
-            ) : (
-              <span className="text-gray-600 text-xs">{userName || userEmail}</span>
-            )}
-          </div>
-        </div>
-
-        {/* Desktop login */}
-        <div className="hidden md:flex justify-center mt-2">
-          {!isLoggedIn ? (
-            <div className="flex gap-2">
-              <button onClick={() => setShowLoginModal(true)} className="text-blue-600 px-3 py-1 rounded text-sm font-medium hover:bg-blue-50">
-                Sign In
-              </button>
-              <button onClick={() => setShowRegisterModal(true)} className="bg-blue-600 text-white px-4 py-1 rounded-full text-sm font-semibold hover:bg-blue-700 transition-colors shadow-sm">
-                Sign Up
-              </button>
-            </div>
-          ) : (
-            <div className="text-center">
-              <p className="text-gray-600 text-sm">{userName || userEmail}</p>
-            </div>
-          )}
-        </div>
-      </div>
-
       {/* Main chat area */}
       <div className="flex-1 flex flex-col min-h-0 bg-gray-50">
         {/* Messages area */}
@@ -1192,7 +1142,7 @@ const handleSharePrayer = (confession) => {
       )}
       
       {/* Desktop Navigation */}
-      <div className="hidden md:block bg-white border-b border-gray-100 shadow-sm z-20">
+      <div className="bg-white border-b border-gray-100 shadow-sm z-20">
         <div className="max-w-4xl mx-auto px-4 py-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-8">
